@@ -66,6 +66,8 @@ public class socket : MonoBehaviour
         }
         memoryStream.Position = 0;
 
+        //recv에서 성공이라고 하면
+
         if (size > 0) SceneManager.LoadScene("Lobby");
     }
 
