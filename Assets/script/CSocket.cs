@@ -9,12 +9,36 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System.Threading;
 
-public class socket : MonoBehaviour // 이걸 쓰레드로 쓰자
+public class CSocket : MonoBehaviour
 {
+    private static CSocket instance;
+
     byte[] buffer;
     MemoryStream memoryStream;
     BinaryWriter binaryWriter;
-    public static Socket m_socket;
+    public Socket m_socket;
+
+    public static CSocket Instance
+    {
+        get
+        {
+            if(instance == null)
+            {
+                var obj = FindObjectOfType<CSocket>();
+                if(obj != null) 
+                {
+                    instance = obj;
+                } 
+                else
+                {
+                    var newObj = new GameObject().AddComponent<CSocket>();
+                    instance = newObj;
+                }
+            }
+            return instance;
+        }
+    }
+
     void Awake()
     {
         buffer = new byte[65535];

@@ -5,16 +5,17 @@ using System.Net.Sockets;
 using System.Threading;
 public class thread : MonoBehaviour
 {
-    Thread m_thread;
-    Socket socket;
+    private Thread m_thread;
+
     // Start is called before the first frame update
     private void Awake()
     {
-        m_thread = new Thread(() => Run(socket));
+        
     }
     void Start()
     {
-        
+        m_thread = new Thread(Run);
+        m_thread.Start();
     }
 
     // Update is called once per frame
@@ -23,8 +24,14 @@ public class thread : MonoBehaviour
         
     }
 
-    void Run(Socket _socket)
+    void Run()
     {
-
+        Socket socket = CSocket.Instance.m_socket;
+        float time = 0.0f;
+        while(true)
+        {
+            if (time >= 1.0) time = 0.0f;
+            time += Time.deltaTime;
+        }
     }
 }
