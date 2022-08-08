@@ -7,13 +7,14 @@ using System.Net.Sockets;
 using System.IO;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Threading;
 
-public class socket : MonoBehaviour
+public class socket : MonoBehaviour // 이걸 쓰레드로 쓰자
 {
     byte[] buffer;
     MemoryStream memoryStream;
     BinaryWriter binaryWriter;
-    Socket m_socket;
+    public static Socket m_socket;
     void Awake()
     {
         buffer = new byte[65535];
