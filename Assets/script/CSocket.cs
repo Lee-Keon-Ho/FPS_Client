@@ -13,10 +13,14 @@ public class CSocket : MonoBehaviour
 {
     private static CSocket instance;
 
-    byte[] buffer;
-    MemoryStream memoryStream;
+    byte[] sendBuffer;
+    byte[] recvBuffer;
+    MemoryStream sendMemoryStream;
+    MemoryStream recvMemoryStream;
     BinaryWriter binaryWriter;
+    BinaryReader binaryReader;
     public Socket m_socket;
+    Thread thread;
 
     public static CSocket Instance
     {
@@ -41,15 +45,15 @@ public class CSocket : MonoBehaviour
 
     void Awake()
     {
-        buffer = new byte[65535];
-        memoryStream = new MemoryStream(buffer);
-        binaryWriter = new BinaryWriter(memoryStream);
-
+        sendBuffer = new byte[65535];
+        sendMemoryStream = new MemoryStream(sendBuffer);
+        binaryWriter = new BinaryWriter(sendMemoryStream);
+        
         m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         try
         {
-            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("59.30.46.242"), 30002);
+            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("192.168.123.14"), 30002);
 
             m_socket.Connect(iPEndPoint);
         }
@@ -57,6 +61,9 @@ public class CSocket : MonoBehaviour
         {
             Debug.Log(e);
         }
+
+        thread = new Thread(Run);
+        thread.Start();
 
         DontDestroyOnLoad(this);
     }
@@ -77,27 +84,52 @@ public class CSocket : MonoBehaviour
     {
         byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text);
         binaryWriter.Write((ushort)(sizeof(int) + str.Length));
-        binaryWriter.Write((ushort)2);
+        binaryWriter.Write((ushort)1);
         binaryWriter.Write(str);
 
-        int size = m_socket.Send(buffer, (int)memoryStream.Position, 0);
+        int size = m_socket.Send(sendBuffer, (int)sendMemoryStream.Position, 0);
 
-        Debug.Log("str size" + str.Length);
+        //Debug.Log("str size" + str.Length);
 
-        for(int i = 0; i < str.Length; i ++)
-        {
-            Debug.Log(str[i]);
+        //for(int i = 0; i < str.Length; i ++)
+        //{
+        //    Debug.Log(str[i]);
 
-        }
-        memoryStream.Position = 0;
+        //}
+        sendMemoryStream.Position = 0;
 
         //recv에서 성공이라고 하면
 
-        if (size > 0) SceneManager.LoadScene("Lobby");
+       //if (size > 0) SceneManager.LoadScene("Lobby");
     }
 
     private void OnDestroy()
     {
         // 종료 및 logout packet
     }
+
+    void Run()
+    {
+        recvBuffer = new byte[65535];
+        recvMemoryStream = new MemoryStream(recvBuffer);
+        binaryReader = new BinaryReader(recvMemoryStream);
+
+        while (true)
+        {
+            int recvSize = m_socket.Receive(recvBuffer);
+            Debug.Log("abcd");
+            if (recvSize <= 0) break;
+
+            ushort size = binaryReader.ReadUInt16();
+            ushort type = binaryReader.ReadUInt16();
+
+            if(type == 1)
+            {
+                CSceneManager.Instance.ChangeScene(1);
+            }
+            recvMemoryStream.Position = 0;
+        }
+    }
+
+   
 }
