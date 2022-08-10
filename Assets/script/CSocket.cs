@@ -53,7 +53,7 @@ public class CSocket : MonoBehaviour
 
         try
         {
-            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("192.168.123.14"), 30002);
+            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("59.30.46.242"), 30002);
 
             m_socket.Connect(iPEndPoint);
         }
