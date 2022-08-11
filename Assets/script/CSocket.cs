@@ -13,6 +13,8 @@ public class CSocket : MonoBehaviour
 {
     private static CSocket instance;
 
+    CRingBuffer ringBuffer;
+
     byte[] sendBuffer;
     byte[] recvBuffer;
     MemoryStream sendMemoryStream;
@@ -52,6 +54,9 @@ public class CSocket : MonoBehaviour
 
     void Awake()
     {
+        ringBuffer = new CRingBuffer(65535);
+
+
         sendBuffer = new byte[65535];
         sendMemoryStream = new MemoryStream(sendBuffer);
         binaryWriter = new BinaryWriter(sendMemoryStream);
@@ -60,7 +65,7 @@ public class CSocket : MonoBehaviour
 
         try
         {
-            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("59.30.46.242"), 30002);
+            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("192.168.123.4"), 30002);
 
             m_socket.Connect(iPEndPoint);
         }
@@ -69,17 +74,17 @@ public class CSocket : MonoBehaviour
             Debug.Log(e);
         }
 
-        thread = new Thread(Run);
-        thread.Start();
+        //thread = new Thread(Run);
+        //thread.Start();
 
 
         //2022-08-10
         buffer = new byte[m_size];
 
-        readBuffer = new MemoryStream(buffer);
-        writeBuffer = new MemoryStream(buffer);
-        binaryReader = new BinaryReader(readBuffer);
-        binaryWriter = new BinaryWriter(writeBuffer);
+        //readBuffer = new MemoryStream(buffer);
+        //writeBuffer = new MemoryStream(buffer);
+        //binaryReader = new BinaryReader(readBuffer);
+        //binaryWriter = new BinaryWriter(writeBuffer);
 
         DontDestroyOnLoad(this);
     }
@@ -93,29 +98,34 @@ public class CSocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(readBuffer.Position == writeBuffer.Position)
-        {
+        //if(readBuffer.Position == writeBuffer.Position)
+        //{
 
-        }
+        //}
     }
 
     public void LoginButton(TextMeshProUGUI _textMesh)
     {
         byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text);
-        binaryWriter.Write((ushort)(sizeof(int) + str.Length));
-        binaryWriter.Write((ushort)1);
-        binaryWriter.Write(str);
+        MemoryStream memoryStream = new MemoryStream(str);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
 
-        int size = m_socket.Send(sendBuffer, (int)sendMemoryStream.Position, 0);
+        bw.Write((ushort)(sizeof(int) + str.Length - 2));
+        bw.Write((ushort)1);
+        bw.Write(str);
 
-        //Debug.Log("str size" + str.Length);
+        Debug.Log("str size : " + memoryStream.Position);
 
-        //for(int i = 0; i < str.Length; i ++)
-        //{
-        //    Debug.Log(str[i]);
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
+        
+        Debug.Log("str size : " + str.Length);
+        Debug.Log(_textMesh.text);
+        for(int i = 0; i < _textMesh.text.Length; i ++)
+        {
+            Debug.Log(_textMesh.text[i]);
 
-        //}
-        sendMemoryStream.Position = 0;
+        }
+        memoryStream.Position = 0;
 
         //recv에서 성공이라고 하면
 
@@ -135,7 +145,21 @@ public class CSocket : MonoBehaviour
         
         while (true)
         {
-            int recvSize = m_socket.Receive(buffer, 10, 100, SocketFlags.None); // 이게 핵심
+            int writePos = ringBuffer.GetWritePos();
+            int readPos = ringBuffer.GetReadPos();
+            int bufferSize = ringBuffer.GetSize();
+            int recvSize;
+
+
+            if(readPos <= writePos)
+            {
+                recvSize = m_socket.Receive(ringBuffer.GetBuffer(), writePos, bufferSize - writePos, SocketFlags.None);
+            }
+            else
+            {
+                recvSize = m_socket.Receive(ringBuffer.GetBuffer(), readPos, readPos - writePos, SocketFlags.None);
+            }
+            
             
             if (recvSize <= 0) break;
 

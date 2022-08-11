@@ -5,7 +5,9 @@ using UnityEngine;
 public class LobbyCharacter : MonoBehaviour
 {
     private float speed = 3f;
+    public Camera getCamera;
     public GameObject gameObject;
+    private RaycastHit hit;
     public Transform rightGunBone;
 
     // Start is called before the first frame update
@@ -33,7 +35,12 @@ public class LobbyCharacter : MonoBehaviour
     {
         if(Input.GetMouseButton(0))
         {
-            gameObject.transform.Rotate(0f, -Input.GetAxis("Mouse X") * speed, 0f, Space.World);
+            Ray ray = getCamera.ScreenPointToRay(Input.mousePosition);
+
+            if(Physics.Raycast(ray, out hit))
+            {
+                gameObject.transform.Rotate(0f, -Input.GetAxis("Mouse X") * speed, 0f, Space.World);
+            }
         }
     }
 }
