@@ -16,32 +16,20 @@ public class CSocket : MonoBehaviour
     CRingBuffer ringBuffer;
 
     byte[] sendBuffer;
-    byte[] recvBuffer;
-    MemoryStream sendMemoryStream;
-    MemoryStream recvMemoryStream;
-    //BinaryWriter binaryWriter;
-    //BinaryReader binaryReader;
-    public Socket m_socket;
+    Socket m_socket;
     Thread thread;
 
-    // 2022-08-10
-    byte[] buffer;
-    int m_size = 65530;
-    MemoryStream readBuffer;
-    MemoryStream writeBuffer;
-    BinaryWriter binaryWriter;
-    BinaryReader binaryReader;
     public static CSocket Instance
     {
         get
         {
-            if(instance == null)
+            if (instance == null)
             {
                 var obj = FindObjectOfType<CSocket>();
-                if(obj != null) 
+                if (obj != null)
                 {
                     instance = obj;
-                } 
+                }
                 else
                 {
                     var newObj = new GameObject().AddComponent<CSocket>();
@@ -52,20 +40,18 @@ public class CSocket : MonoBehaviour
         }
     }
 
+
     void Awake()
     {
         ringBuffer = new CRingBuffer(65535);
-
-
-        sendBuffer = new byte[65535];
-        sendMemoryStream = new MemoryStream(sendBuffer);
-        binaryWriter = new BinaryWriter(sendMemoryStream);
         
+        sendBuffer = new byte[65535];
+
         m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         try
         {
-            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("192.168.123.4"), 30002);
+            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("222.113.24.195"), 30002);
 
             m_socket.Connect(iPEndPoint);
         }
@@ -74,17 +60,8 @@ public class CSocket : MonoBehaviour
             Debug.Log(e);
         }
 
-        //thread = new Thread(Run);
-        //thread.Start();
-
-
-        //2022-08-10
-        buffer = new byte[m_size];
-
-        //readBuffer = new MemoryStream(buffer);
-        //writeBuffer = new MemoryStream(buffer);
-        //binaryReader = new BinaryReader(readBuffer);
-        //binaryWriter = new BinaryWriter(writeBuffer);
+        thread = new Thread(Run);
+        thread.Start();
 
         DontDestroyOnLoad(this);
     }
@@ -98,38 +75,72 @@ public class CSocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if(readBuffer.Position == writeBuffer.Position)
-        //{
+        if (ringBuffer.GetRemainSize() > 3)
+        {
+            byte[] tempBuffer = new byte[65530];
+            int readPos = ringBuffer.GetReadPos();
+            int bufferSize = ringBuffer.GetSize();
+            MemoryStream tempStream = new MemoryStream(tempBuffer);
+            BinaryReader binaryReader = new BinaryReader(tempStream);
 
-        //}
+            Debug.Log("remainSize : " + ringBuffer.GetRemainSize());
+            Debug.Log("readPos : " + ringBuffer.GetReadPos());
+            // 여기부터 read에 대한처리
+            if (readPos > bufferSize)
+            {
+                Array.Copy(ringBuffer.GetBuffer(), readPos, tempBuffer, 0, bufferSize - readPos);
+                Array.Copy(ringBuffer.GetBuffer(), 0, tempBuffer, bufferSize - readPos, ringBuffer.GetRemainSize() - (bufferSize - readPos));
+            }
+            else
+            {
+                Array.Copy(ringBuffer.GetBuffer(), tempBuffer, ringBuffer.GetRemainSize());
+            }
+
+            ushort size = binaryReader.ReadUInt16();
+            ushort type = binaryReader.ReadUInt16();
+            Debug.Log("size : " + size);
+            Debug.Log("type : " + type);
+
+            if (type == 1) // Handle
+            {
+                ushort scene = binaryReader.ReadUInt16();
+                Debug.Log("scene : " + scene);
+                if (scene == 1) SceneManager.LoadScene("Lobby");
+            }
+
+            ringBuffer.Read(size);
+
+        }
     }
 
     public void LoginButton(TextMeshProUGUI _textMesh)
     {
         byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text);
-        MemoryStream memoryStream = new MemoryStream(str);
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
         bw.Write((ushort)(sizeof(int) + str.Length - 2));
         bw.Write((ushort)1);
         bw.Write(str);
 
-        Debug.Log("str size : " + memoryStream.Position);
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
 
-        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
-        
-        Debug.Log("str size : " + str.Length);
-        Debug.Log(_textMesh.text);
-        for(int i = 0; i < _textMesh.text.Length; i ++)
-        {
-            Debug.Log(_textMesh.text[i]);
-
-        }
         memoryStream.Position = 0;
+    }
 
-        //recv에서 성공이라고 하면
+    public void ChatSend(TextMeshProUGUI _textMesh)
+    {
+        byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text);
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
 
-       //if (size > 0) SceneManager.LoadScene("Lobby");
+        bw.Write((ushort)(sizeof(int) + str.Length - 2));
+        bw.Write((ushort)5);
+        bw.Write(str);
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
+
+        memoryStream.Position = 0;
     }
 
     private void OnDestroy()
@@ -138,46 +149,22 @@ public class CSocket : MonoBehaviour
     }
 
     void Run()
-    {
-        //recvBuffer = new byte[65535];
-        //recvMemoryStream = new MemoryStream(recvBuffer);
-        //binaryReader = new BinaryReader(recvMemoryStream);
-        
+    {   
         while (true)
         {
             int writePos = ringBuffer.GetWritePos();
-            int readPos = ringBuffer.GetReadPos();
-            int bufferSize = ringBuffer.GetSize();
-            int recvSize;
+            int recvSize = 0;
 
+            recvSize = m_socket.Receive(ringBuffer.GetBuffer(), writePos, ringBuffer.GetWriteBufferSize(), SocketFlags.None);
 
-            if(readPos <= writePos)
+            ringBuffer.Write(recvSize);
+
+            for(int i = 0; i < ringBuffer.GetRemainSize(); i++)
             {
-                recvSize = m_socket.Receive(ringBuffer.GetBuffer(), writePos, bufferSize - writePos, SocketFlags.None);
+                Debug.Log(ringBuffer.GetBuffer()[i]);
             }
-            else
-            {
-                recvSize = m_socket.Receive(ringBuffer.GetBuffer(), readPos, readPos - writePos, SocketFlags.None);
-            }
-            
-            
+
             if (recvSize <= 0) break;
-
-            //ushort size = binaryReader.ReadUInt16();
-            //ushort type = binaryReader.ReadUInt16();
-
-            writeBuffer.Position += recvSize;
-            if(writeBuffer.Position >= m_size)
-            {
-                writeBuffer.Position = 0;
-            }
-            
-
-            //if(type == 1)
-            //{
-            //    CSceneManager.Instance.ChangeScene(1);
-            //}
-            //recvMemoryStream.Position = 0;
         }
     }
 
