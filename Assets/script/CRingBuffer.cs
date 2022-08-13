@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class CRingBuffer : MonoBehaviour
+public class CRingBuffer
 {
     byte[] buffer;
     int bufferSize;

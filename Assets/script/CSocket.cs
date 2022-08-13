@@ -9,7 +9,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System.Threading;
 
-public class CSocket : MonoBehaviour
+public class CSocket : MonoBehaviour // 일반 클레스로
 {
     private static CSocket instance;
 
@@ -116,8 +116,8 @@ public class CSocket : MonoBehaviour
     public void LoginButton(TextMeshProUGUI _textMesh)
     {
         byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text);
-        MemoryStream memoryStream = new MemoryStream(sendBuffer);
-        BinaryWriter bw = new BinaryWriter(memoryStream);
+        MemoryStream memoryStream = new MemoryStream(sendBuffer); // 포인터 처럼 
+        BinaryWriter bw = new BinaryWriter(memoryStream); // 가지고 있어도 된다.
 
         bw.Write((ushort)(sizeof(int) + str.Length - 2));
         bw.Write((ushort)1);
@@ -125,12 +125,12 @@ public class CSocket : MonoBehaviour
 
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
 
-        memoryStream.Position = 0;
+        memoryStream.Position = 0; // 시작할때 넣는게 좋다
     }
 
     public void ChatSend(TextMeshProUGUI _textMesh)
     {
-        byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text);
+        byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text); // 11 32가 나오는건 인코딩 해서 나오는 것이다.
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
@@ -167,6 +167,4 @@ public class CSocket : MonoBehaviour
             if (recvSize <= 0) break;
         }
     }
-
-   
 }
