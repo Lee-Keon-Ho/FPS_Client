@@ -1,0 +1,44 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+public class App : MonoBehaviour
+{
+    public CSocket m_socket;
+
+    private void Awake()
+    {
+        m_socket = new CSocket();
+
+        m_socket.Init("222.113.24.195", 30002);
+
+        DontDestroyOnLoad(this);
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        m_socket.RunLoop();
+    }
+
+    public void OnLogin(TextMeshProUGUI _textMesh)
+    {
+        m_socket.LoginButton(_textMesh);
+    }
+
+    public void OnReturn(TextMeshProUGUI _textMesh)
+    {
+        m_socket.ChatSend(_textMesh);
+    }
+
+    public void OnCreate(TextMeshProUGUI _textMesh)
+    {
+        m_socket.CreateRoom(_textMesh);
+    }
+}

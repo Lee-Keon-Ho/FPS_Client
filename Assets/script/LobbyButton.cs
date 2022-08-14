@@ -26,7 +26,8 @@ public class LobbyButton : MonoBehaviour
 
     public void OnCreateOkButton(TextMeshProUGUI _text)
     {
-        // send
+        GameObject gameObject = GameObject.Find("serverObject");
+        gameObject.GetComponent<App>().OnCreate(_text);
     }
 
     public void OnCreateExitButton()

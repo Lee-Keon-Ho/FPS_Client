@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-
 public class CRingBuffer
 {
     byte[] buffer;
@@ -69,6 +68,7 @@ public class CRingBuffer
             }
 
             remainDataSize -= _size;
+            readStream.Position += _size;
         }
     }
 

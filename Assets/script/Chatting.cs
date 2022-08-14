@@ -4,7 +4,16 @@ using UnityEngine;
 using TMPro;
 public class Chatting : MonoBehaviour
 {
-    public TextMeshProUGUI charText;
+    public TextMeshProUGUI chatText;
+    public TMP_InputField chatInputField;
+    GameObject serverObject;
+
+    private void Awake()
+    {
+        serverObject = GameObject.Find("serverObject");
+        chatInputField.onSubmit.AddListener(delegate { OnReturn(); });
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,10 +28,10 @@ public class Chatting : MonoBehaviour
 
     public void OnReturn()
     {
-        if (charText.text.Length != 0)
+        if (chatText.text.Length != 0)
         {
-            CSocket.Instance.ChatSend(charText);
+            serverObject.GetComponent<App>().OnReturn(chatText);
         }
-        charText.text = null;
+        chatInputField.text = "";
     }
 }

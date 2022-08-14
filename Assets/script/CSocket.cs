@@ -9,49 +9,25 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System.Threading;
 
-public class CSocket : MonoBehaviour // 일반 클레스로
+public class CSocket
 {
-    private static CSocket instance;
-
     CRingBuffer ringBuffer;
 
     byte[] sendBuffer;
     Socket m_socket;
     Thread thread;
 
-    public static CSocket Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                var obj = FindObjectOfType<CSocket>();
-                if (obj != null)
-                {
-                    instance = obj;
-                }
-                else
-                {
-                    var newObj = new GameObject().AddComponent<CSocket>();
-                    instance = newObj;
-                }
-            }
-            return instance;
-        }
-    }
-
-
-    void Awake()
+    public void Init(String _ip, int _port)
     {
         ringBuffer = new CRingBuffer(65535);
-        
+
         sendBuffer = new byte[65535];
 
         m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         try
         {
-            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("222.113.24.195"), 30002);
+            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
 
             m_socket.Connect(iPEndPoint);
         }
@@ -62,18 +38,9 @@ public class CSocket : MonoBehaviour // 일반 클레스로
 
         thread = new Thread(Run);
         thread.Start();
-
-        DontDestroyOnLoad(this);
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+    public void RunLoop()
     {
         if (ringBuffer.GetRemainSize() > 3)
         {
@@ -83,8 +50,6 @@ public class CSocket : MonoBehaviour // 일반 클레스로
             MemoryStream tempStream = new MemoryStream(tempBuffer);
             BinaryReader binaryReader = new BinaryReader(tempStream);
 
-            Debug.Log("remainSize : " + ringBuffer.GetRemainSize());
-            Debug.Log("readPos : " + ringBuffer.GetReadPos());
             // 여기부터 read에 대한처리
             if (readPos > bufferSize)
             {
@@ -93,23 +58,29 @@ public class CSocket : MonoBehaviour // 일반 클레스로
             }
             else
             {
-                Array.Copy(ringBuffer.GetBuffer(), tempBuffer, ringBuffer.GetRemainSize());
+                Array.Copy(ringBuffer.GetBuffer(), readPos, tempBuffer, 0, ringBuffer.GetRemainSize());
             }
 
             ushort size = binaryReader.ReadUInt16();
             ushort type = binaryReader.ReadUInt16();
-            Debug.Log("size : " + size);
-            Debug.Log("type : " + type);
 
-            if (type == 1) // Handle
+            if (type == 1) // Handle    
             {
                 ushort scene = binaryReader.ReadUInt16();
-                Debug.Log("scene : " + scene);
                 if (scene == 1) SceneManager.LoadScene("Lobby");
+            }
+            if (type == 5)
+            {
+                ChattingList gameObject = Transform.FindObjectOfType<ChattingList>();
+                gameObject.OnList(tempBuffer);
+            }
+            if(type == 6)
+            {
+                ushort scene = binaryReader.ReadUInt16();
+                if (scene == 1) SceneManager.LoadScene("Room");
             }
 
             ringBuffer.Read(size);
-
         }
     }
 
@@ -143,9 +114,19 @@ public class CSocket : MonoBehaviour // 일반 클레스로
         memoryStream.Position = 0;
     }
 
-    private void OnDestroy()
+    public void CreateRoom(TextMeshProUGUI _textMesh)
     {
-        // 종료 및 logout packet
+        byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text); // 11 32가 나오는건 인코딩 해서 나오는 것이다.
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        bw.Write((ushort)(sizeof(int) + str.Length - 2));
+        bw.Write((ushort)6);
+        bw.Write(str);
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
+
+        memoryStream.Position = 0;
     }
 
     void Run()
@@ -158,11 +139,6 @@ public class CSocket : MonoBehaviour // 일반 클레스로
             recvSize = m_socket.Receive(ringBuffer.GetBuffer(), writePos, ringBuffer.GetWriteBufferSize(), SocketFlags.None);
 
             ringBuffer.Write(recvSize);
-
-            for(int i = 0; i < ringBuffer.GetRemainSize(); i++)
-            {
-                Debug.Log(ringBuffer.GetBuffer()[i]);
-            }
 
             if (recvSize <= 0) break;
         }
