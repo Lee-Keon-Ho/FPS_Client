@@ -72,7 +72,7 @@ public class CSocket
             if (type == 5)
             {
                 ChattingList gameObject = Transform.FindObjectOfType<ChattingList>();
-                gameObject.OnList(tempBuffer);
+                gameObject.OnList(System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(100)));
             }
             if(type == 6)
             {

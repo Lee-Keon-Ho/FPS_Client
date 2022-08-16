@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 public class Chatting : MonoBehaviour
 {
@@ -28,6 +30,7 @@ public class Chatting : MonoBehaviour
 
     public void OnReturn()
     {
+        chatInputField.Select();
         if (chatText.text.Length != 0)
         {
             serverObject.GetComponent<App>().OnReturn(chatText);
