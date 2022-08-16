@@ -64,17 +64,46 @@ public class CSocket
             ushort size = binaryReader.ReadUInt16();
             ushort type = binaryReader.ReadUInt16();
 
-            if (type == 1) // Handle    
+            // Handle    
+            if (type == 1) // login
             {
                 ushort scene = binaryReader.ReadUInt16();
                 if (scene == 1) SceneManager.LoadScene("Lobby");
             }
-            if (type == 5)
+            if (type == 2)
+            {
+                ushort exit = binaryReader.ReadUInt16();
+                if(exit == 1)
+                {
+                    UnityEditor.EditorApplication.isPlaying = false; // 에디터
+                    Application.Quit(); // 게임
+                    m_socket.Close();
+                }
+            }
+
+            if (type == 3) // userList
+            {
+                ushort count = binaryReader.ReadUInt16();
+                ushort state;
+                String str;
+                CUserList userList = Transform.FindObjectOfType<CUserList>();
+                for (int i = 0; i < count; i++)
+                {
+                    state = binaryReader.ReadUInt16();
+                    str = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(64));
+                    userList.UserListUpdate(str, state, i);
+                }
+            }
+            if (type == 4) // roomList
+            {
+                
+            }
+            if (type == 5) // chatting
             {
                 ChattingList gameObject = Transform.FindObjectOfType<ChattingList>();
                 gameObject.OnList(System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(100)));
             }
-            if(type == 6)
+            if (type == 6) // CreateRoom
             {
                 ushort scene = binaryReader.ReadUInt16();
                 if (scene == 1) SceneManager.LoadScene("Room");
@@ -84,19 +113,45 @@ public class CSocket
         }
     }
 
-    public void LoginButton(TextMeshProUGUI _textMesh)
+    public void Login(TextMeshProUGUI _textMesh)
     {
         byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text);
         MemoryStream memoryStream = new MemoryStream(sendBuffer); // 포인터 처럼 
         BinaryWriter bw = new BinaryWriter(memoryStream); // 가지고 있어도 된다.
+
+        memoryStream.Position = 0;
 
         bw.Write((ushort)(sizeof(int) + str.Length - 2));
         bw.Write((ushort)1);
         bw.Write(str);
 
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
+    }
 
-        memoryStream.Position = 0; // 시작할때 넣는게 좋다
+    public void LogOut()
+    {
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)(sizeof(int)));
+        bw.Write((ushort)2); // logout
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
+    }
+
+    public void UserList()
+    {
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)(sizeof(int)));
+        bw.Write((ushort)3);
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
 
     public void ChatSend(TextMeshProUGUI _textMesh)
@@ -105,13 +160,13 @@ public class CSocket
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
+        memoryStream.Position = 0;
+
         bw.Write((ushort)(sizeof(int) + str.Length - 2));
         bw.Write((ushort)5);
         bw.Write(str);
 
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
-
-        memoryStream.Position = 0;
     }
 
     public void CreateRoom(TextMeshProUGUI _textMesh)
@@ -120,13 +175,13 @@ public class CSocket
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
+        memoryStream.Position = 0;
+
         bw.Write((ushort)(sizeof(int) + str.Length - 2));
         bw.Write((ushort)6);
         bw.Write(str);
 
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
-
-        memoryStream.Position = 0;
     }
 
     void Run()

@@ -10,7 +10,7 @@ public class App : MonoBehaviour
     {
         m_socket = new CSocket();
 
-        m_socket.Init("192.168.123.9", 30002);
+        m_socket.Init("222.113.24.195", 30002);
 
         DontDestroyOnLoad(this);
     }
@@ -31,7 +31,8 @@ public class App : MonoBehaviour
     {
         if(_textMesh.text.Length > 4)
         {
-            m_socket.LoginButton(_textMesh);
+            m_socket.Login(_textMesh);
+            m_socket.UserList();
         }
     }
 
@@ -43,5 +44,10 @@ public class App : MonoBehaviour
     public void OnCreate(TextMeshProUGUI _textMesh)
     {
         m_socket.CreateRoom(_textMesh);
+    }
+
+    public void OnLogOut()
+    {
+        m_socket.LogOut();
     }
 }

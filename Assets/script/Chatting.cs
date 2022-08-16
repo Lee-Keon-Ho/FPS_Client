@@ -31,7 +31,7 @@ public class Chatting : MonoBehaviour
     public void OnReturn()
     {
         chatInputField.Select();
-        if (chatText.text.Length != 0)
+        if (chatText.text.Length > 1)
         {
             serverObject.GetComponent<App>().OnReturn(chatText);
         }

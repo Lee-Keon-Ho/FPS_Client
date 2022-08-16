@@ -49,8 +49,7 @@ public class Login : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Return))
         {
-            firstInput.Select();
-            //submitButton.onClick.Invoke();
+            submitButton.onClick.Invoke();
         }
     }
 }

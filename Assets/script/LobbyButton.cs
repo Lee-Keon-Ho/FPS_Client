@@ -5,8 +5,14 @@ using UnityEngine.UI;
 using TMPro;
 public class LobbyButton : MonoBehaviour
 {
-    public Button CreateButton;
     public GameObject inputCreate;
+    public GameObject exitWindow;
+    GameObject gameObject;
+
+    private void Awake()
+    {
+        gameObject = GameObject.Find("serverObject");
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -26,12 +32,26 @@ public class LobbyButton : MonoBehaviour
 
     public void OnCreateOkButton(TextMeshProUGUI _text)
     {
-        GameObject gameObject = GameObject.Find("serverObject");
         gameObject.GetComponent<App>().OnCreate(_text);
     }
 
     public void OnCreateExitButton()
     {
         inputCreate.SetActive(false);
+    }
+
+    public void OnExitButton()
+    {
+        exitWindow.SetActive(true);
+    }
+
+    public void OnExitNoButton()
+    {
+        exitWindow.SetActive(false);
+    }
+
+    public void OnExitOkButton()
+    {
+        gameObject.GetComponent<App>().OnLogOut();
     }
 }
