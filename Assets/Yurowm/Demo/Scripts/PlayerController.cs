@@ -10,11 +10,12 @@ public class PlayerController : MonoBehaviour {
 
 	private Animator animator;
 
-	void Awake() {
+	void Awake() 
+	{
 		animator = GetComponent<Animator> ();
 		if (arsenal.Length > 0)
 			SetArsenal (arsenal[1].name);
-		}
+	}
 
 	public void SetArsenal(string name) {
 		foreach (Arsenal hand in arsenal) {
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour {
 					newRightGun.transform.parent = rightGunBone;
 					newRightGun.transform.localPosition = Vector3.zero;
 					newRightGun.transform.localRotation = Quaternion.Euler(90, 0, 0);
+					newRightGun.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
 					}
 				//if (hand.leftGun != null) {
 				//	GameObject newLeftGun = (GameObject) Instantiate(hand.leftGun);

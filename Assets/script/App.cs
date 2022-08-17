@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using TMPro;
+
 public class App : MonoBehaviour
 {
     public CSocket m_socket;
-
+    private string m_name;
     private void Awake()
     {
         m_socket = new CSocket();
 
-        m_socket.Init("222.113.24.195", 30002);
+        m_socket.Init("192.168.123.8", 30002);
 
         DontDestroyOnLoad(this);
     }
@@ -32,6 +34,7 @@ public class App : MonoBehaviour
         if(_textMesh.text.Length > 4)
         {
             m_socket.Login(_textMesh);
+            m_name = _textMesh.text;
             m_socket.UserList();
         }
     }
@@ -50,4 +53,6 @@ public class App : MonoBehaviour
     {
         m_socket.LogOut();
     }
+
+    public string GetName() { return m_name; }
 }

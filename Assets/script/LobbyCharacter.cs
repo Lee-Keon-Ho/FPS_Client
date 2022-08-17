@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class LobbyCharacter : MonoBehaviour
 {
@@ -9,13 +10,14 @@ public class LobbyCharacter : MonoBehaviour
     public GameObject gameObject;
     private RaycastHit hit;
     public Transform rightGunBone;
-
+    public TextMeshProUGUI name;
     // Start is called before the first frame update
     private void Awake()
     {
+        name.text = GameObject.Find("serverObject").GetComponent<App>().GetName();
         //if (rightGunBone.childCount > 0)
         //    Destroy(rightGunBone.GetChild(0).gameObject);
-        
+
         //if (hand.rightGun != null)
         //{
         //    GameObject newRightGun = (GameObject)Instantiate(hand.rightGun);
