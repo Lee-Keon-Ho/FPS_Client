@@ -8,7 +8,6 @@ using System.IO;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Threading;
-using UnityEditor;
 
 public class CSocket
 {
@@ -76,8 +75,9 @@ public class CSocket
                 ushort exit = binaryReader.ReadUInt16();
                 if(exit == 1)
                 {
-                    UnityEditor.EditorApplication.isPlaying = false; // 에디터
-                    Application.Quit(); // 게임
+                    //UnityEditor.EditorApplication.isPlaying = false; // 에디터
+                    //Application.Quit(); // 게임
+                    // 소켓에서 처리하는게 아니라 다른 곳에 보내서 처리하는게 맞다! 서버랑 똑같다
                     m_socket.Close();
                 }
             }
