@@ -8,7 +8,7 @@ public class LobbyButton : MonoBehaviour
     public GameObject inputCreate;
     public GameObject exitWindow;
     GameObject gameObject;
-
+    private int test = 0;
     private void Awake()
     {
         gameObject = GameObject.Find("serverObject");
@@ -53,5 +53,16 @@ public class LobbyButton : MonoBehaviour
     public void OnExitOkButton()
     {
         gameObject.GetComponent<App>().OnLogOut();
+    }
+
+    public void ScrollDown()
+    {
+        test += 1;
+        Debug.Log(test);
+    }
+
+    public void ScrollUp()
+    {
+
     }
 }

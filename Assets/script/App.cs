@@ -11,8 +11,7 @@ public class App : MonoBehaviour
     {
         m_socket = new CSocket();
 
-        m_socket.Init("192.168.123.5", 30002);
-
+        m_socket.Init("222.113.24.195", 30002);
         DontDestroyOnLoad(this);
     }
 

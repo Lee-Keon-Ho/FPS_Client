@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
 using TMPro;
-using UnityEngine.SceneManagement;
 using System.Threading;
 
 public class CSocket
@@ -44,73 +43,7 @@ public class CSocket
     {
         if (ringBuffer.GetRemainSize() > 3)
         {
-            byte[] tempBuffer = new byte[65530];
-            int readPos = ringBuffer.GetReadPos();
-            int bufferSize = ringBuffer.GetSize();
-            MemoryStream tempStream = new MemoryStream(tempBuffer);
-            BinaryReader binaryReader = new BinaryReader(tempStream);
-
-            // 여기부터 read에 대한처리
-            if (readPos > bufferSize)
-            {
-                Array.Copy(ringBuffer.GetBuffer(), readPos, tempBuffer, 0, bufferSize - readPos);
-                Array.Copy(ringBuffer.GetBuffer(), 0, tempBuffer, bufferSize - readPos, ringBuffer.GetRemainSize() - (bufferSize - readPos));
-            }
-            else
-            {
-                Array.Copy(ringBuffer.GetBuffer(), readPos, tempBuffer, 0, ringBuffer.GetRemainSize());
-            }
-
-            ushort size = binaryReader.ReadUInt16();
-            ushort type = binaryReader.ReadUInt16();
-
-            // Handle    
-            if (type == 1) // login
-            {
-                ushort scene = binaryReader.ReadUInt16();
-                if (scene == 1) SceneManager.LoadScene("Lobby");
-            }
-            if (type == 2)
-            {
-                ushort exit = binaryReader.ReadUInt16();
-                if(exit == 1)
-                {
-                    //UnityEditor.EditorApplication.isPlaying = false; // 에디터
-                    //Application.Quit(); // 게임
-                    // 소켓에서 처리하는게 아니라 다른 곳에 보내서 처리하는게 맞다! 서버랑 똑같다
-                    m_socket.Close();
-                }
-            }
-
-            if (type == 3) // userList
-            {
-                ushort count = binaryReader.ReadUInt16();
-                ushort state;
-                String str;
-                CUserList userList = Transform.FindObjectOfType<CUserList>();
-                for (int i = 0; i < count; i++)
-                {
-                    state = binaryReader.ReadUInt16();
-                    str = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(64));
-                    userList.UserListUpdate(str, state, i);
-                }
-            }
-            if (type == 4) // roomList
-            {
-                
-            }
-            if (type == 5) // chatting
-            {
-                ChattingList gameObject = Transform.FindObjectOfType<ChattingList>();
-                gameObject.OnList(System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(100)));
-            }
-            if (type == 6) // CreateRoom
-            {
-                ushort scene = binaryReader.ReadUInt16();
-                if (scene == 1) SceneManager.LoadScene("Room");
-            }
-
-            ringBuffer.Read(size);
+            ringBuffer.Read(PacketHandler.instance.Handle(this));
         }
     }
 
@@ -203,4 +136,6 @@ public class CSocket
             }
         }
     }
+
+    public CRingBuffer GetRingBuffer() { return ringBuffer; }
 }
