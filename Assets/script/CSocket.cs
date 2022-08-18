@@ -196,7 +196,11 @@ public class CSocket
 
             ringBuffer.Write(recvSize);
 
-            if (recvSize <= 0) break;
+            if (recvSize <= 0)
+            {
+                m_socket.Close();
+                break;
+            }
         }
     }
 }
