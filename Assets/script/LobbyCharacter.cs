@@ -14,7 +14,7 @@ public class LobbyCharacter : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        name.text = GameObject.Find("serverObject").GetComponent<App>().GetName();
+        if(name != null) name.text = GameObject.Find("serverObject").GetComponent<App>().GetName();
         //if (rightGunBone.childCount > 0)
         //    Destroy(rightGunBone.GetChild(0).gameObject);
 

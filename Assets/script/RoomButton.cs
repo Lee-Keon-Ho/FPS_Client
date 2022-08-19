@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 public class RoomButton : MonoBehaviour
 {
+    GameObject gameObject;
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameObject = GameObject.Find("serverObject");
     }
 
     // Update is called once per frame
@@ -18,6 +19,7 @@ public class RoomButton : MonoBehaviour
 
     public void OnBackButton()
     {
-        // 뒤로가기 버튼
+        gameObject.GetComponent<App>().RoomOut();
+        gameObject.GetComponent<App>().List();
     }
 }

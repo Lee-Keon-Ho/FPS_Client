@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 public class RoomList : MonoBehaviour
 {
     public GameObject[] gameObject = new GameObject[10];
@@ -23,16 +23,16 @@ public class RoomList : MonoBehaviour
         if(_num != 0)
         {
             gameObject[_index].SetActive(true);
-            gameObject[_index].transform.GetChild(0).GetComponent<Text>().text = _num.ToString();
-            gameObject[_index].transform.GetChild(1).GetComponent<Text>().text = _name;
-            gameObject[_index].transform.GetChild(2).GetComponent<Text>().text = _playerCount.ToString() + "/8";
+            gameObject[_index].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = _num.ToString();
+            gameObject[_index].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = _name;
+            gameObject[_index].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = _playerCount.ToString() + "/8";
             if (_state == 0)
             {
-                gameObject[_index].transform.GetChild(3).GetComponent<Text>().text = "게임중";
+                gameObject[_index].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = "게임중";
             }
             else
             {
-                gameObject[_index].transform.GetChild(3).GetComponent<Text>().text = "대기중";
+                gameObject[_index].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = "대기중";
             }
         }
         else

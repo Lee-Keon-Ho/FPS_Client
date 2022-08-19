@@ -7,6 +7,7 @@ public class LobbyButton : MonoBehaviour
 {
     public GameObject inputCreate;
     public GameObject exitWindow;
+    public GameObject selectObject;
     GameObject gameObject;
     private int test = 0;
     private void Awake()
@@ -22,7 +23,18 @@ public class LobbyButton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit))
+            {
+                if(hit.transform.gameObject.tag == "RoomList")
+                {
+                    Debug.Log(hit.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
+                }
+            }
+        }
     }
 
     public void OnCreateButton()
@@ -53,6 +65,11 @@ public class LobbyButton : MonoBehaviour
     public void OnExitOkButton()
     {
         gameObject.GetComponent<App>().OnLogOut();
+    }
+
+    public void OnSelectButton()
+    {
+
     }
 
     public void ScrollDown()
