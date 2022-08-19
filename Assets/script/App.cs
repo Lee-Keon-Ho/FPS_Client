@@ -11,7 +11,7 @@ public class App : MonoBehaviour
     {
         m_socket = new CSocket();
 
-        m_socket.Init("222.113.24.195", 30002);
+        m_socket.Init("192.168.123.1", 30002);
         DontDestroyOnLoad(this);
     }
 
@@ -34,6 +34,7 @@ public class App : MonoBehaviour
             m_socket.Login(_textMesh);
             m_name = _textMesh.text;
             m_socket.UserList();
+            m_socket.RoomList();
         }
     }
 

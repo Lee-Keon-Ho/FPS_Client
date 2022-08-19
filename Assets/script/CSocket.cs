@@ -88,6 +88,19 @@ public class CSocket
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
 
+    public void RoomList()
+    {
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)(sizeof(int)));
+        bw.Write((ushort)4);
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
+    }
+
     public void ChatSend(TextMeshProUGUI _textMesh)
     {
         byte[] str = System.Text.Encoding.Unicode.GetBytes(_textMesh.text); // 11 32가 나오는건 인코딩 해서 나오는 것이다.

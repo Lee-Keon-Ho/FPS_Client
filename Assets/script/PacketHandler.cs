@@ -69,7 +69,7 @@ public class PacketHandler : MonoBehaviour
             {
                 ushort count = binaryReader.ReadUInt16();
                 ushort state;
-                String str;
+                string str;
                 CUserList userList = Transform.FindObjectOfType<CUserList>();
                 for (int i = 0; i < count; i++)
                 {
@@ -80,7 +80,23 @@ public class PacketHandler : MonoBehaviour
             }
             if (type == 4) // roomList
             {
-                
+                ushort count = binaryReader.ReadUInt16();
+                int number = binaryReader.ReadInt32();
+                string roomName = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(64));
+                int playerCount = binaryReader.ReadInt32();
+                int state = binaryReader.ReadInt32();
+                RoomList roomList = Transform.FindObjectOfType<RoomList>();
+                for (int i = 0; i < 10; i++)
+                {
+                    if (i < count)
+                    {
+                        roomList.RoomListUpdate(number, roomName, playerCount, state, i);
+                    }
+                    else
+                    {
+                        roomList.RoomListUpdate(0, "", 0, 0, i);
+                    }
+                }
             }
             if (type == 5) // chatting
             {
