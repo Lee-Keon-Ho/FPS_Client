@@ -82,6 +82,8 @@ public class PacketHandler : MonoBehaviour
                 case 8:
                     RoomOut();
                     break;
+                case 9:
+                    break;
                 default:
                     break;
             }
@@ -102,10 +104,11 @@ public class PacketHandler : MonoBehaviour
         ushort exit = binaryReader.ReadUInt16();
         if (exit == 1)
         {
-            //UnityEditor.EditorApplication.isPlaying = false; // 에디터
+            UnityEditor.EditorApplication.isPlaying = false; // 에디터
             //Application.Quit(); // 게임
             // 소켓에서 처리하는게 아니라 다른 곳에 보내서 처리하는게 맞다! 서버랑 똑같다
             //_socket.Close();
+            
         }
     }
 
@@ -166,11 +169,17 @@ public class PacketHandler : MonoBehaviour
 
     private void RoomIn()
     {
-
+        ushort roomIn = binaryReader.ReadUInt16();
+        if (roomIn == 1) SceneManager.LoadScene("Room");
     }
 
     private void RoomOut()
     {
         SceneManager.LoadScene("Lobby");
+    }
+
+    private void RoomState()
+    {
+
     }
 }

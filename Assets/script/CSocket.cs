@@ -39,6 +39,11 @@ public class CSocket
         thread.Start();
     }
 
+    public void Delete()
+    {
+        m_socket.Close();
+    }
+
     public void RunLoop()
     {
         if (ringBuffer.GetRemainSize() > 3)

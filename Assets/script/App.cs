@@ -11,7 +11,7 @@ public class App : MonoBehaviour
     {
         m_socket = new CSocket();
 
-        m_socket.Init("222.113.24.225", 30002);
+        m_socket.Init("192.168.123.11", 30002);
         DontDestroyOnLoad(this);
     }
 
@@ -25,6 +25,11 @@ public class App : MonoBehaviour
     void Update()
     {
         m_socket.RunLoop();
+    }
+
+    private void OnDestroy()
+    {
+        m_socket.Delete();
     }
 
     public void OnLogin(TextMeshProUGUI _textMesh)

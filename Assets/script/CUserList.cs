@@ -28,10 +28,10 @@ public class CUserList : MonoBehaviour
                 list[_num].transform.GetChild(0).GetComponent<Image>().color = Color.green;
                 break;
             case 1:
-                list[_num].transform.GetChild(0).GetComponent<Image>().color = Color.red;
+                list[_num].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
                 break;
             default:
-                list[_num].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
+                list[_num].transform.GetChild(0).GetComponent<Image>().color = Color.red;
                 break;
         }
         list[_num].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = _name;
