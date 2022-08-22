@@ -28,4 +28,18 @@ public class CRoom : MonoBehaviour
     {
         
     }
+
+    public void OnPlayerInfo(ushort _team, ushort _ready, string _name)
+    {
+        if(_team == 0)
+        {
+            m_teamA[m_team_A_Count].text = _name;
+            m_team_A_Count++;
+        }
+        else
+        {
+            m_teamB[m_team_B_Count].text = _name;
+            m_team_B_Count++;
+        }
+    }
 }

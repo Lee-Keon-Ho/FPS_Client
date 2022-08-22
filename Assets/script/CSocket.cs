@@ -136,9 +136,18 @@ public class CSocket
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
     }
 
-    public void RoomIn()
+    public void Selected(int _num)
     {
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
 
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)6);
+        bw.Write((ushort)7);
+        bw.Write((ushort)_num);
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
 
     public void RoomOut()

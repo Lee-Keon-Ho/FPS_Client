@@ -9,9 +9,10 @@ public class LobbyButton : MonoBehaviour
     public GameObject exitWindow;
     public GameObject selectObject;
     GameObject gameObject;
-    private int test = 0;
+    private int roomNumber;
     private void Awake()
     {
+        roomNumber = 0;
         gameObject = GameObject.Find("serverObject");
     }
     // Start is called before the first frame update
@@ -31,7 +32,7 @@ public class LobbyButton : MonoBehaviour
             {
                 if(hit.transform.gameObject.tag == "RoomList")
                 {
-                    Debug.Log(hit.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
+                    roomNumber = int.Parse(hit.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
                 }
             }
         }
@@ -69,13 +70,11 @@ public class LobbyButton : MonoBehaviour
 
     public void OnSelectButton()
     {
-
+        gameObject.GetComponent<App>().OnSelected(roomNumber);
     }
 
     public void ScrollDown()
     {
-        test += 1;
-        Debug.Log(test);
     }
 
     public void ScrollUp()
