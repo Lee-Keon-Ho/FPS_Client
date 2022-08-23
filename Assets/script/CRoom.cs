@@ -6,16 +6,14 @@ using TMPro;
 
 public class CRoom : MonoBehaviour
 {
-    public Button[] m_button;
+    public Button m_readyButton;
+    public TextMeshProUGUI m_readyText;
     public TextMeshProUGUI[] m_teamA;
     public TextMeshProUGUI[] m_teamB;
 
-    private int m_team_A_Count;
-    private int m_team_B_Count;
     private void Awake()
     {
-        m_team_A_Count = 0;
-        m_team_B_Count = 0;
+        
     }
     // Start is called before the first frame update
     void Start()
@@ -29,17 +27,41 @@ public class CRoom : MonoBehaviour
         
     }
 
-    public void OnPlayerInfo(ushort _team, ushort _ready, string _name)
+    public void palyerInfoReset()
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            m_teamA[i].text = "";
+            m_teamB[i].text = "";
+        }
+    }
+
+    public void OnPlayerInfo(ushort _team, ushort _ready, string _name, int _boss, int _index)
     {
         if(_team == 0)
         {
-            m_teamA[m_team_A_Count].text = _name;
-            m_team_A_Count++;
+            m_teamA[_index].text = _name;
+            if (_boss == 0)
+            {
+                m_teamA[_index].color = new Color(255, 0, 0);
+            }
+            else
+            {
+                m_teamA[_index].color = new Color(0, 0, 0);
+            }
         }
         else
         {
-            m_teamB[m_team_B_Count].text = _name;
-            m_team_B_Count++;
+            m_teamB[_index].text = _name;
+            if (_boss == 0)
+            {
+                m_teamB[_index].color = new Color(255, 0, 0);
+            }
+            else
+            {
+                m_teamB[_index].color = new Color(0, 0, 0);
+
+            }
         }
     }
 }

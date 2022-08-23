@@ -22,4 +22,14 @@ public class RoomButton : MonoBehaviour
         gameObject.GetComponent<App>().RoomOut();
         gameObject.GetComponent<App>().List();
     }
+
+    public void OnTemaA()
+    {
+        gameObject.GetComponent<App>().TeamChange(0);
+    }
+
+    public void OnTeamB()
+    {
+        gameObject.GetComponent<App>().TeamChange(1);
+    }
 }

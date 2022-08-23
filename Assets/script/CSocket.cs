@@ -162,6 +162,19 @@ public class CSocket
 
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
+    public void TeamChange(int _num)
+    {
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)6);
+        bw.Write((ushort)10);
+        bw.Write((ushort)_num);
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
+    }
 
     void Run()
     {   
@@ -181,6 +194,8 @@ public class CSocket
             }
         }
     }
+
+   
 
     public CRingBuffer GetRingBuffer() { return ringBuffer; }
 }

@@ -179,9 +179,7 @@ public class PacketHandler : MonoBehaviour
 
     private void RoomOut()
     {
-        Debug.Log("¿Ã∞‘ ø÷ æ»µ ?");
         SceneManager.LoadScene("Lobby");
-        Debug.Log("¿Ã∞‘ ø÷ æ»µ ?");
     }
 
     private void RoomState()
@@ -190,14 +188,29 @@ public class PacketHandler : MonoBehaviour
         ushort team;
         ushort ready;
         string name;
+        ushort boss;
         CRoom room = Transform.FindObjectOfType<CRoom>();
-        
-        for(int i = 0; i < count; i++)
+        room.palyerInfoReset();
+        int teamA = 0;
+        int teamB = 0;
+
+        for (int i = 0; i < count; i++)
         {
             name = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(64));
             team = binaryReader.ReadUInt16();
             ready = binaryReader.ReadUInt16();
-            room.OnPlayerInfo(team, ready, name);
+            boss = binaryReader.ReadUInt16();
+            if (team == 0)
+            {
+                room.OnPlayerInfo(team, ready, name, boss, teamA);
+                teamA++;
+            }
+            else
+            {
+                room.OnPlayerInfo(team, ready, name, boss, teamB);
+                teamB++;
+            }
+            
         }
     }
 }

@@ -6,12 +6,14 @@ using TMPro;
 public class App : MonoBehaviour
 {
     public CSocket m_socket;
+    public CPlayer m_player;
     private string m_name;
+    
     private void Awake()
     {
         m_socket = new CSocket();
-
-        m_socket.Init("222.113.24.225", 30002);
+        m_player.Init();
+        m_socket.Init("192.168.123.11", 30002);
         DontDestroyOnLoad(this);
     }
 
@@ -37,7 +39,7 @@ public class App : MonoBehaviour
         if(_textMesh.text.Length > 4)
         {
             m_socket.Login(_textMesh);
-            m_name = _textMesh.text;
+            m_player.SetName(_textMesh.text);
             m_socket.UserList();
             m_socket.RoomList();
         }
@@ -63,7 +65,7 @@ public class App : MonoBehaviour
         m_socket.LogOut();
     }
 
-    public string GetName() { return m_name; }
+    public string GetName() { return m_player.GetName(); }
 
     public void List()
     {
@@ -74,5 +76,10 @@ public class App : MonoBehaviour
     public void RoomOut()
     {
         m_socket.RoomOut();
+    }
+
+    public void TeamChange(int _num)
+    {
+        m_socket.TeamChange(_num);
     }
 }
