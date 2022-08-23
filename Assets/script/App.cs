@@ -7,13 +7,13 @@ public class App : MonoBehaviour
 {
     public CSocket m_socket;
     public CPlayer m_player;
-    private string m_name;
     
     private void Awake()
     {
         m_socket = new CSocket();
+        m_player = new CPlayer();
         m_player.Init();
-        m_socket.Init("192.168.123.11", 30002);
+        m_socket.Init("222.113.24.225", 30002);
         DontDestroyOnLoad(this);
     }
 
@@ -66,7 +66,7 @@ public class App : MonoBehaviour
     }
 
     public string GetName() { return m_player.GetName(); }
-
+    public void SetBoss(int _boss) { m_player.SetBoss(_boss); }
     public void List()
     {
         m_socket.UserList();

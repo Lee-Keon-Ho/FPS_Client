@@ -174,6 +174,11 @@ public class PacketHandler : MonoBehaviour
     private void RoomIn()
     {
         ushort roomIn = binaryReader.ReadUInt16();
+        ushort boss = binaryReader.ReadUInt16();
+
+        App app = Transform.FindObjectOfType<App>();
+        app.SetBoss(boss);
+
         if (roomIn == 1) SceneManager.LoadScene("Room");
     }
 
@@ -200,6 +205,7 @@ public class PacketHandler : MonoBehaviour
             team = binaryReader.ReadUInt16();
             ready = binaryReader.ReadUInt16();
             boss = binaryReader.ReadUInt16();
+
             if (team == 0)
             {
                 room.OnPlayerInfo(team, ready, name, boss, teamA);

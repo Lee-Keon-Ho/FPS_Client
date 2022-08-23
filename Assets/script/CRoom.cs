@@ -47,8 +47,9 @@ public class CRoom : MonoBehaviour
             }
             else
             {
-                m_teamA[_index].color = new Color(0, 0, 0);
+                m_teamA[_index].color = new Color(255, 255, 255);
             }
+            m_readyText.text = "START";
         }
         else
         {
@@ -59,9 +60,9 @@ public class CRoom : MonoBehaviour
             }
             else
             {
-                m_teamB[_index].color = new Color(0, 0, 0);
-
+                m_teamB[_index].color = new Color(255, 255, 255);
             }
+            m_readyText.text = "READY";
         }
     }
 }

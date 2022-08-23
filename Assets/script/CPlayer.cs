@@ -16,10 +16,8 @@ public class CPlayer
         return true;
     }
 
-    public void SetName(string _name)
-    {
-        m_name = _name;
-    }
-
+    public void SetName(string _name) { m_name = _name;}
     public string GetName() { return m_name; }
+    public void SetBoss(int _boss) { m_boss = _boss; }
+    public int GetBoss() { return m_boss; }
 }
