@@ -6,10 +6,10 @@ using TMPro;
 
 public class CRoom : MonoBehaviour
 {
-    public Button m_readyButton;
-    public TextMeshProUGUI m_readyText;
     public TextMeshProUGUI[] m_teamA;
     public TextMeshProUGUI[] m_teamB;
+    public Button m_readyButton;
+    public TextMeshProUGUI m_readyText;
 
     private void Awake()
     {
@@ -27,7 +27,19 @@ public class CRoom : MonoBehaviour
         
     }
 
-    public void palyerInfoReset()
+    public void PlayerInfo(int _boss)
+    {
+        if (_boss == 0)
+        {
+            m_readyText.text = "START";
+        }
+        else
+        {
+            m_readyText.text = "READY";
+        }
+    }
+
+    public void playerInfoReset()
     {
         for(int i = 0; i < 4; i++)
         {
@@ -36,7 +48,7 @@ public class CRoom : MonoBehaviour
         }
     }
 
-    public void OnPlayerInfo(ushort _team, ushort _ready, string _name, int _boss, int _index)
+    public void OnPlayerListInfo(ushort _team, ushort _ready, string _name, int _boss, int _index)
     {
         if(_team == 0)
         {
@@ -49,7 +61,6 @@ public class CRoom : MonoBehaviour
             {
                 m_teamA[_index].color = new Color(255, 255, 255);
             }
-            m_readyText.text = "START";
         }
         else
         {
@@ -62,7 +73,6 @@ public class CRoom : MonoBehaviour
             {
                 m_teamB[_index].color = new Color(255, 255, 255);
             }
-            m_readyText.text = "READY";
         }
     }
 }

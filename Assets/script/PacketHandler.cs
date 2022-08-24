@@ -85,6 +85,12 @@ public class PacketHandler : MonoBehaviour
                 case 9:
                     RoomState();
                     break;
+                case 10:
+                    Ready();
+                    break;
+                case 13:
+                    PlayerInfo();
+                    break;
                 default:
                     break;
             }
@@ -174,10 +180,6 @@ public class PacketHandler : MonoBehaviour
     private void RoomIn()
     {
         ushort roomIn = binaryReader.ReadUInt16();
-        ushort boss = binaryReader.ReadUInt16();
-
-        App app = Transform.FindObjectOfType<App>();
-        app.SetBoss(boss);
 
         if (roomIn == 1) SceneManager.LoadScene("Room");
     }
@@ -185,6 +187,11 @@ public class PacketHandler : MonoBehaviour
     private void RoomOut()
     {
         SceneManager.LoadScene("Lobby");
+    }
+
+    private void Ready()
+    {
+
     }
 
     private void RoomState()
@@ -195,7 +202,7 @@ public class PacketHandler : MonoBehaviour
         string name;
         ushort boss;
         CRoom room = Transform.FindObjectOfType<CRoom>();
-        room.palyerInfoReset();
+        room.playerInfoReset();
         int teamA = 0;
         int teamB = 0;
 
@@ -208,15 +215,25 @@ public class PacketHandler : MonoBehaviour
 
             if (team == 0)
             {
-                room.OnPlayerInfo(team, ready, name, boss, teamA);
+                room.OnPlayerListInfo(team, ready, name, boss, teamA);
                 teamA++;
             }
             else
             {
-                room.OnPlayerInfo(team, ready, name, boss, teamB);
+                room.OnPlayerListInfo(team, ready, name, boss, teamB);
                 teamB++;
             }
             
         }
+    }
+
+    private void PlayerInfo()
+    {
+        App app = Transform.FindObjectOfType<App>();
+
+        ushort boss = binaryReader.ReadUInt16();
+        ushort ready = binaryReader.ReadUInt16();
+
+        app.SetPlayerInfo(boss, ready); // drawio로 정리좀 해서 차분하게 생각해보자
     }
 }
