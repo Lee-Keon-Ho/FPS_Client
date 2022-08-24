@@ -88,9 +88,6 @@ public class PacketHandler : MonoBehaviour
                 case 10:
                     Ready();
                     break;
-                case 13:
-                    PlayerInfo();
-                    break;
                 default:
                     break;
             }
@@ -174,18 +171,30 @@ public class PacketHandler : MonoBehaviour
     private void CreateRoom()
     {
         ushort scene = binaryReader.ReadUInt16();
-        if (scene == 1) SceneManager.LoadScene("Room");
+        if (scene == 1)
+        {
+            App gameObject = Transform.FindObjectOfType<App>();
+            gameObject.SetPlayerInfo(0, 0);
+            SceneManager.LoadScene("Room");
+        }
     }
 
     private void RoomIn()
     {
         ushort roomIn = binaryReader.ReadUInt16();
 
-        if (roomIn == 1) SceneManager.LoadScene("Room");
+        if (roomIn == 1)
+        {
+            App gameObject = Transform.FindObjectOfType<App>();
+            gameObject.SetPlayerInfo(1, 0);
+            SceneManager.LoadScene("Room");
+        }
     }
 
     private void RoomOut()
     {
+        App gameObject = Transform.FindObjectOfType<App>();
+        gameObject.SetPlayerInfo(1, 0);
         SceneManager.LoadScene("Lobby");
     }
 
@@ -225,15 +234,5 @@ public class PacketHandler : MonoBehaviour
             }
             
         }
-    }
-
-    private void PlayerInfo()
-    {
-        App app = Transform.FindObjectOfType<App>();
-
-        ushort boss = binaryReader.ReadUInt16();
-        ushort ready = binaryReader.ReadUInt16();
-
-        app.SetPlayerInfo(boss, ready); // drawio로 정리좀 해서 차분하게 생각해보자
     }
 }

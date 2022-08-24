@@ -18,18 +18,8 @@ public class CRoom : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void PlayerInfo(int _boss)
-    {
-        if (_boss == 0)
+        App app = Transform.FindObjectOfType<App>();
+        if (app.GetBoss() == 0)
         {
             m_readyText.text = "START";
         }
@@ -39,10 +29,17 @@ public class CRoom : MonoBehaviour
         }
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
     public void playerInfoReset()
     {
         for(int i = 0; i < 4; i++)
         {
+
             m_teamA[i].text = "";
             m_teamB[i].text = "";
         }
