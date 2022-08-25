@@ -29,26 +29,26 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void Update()
         {
           //  m_CameraRefocus.GetFocusPoint();
-            Vector3 newCameraPosition;
-            if (rigidbodyFirstPersonController.Velocity.magnitude > 0 && rigidbodyFirstPersonController.Grounded)
-            {
-                Camera.transform.localPosition = motionBob.DoHeadBob(rigidbodyFirstPersonController.Velocity.magnitude*(rigidbodyFirstPersonController.Running ? RunningStrideLengthen : 1f));
-                newCameraPosition = Camera.transform.localPosition;
-                newCameraPosition.y = Camera.transform.localPosition.y - jumpAndLandingBob.Offset();
-            }
-            else
-            {
-                newCameraPosition = Camera.transform.localPosition;
-                newCameraPosition.y = m_OriginalCameraPosition.y - jumpAndLandingBob.Offset();
-            }
-            Camera.transform.localPosition = newCameraPosition;
+            //Vector3 newCameraPosition;
+            //if (rigidbodyFirstPersonController.Velocity.magnitude > 0 && rigidbodyFirstPersonController.Grounded)
+            //{
+            //    Camera.transform.localPosition = motionBob.DoHeadBob(rigidbodyFirstPersonController.Velocity.magnitude*(rigidbodyFirstPersonController.Running ? RunningStrideLengthen : 1f));
+            //    newCameraPosition = Camera.transform.localPosition;
+            //    newCameraPosition.y = Camera.transform.localPosition.y - jumpAndLandingBob.Offset();
+            //}
+            //else
+            //{
+            //    newCameraPosition = Camera.transform.localPosition;
+            //    newCameraPosition.y = m_OriginalCameraPosition.y - jumpAndLandingBob.Offset();
+            //}
+            //Camera.transform.localPosition = newCameraPosition;
 
-            if (!m_PreviouslyGrounded && rigidbodyFirstPersonController.Grounded)
-            {
-                StartCoroutine(jumpAndLandingBob.DoBobCycle());
-            }
+            //if (!m_PreviouslyGrounded && rigidbodyFirstPersonController.Grounded)
+            //{
+            //    StartCoroutine(jumpAndLandingBob.DoBobCycle());
+            //}
 
-            m_PreviouslyGrounded = rigidbodyFirstPersonController.Grounded;
+            //m_PreviouslyGrounded = rigidbodyFirstPersonController.Grounded;
           //  m_CameraRefocus.SetFocusPoint();
         }
     }
