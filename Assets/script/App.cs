@@ -13,7 +13,7 @@ public class App : MonoBehaviour
         m_socket = new CSocket();
         m_player = new CPlayer();
         m_player.Init();
-        m_socket.Init("192.168.123.11", 30002);
+        m_socket.Init("211.218.197.86", 30002);
         DontDestroyOnLoad(this);
     }
 
@@ -71,9 +71,6 @@ public class App : MonoBehaviour
         m_socket.LogOut();
     }
 
-    public string GetName() { return m_player.GetName(); }
-    public int GetBoss() { return m_player.GetBoss(); }
-    public void SetBoss(int _boss) { m_player.SetBoss(_boss); }
     public void List()
     {
         m_socket.UserList();
@@ -89,4 +86,12 @@ public class App : MonoBehaviour
     {
         m_socket.TeamChange(_num);
     }
+
+    public string GetName() { return m_player.GetName(); }
+    public int GetBoss() { return m_player.GetBoss(); }
+    public void SetBoss(int _boss) { m_player.SetBoss(_boss); }
+
+    public void SetReady(int _ready) { m_player.SetReady(_ready); }
+
+    public int GetReady() { return m_player.GetReady(); }
 }

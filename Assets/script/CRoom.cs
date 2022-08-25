@@ -10,29 +10,37 @@ public class CRoom : MonoBehaviour
     public TextMeshProUGUI[] m_teamB;
     public Button m_readyButton;
     public TextMeshProUGUI m_readyText;
-
+    public TextMeshProUGUI m_name;
+    int boss;
     private void Awake()
-    {
-        
-    }
-    // Start is called before the first frame update
-    void Start()
     {
         App app = Transform.FindObjectOfType<App>();
         if (app.GetBoss() == 0)
         {
+            boss = 0;
             m_readyText.text = "START";
         }
         else
         {
+            boss = 1;
             m_readyText.text = "READY";
         }
+
+        m_name.text = app.GetName();
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(boss == 0)
+        {
+
+        }
     }
 
     public void playerInfoReset()
@@ -69,6 +77,29 @@ public class CRoom : MonoBehaviour
             else
             {
                 m_teamB[_index].color = new Color(255, 255, 255);
+            }
+        }
+    }
+
+    public void OnReadyButton()
+    {
+        App app = Transform.FindObjectOfType<App>();
+        int ready = app.GetReady();
+        if (boss == 0)
+        {
+            
+        }
+        else
+        {
+            if(ready == 0)
+            {
+                app.SetReady(0);
+                m_readyText.color = new Color(255, 0, 0);
+            }
+            else
+            {
+                app.SetReady(1);
+                m_readyText.color = new Color(255, 255, 255);
             }
         }
     }
