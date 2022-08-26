@@ -176,16 +176,28 @@ public class CSocket
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
 
-    public void Ready(int _num)
+    public void Ready()
     {
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
         memoryStream.Position = 0;
 
-        bw.Write((ushort)6);
+        bw.Write((ushort)4);
         bw.Write((ushort)11);
-        bw.Write((ushort)_num);
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
+    }
+
+    public void GameStart()
+    {
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)4);
+        bw.Write((ushort)12);
 
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }

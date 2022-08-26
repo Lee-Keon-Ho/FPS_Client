@@ -36,4 +36,23 @@ public class RoomButton : MonoBehaviour
     {
         gameObject.GetComponent<App>().TeamChange(1);
     }
+
+    public void OnReadyButton()
+    {
+        int boss = gameObject.GetComponent<App>().GetBoss();
+        if(boss == 0)
+        {
+            gameObject.GetComponent<App>().GameStart();
+        }
+        else
+        {
+            gameObject.GetComponent<App>().ReadButton();
+        }
+        
+    }
+
+    public void OnStart()
+    {
+        gameObject.GetComponent<App>().GameStart();
+    }
 }

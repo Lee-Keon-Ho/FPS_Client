@@ -85,8 +85,11 @@ public class PacketHandler : MonoBehaviour
                 case 9:
                     RoomState();
                     break;
-                case 10:
-                    Ready();
+                case 12:
+                    GameStart();
+                    break;
+                case 13:
+                    PlayerInfo();
                     break;
                 default:
                     break;
@@ -198,9 +201,16 @@ public class PacketHandler : MonoBehaviour
         SceneManager.LoadScene("Lobby");
     }
 
-    private void Ready()
+    private void PlayerInfo()
     {
+        int boss = binaryReader.ReadUInt16();
+        int ready = binaryReader.ReadUInt16();
 
+        App player = Transform.FindObjectOfType<App>();
+        CRoom room = Transform.FindObjectOfType<CRoom>();
+
+        player.SetBoss(boss);
+        player.SetReady(ready);
     }
 
     private void RoomState()
@@ -232,7 +242,11 @@ public class PacketHandler : MonoBehaviour
                 room.OnPlayerListInfo(team, ready, name, boss, teamB);
                 teamB++;
             }
-            
         }
+    }
+
+    private void GameStart()
+    {
+        SceneManager.LoadScene("Game");
     }
 }

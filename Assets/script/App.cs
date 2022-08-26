@@ -46,8 +46,7 @@ public class App : MonoBehaviour
         {
             m_socket.Login(_textMesh);
             m_player.SetName(_textMesh.text);
-            m_socket.UserList();
-            m_socket.RoomList();
+            List();
         }
     }
 
@@ -85,6 +84,16 @@ public class App : MonoBehaviour
     public void TeamChange(int _num)
     {
         m_socket.TeamChange(_num);
+    }
+
+    public void ReadButton()
+    {
+        m_socket.Ready();
+    }
+
+    public void GameStart()
+    {
+        m_socket.GameStart();
     }
 
     public string GetName() { return m_player.GetName(); }

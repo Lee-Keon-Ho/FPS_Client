@@ -11,14 +11,17 @@ public class CRoom : MonoBehaviour
     public Button m_readyButton;
     public TextMeshProUGUI m_readyText;
     public TextMeshProUGUI m_name;
+    private App app;
     int boss;
     private void Awake()
     {
-        App app = Transform.FindObjectOfType<App>();
+        app = Transform.FindObjectOfType<App>();
         if (app.GetBoss() == 0)
         {
             boss = 0;
             m_readyText.text = "START";
+            m_readyButton.interactable = false;
+            m_readyText.color = new Color(1, 1, 1);
         }
         else
         {
@@ -37,9 +40,33 @@ public class CRoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(boss == 0)
+        boss = app.GetBoss();
+        int ready = app.GetReady();
+        if (boss == 0)
         {
-
+            m_readyText.text = "START";
+            if (ready == 0)
+            {
+                m_readyButton.interactable = false;
+                m_readyText.color = new Color(1, 1, 1);
+            }
+            else
+            {
+                m_readyButton.interactable = true;
+                m_readyText.color = new Color(255, 0, 0);
+            }
+        }
+        else
+        {
+            m_readyText.text = "READY";
+            if (ready == 0)
+            {
+                m_readyText.color = new Color(255, 255, 255);
+            }
+            else
+            {
+                m_readyText.color = new Color(255, 0, 0);
+            }
         }
     }
 
@@ -81,26 +108,5 @@ public class CRoom : MonoBehaviour
         }
     }
 
-    public void OnReadyButton()
-    {
-        App app = Transform.FindObjectOfType<App>();
-        int ready = app.GetReady();
-        if (boss == 0)
-        {
-            
-        }
-        else
-        {
-            if(ready == 0)
-            {
-                app.SetReady(0);
-                m_readyText.color = new Color(255, 0, 0);
-            }
-            else
-            {
-                app.SetReady(1);
-                m_readyText.color = new Color(255, 255, 255);
-            }
-        }
-    }
+    public int GetBoss() { return boss; }
 }
