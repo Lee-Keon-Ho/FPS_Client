@@ -6,7 +6,7 @@ public class CPlayer
     string m_name;
     int m_boss;
     int m_ready;
-    
+    int m_number;
     public bool Init()
     {
         m_name = "";
@@ -24,4 +24,6 @@ public class CPlayer
     public int GetBoss() { return m_boss; }
     public void SetReady(int _ready) { m_ready = _ready; }
     public int GetReady() { return m_ready; }
+    public void SetNumber(int _number) { m_number = _number; } 
+    public int GetNumber() { return m_number; }
 }

@@ -7,6 +7,7 @@ public class CGameManger : MonoBehaviour
     private static CGameManger instance = null;
     private int teamACount;
     private int teamBCount;
+
     void Awake()
     {
         if(null == instance)
@@ -31,5 +32,10 @@ public class CGameManger : MonoBehaviour
             return instance;
         }
     }
+    
 
+    public void SetTeamACount(int _num) { teamACount = _num; }
+    public void SetTeamBCount(int _num) { teamBCount = _num; }
+    public int GetTeamACount() { return teamACount; }
+    public int GetTeamBCount() { return teamBCount; }
 }

@@ -205,11 +205,12 @@ public class PacketHandler : MonoBehaviour
     {
         int boss = binaryReader.ReadUInt16();
         int ready = binaryReader.ReadUInt16();
-
+        int number = binaryReader.ReadUInt16();
         App player = Transform.FindObjectOfType<App>();
 
         player.SetBoss(boss);
         player.SetReady(ready);
+        player.SetNumber(number);
     }
 
     private void RoomState()
@@ -246,6 +247,18 @@ public class PacketHandler : MonoBehaviour
 
     private void GameStart()
     {
+        int tempACount = binaryReader.ReadUInt16();
+        int tempBCount = binaryReader.ReadUInt16();
+
+        int playerNum = binaryReader.ReadUInt16();
+        int playerTeam = binaryReader.ReadUInt16();
+
+        int enemyNum = binaryReader.ReadUInt16();
+        int enemyTeam = binaryReader.ReadUInt16();
+
+        CGameManger.Instance.SetTeamACount(tempACount);
+        CGameManger.Instance.SetTeamBCount(tempBCount);
+
         SceneManager.LoadScene("Game");
     }
 }

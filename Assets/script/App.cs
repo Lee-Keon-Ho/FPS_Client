@@ -96,11 +96,17 @@ public class App : MonoBehaviour
         m_socket.GameStart();
     }
 
+    public void Test(Vector3 _vector3)
+    {
+
+    }
+
     public string GetName() { return m_player.GetName(); }
     public int GetBoss() { return m_player.GetBoss(); }
     public void SetBoss(int _boss) { m_player.SetBoss(_boss); }
-
     public void SetReady(int _ready) { m_player.SetReady(_ready); }
-
     public int GetReady() { return m_player.GetReady(); }
+    public void SetNumber(int _num) { m_player.SetNumber(_num); }
+
+    public CPlayer GetPlayer() { return m_player; }
 }

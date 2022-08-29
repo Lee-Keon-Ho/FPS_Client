@@ -202,6 +202,22 @@ public class CSocket
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
 
+    public void Test(Vector3 vector3)
+    {
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)16);
+        bw.Write((ushort)20);
+        bw.Write((float)vector3.x);
+        bw.Write((float)vector3.y);
+        bw.Write((float)vector3.z);
+
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
+    }
+
     void Run()
     {   
         while (true)
