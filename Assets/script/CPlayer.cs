@@ -6,7 +6,7 @@ public class CPlayer
     string m_name;
     int m_boss;
     int m_ready;
-
+    
     public bool Init()
     {
         m_name = "";

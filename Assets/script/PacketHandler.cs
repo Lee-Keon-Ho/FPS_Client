@@ -207,7 +207,6 @@ public class PacketHandler : MonoBehaviour
         int ready = binaryReader.ReadUInt16();
 
         App player = Transform.FindObjectOfType<App>();
-        CRoom room = Transform.FindObjectOfType<CRoom>();
 
         player.SetBoss(boss);
         player.SetReady(ready);
