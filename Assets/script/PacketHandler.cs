@@ -91,6 +91,9 @@ public class PacketHandler : MonoBehaviour
                 case 13:
                     PlayerInfo();
                     break;
+                case 20:
+                    Test();
+                    break;
                 default:
                     break;
             }
@@ -260,5 +263,20 @@ public class PacketHandler : MonoBehaviour
         CGameManger.Instance.SetTeamBCount(tempBCount);
 
         SceneManager.LoadScene("Game");
+    }
+
+    private void Test()
+    {
+        Vector3 vector;
+
+        int num = binaryReader.ReadUInt16();
+
+        vector.x = binaryReader.ReadSingle();
+        vector.y = binaryReader.ReadSingle();
+        vector.z = binaryReader.ReadSingle();
+
+        Spawn spawn = Transform.FindObjectOfType<Spawn>();
+
+        spawn.SetPosition(num, vector);
     }
 }

@@ -7,7 +7,7 @@ public class CGameManger : MonoBehaviour
     private static CGameManger instance = null;
     private int teamACount;
     private int teamBCount;
-
+    private CPlayer m_player;
     void Awake()
     {
         if(null == instance)

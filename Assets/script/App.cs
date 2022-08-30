@@ -13,7 +13,7 @@ public class App : MonoBehaviour
         m_socket = new CSocket();
         m_player = new CPlayer();
         m_player.Init();
-        m_socket.Init("211.218.197.86", 30002);
+        m_socket.Init("192.168.123.12", 30002);
         DontDestroyOnLoad(this);
     }
 
@@ -98,7 +98,7 @@ public class App : MonoBehaviour
 
     public void Test(Vector3 _vector3)
     {
-
+        m_socket.Test(_vector3);
     }
 
     public string GetName() { return m_player.GetName(); }
