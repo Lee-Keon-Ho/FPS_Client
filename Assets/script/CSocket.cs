@@ -215,6 +215,10 @@ public class CSocket
         bw.Write((float)vector3.y);
         bw.Write((float)vector3.z);
 
+        Debug.Log(vector3.x);
+        Debug.Log(vector3.y);
+        Debug.Log(vector3.z);
+
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
 
