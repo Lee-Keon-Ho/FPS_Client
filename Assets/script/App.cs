@@ -7,7 +7,8 @@ public class App : MonoBehaviour
 {
     public CSocket m_socket;
     public CPlayer m_player;
-   
+
+
     private void Awake()
     {
         m_socket = new CSocket();

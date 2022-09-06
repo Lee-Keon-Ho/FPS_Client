@@ -65,7 +65,10 @@ public class Spawn : MonoBehaviour
     void Update()
     {
         App app = Transform.FindObjectOfType<App>();
-        app.Test(m_player.transform.position);
+        if(Input.GetKeyDown(KeyCode.W))
+        {
+            app.Test(m_player.transform.position);
+        }
     }
 
     public void SetPosition(int _num, Vector3 _vector)

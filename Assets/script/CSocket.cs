@@ -22,7 +22,7 @@ public class CSocket
 
         sendBuffer = new byte[65535];
 
-        m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
         try
         {
@@ -64,7 +64,7 @@ public class CSocket
         bw.Write((ushort)1);
         bw.Write(str);
 
-        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position - 2, 0);
+        int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position - 2, 0);
     }
 
     public void LogOut()
@@ -229,7 +229,7 @@ public class CSocket
             int writePos = ringBuffer.GetWritePos();
             int recvSize = 0;
 
-            recvSize = m_socket.Receive(ringBuffer.GetBuffer(), writePos, ringBuffer.GetWriteBufferSize(), SocketFlags.None);
+            recvSize = m_socket.ReceiveFrom(ringBuffer.GetBuffer(), writePos, ringBuffer.GetWriteBufferSize(), SocketFlags.None);
 
             ringBuffer.Write(recvSize);
 
