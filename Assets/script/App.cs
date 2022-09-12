@@ -14,7 +14,7 @@ public class App : MonoBehaviour
         m_socket = new CSocket();
         m_player = new CPlayer();
         m_player.Init();
-        m_socket.Init("211.218.197.86", 30002);
+        m_socket.Init("211.218.197.152", 30002);
         DontDestroyOnLoad(this);
     }
 
