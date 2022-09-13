@@ -262,7 +262,10 @@ public class PacketHandler : MonoBehaviour
         CGameManger.Instance.SetTeamACount(tempACount);
         CGameManger.Instance.SetTeamBCount(tempBCount);
 
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("Game"); // 여기를 로딩씬으로 대처
+
+        App app = Transform.FindObjectOfType<App>();
+        app.UdpInit();
     }
 
     private void Test()
