@@ -264,6 +264,14 @@ public class PacketHandler : MonoBehaviour
 
         SceneManager.LoadScene("Game"); // 여기를 로딩씬으로 대처
 
+        // int boss = binaryReader.ReadUInt16();
+        // boss 일 경우 udp server를 아닐 경우 udp client
+        /*
+            if(boss == true)
+            {
+                
+            }
+        */
         App app = Transform.FindObjectOfType<App>();
         app.UdpInit();
     }

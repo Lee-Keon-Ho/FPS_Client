@@ -45,7 +45,7 @@ public class App : MonoBehaviour
         m_socket.Delete();
     }
 
-    public void UdpInit()
+    public void UdpInit() // server 인지 client 인지
     {
         m_udp.Init("211.218.197.152", 30001);
     }
