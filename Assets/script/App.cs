@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using TMPro;
 
@@ -16,7 +17,7 @@ public class App : MonoBehaviour
         m_player = new CPlayer();
         m_udp = new CUdp();
         m_player.Init();
-        m_socket.Init("211.218.197.152", 30002);
+        m_socket.Init("221.144.254.21", 30002);
         bType = true;
         DontDestroyOnLoad(this);
     }
@@ -45,9 +46,9 @@ public class App : MonoBehaviour
         m_socket.Delete();
     }
 
-    public void UdpInit() // server 인지 client 인지
+    public void UdpInit(String _ip, int _port) // server 인지 client 인지
     {
-        m_udp.Init("211.218.197.152", 30001);
+        m_udp.Init("221.144.254.21", 30001);
     }
 
     public void SetPlayerInfo(int _boss, int _ready)

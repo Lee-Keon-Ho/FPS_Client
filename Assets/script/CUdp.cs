@@ -3,6 +3,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 public class CUdp
 {
@@ -10,14 +11,31 @@ public class CUdp
 
     Socket m_socket;
     Thread thread;
-    
+
+    IPEndPoint iPEndPoint;
+
+    float time = 0;
+
+    MemoryStream writeStream;
+    MemoryStream readStream;
+    BinaryWriter binaryWriter;
+    BinaryReader binaryReader;
+
+    public bool OnGame = false;
+
     public void Init(String _ip, int _port)
     {
         m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
+        writeStream = new MemoryStream(buffer);
+        readStream = new MemoryStream(buffer);
+
+        binaryWriter = new BinaryWriter(writeStream);
+        binaryReader = new BinaryReader(readStream);
+
         try
         {
-            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
+            iPEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
 
             m_socket.Connect(iPEndPoint);
         }
@@ -40,6 +58,8 @@ public class CUdp
 
             recvSize = m_socket.ReceiveFrom(buffer, ref end);
 
+            OnGame = true;
+
             if (recvSize <= 0)
             {
                 m_socket.Close();
@@ -53,6 +73,19 @@ public class CUdp
 
     public void RunLoop()
     {
-
+        time += Time.deltaTime;
+        if(time > 1f)
+        {
+            byte[] buf = new byte[1000];
+            writeStream = new MemoryStream(buffer);
+            binaryWriter = new BinaryWriter(writeStream);
+            
+            App app = Transform.FindObjectOfType<App>();            
+            EndPoint end = (EndPoint)iPEndPoint;
+            
+            binaryWriter.Write((ushort)4);
+            binaryWriter.Write((ushort)app.m_player.GetNumber());
+            m_socket.SendTo(buf, 4, 0, end);
+        }
     }
 }

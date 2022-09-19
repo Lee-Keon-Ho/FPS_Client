@@ -262,8 +262,11 @@ public class PacketHandler : MonoBehaviour
         CGameManger.Instance.SetTeamACount(tempACount);
         CGameManger.Instance.SetTeamBCount(tempBCount);
 
-        SceneManager.LoadScene("Game"); // 여기를 로딩씬으로 대처
-
+        App app = Transform.FindObjectOfType<App>();
+        app.UdpInit("221,144,254,21", 30001);
+        app.bType = false;
+        //LoadingSceneController.Instance.LoadScene("Game");
+        LoadingSceneController.LoadScene("Game");
         // int boss = binaryReader.ReadUInt16();
         // boss 일 경우 udp server를 아닐 경우 udp client
         /*
@@ -272,8 +275,6 @@ public class PacketHandler : MonoBehaviour
                 
             }
         */
-        App app = Transform.FindObjectOfType<App>();
-        app.UdpInit();
     }
 
     private void Test()

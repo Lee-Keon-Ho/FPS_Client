@@ -12,7 +12,7 @@ public class CPlayer
         m_name = "";
         m_boss = 0;
         m_ready = 0;
-
+        
         if (m_name == null) return false;
 
         return true;
