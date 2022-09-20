@@ -10,7 +10,7 @@ public class Spawn : MonoBehaviour
 
     void Awake()
     {
-        CGameManger gameManager = CGameManger.Instance;
+        CGameManager gameManager = CGameManager.Instance;
         int teamACount = gameManager.GetTeamACount();
         int teamBCount = gameManager.GetTeamBCount();
 
@@ -18,8 +18,9 @@ public class Spawn : MonoBehaviour
         CPlayer player = app.GetPlayer();
 
         int team = player.GetNumber();
-
-        if(team == 1)
+        A_spawn[0].SetActive(true);
+        B_spawn[0].SetActive(true);
+        if (team == 1)
         {
             for (int i = 0; i < teamACount; i++)
             {
@@ -57,17 +58,24 @@ public class Spawn : MonoBehaviour
         {
             m_player.transform.position = B_spawn[0].transform.position;
         }
-
-        app.Test(m_player.transform.position);
+        CGameManager.Instance.gameStart = true;
+        //app.Test(m_player.transform.position);
     }
 
     // Update is called once per frame
     void Update()
     {
         App app = Transform.FindObjectOfType<App>();
-        if(Input.GetKeyDown(KeyCode.W))
+        CPlayer player = app.GetPlayer();
+
+        CGameManager.Instance.TeamAPosition(m_player.transform.position);
+        if (player.GetNumber() != 1)
         {
-            app.Test(m_player.transform.position);
+            A_spawn[0].transform.position = CGameManager.Instance.GetB();
+        }
+        if (player.GetNumber() != 2)
+        {
+            B_spawn[0].transform.position = CGameManager.Instance.GetB();
         }
     }
 

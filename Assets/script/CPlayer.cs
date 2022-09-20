@@ -24,6 +24,10 @@ public class CPlayer
     public int GetBoss() { return m_boss; }
     public void SetReady(int _ready) { m_ready = _ready; }
     public int GetReady() { return m_ready; }
-    public void SetNumber(int _number) { m_number = _number; } 
+    public void SetNumber(int _number) 
+    {
+        m_number = _number;
+        CGameManager.Instance.number = _number;
+    } 
     public int GetNumber() { return m_number; }
 }

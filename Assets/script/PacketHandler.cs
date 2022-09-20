@@ -259,8 +259,8 @@ public class PacketHandler : MonoBehaviour
         int enemyNum = binaryReader.ReadUInt16();
         int enemyTeam = binaryReader.ReadUInt16();
 
-        CGameManger.Instance.SetTeamACount(tempACount);
-        CGameManger.Instance.SetTeamBCount(tempBCount);
+        CGameManager.Instance.SetTeamACount(tempACount);
+        CGameManager.Instance.SetTeamBCount(tempBCount);
 
         App app = Transform.FindObjectOfType<App>();
         app.UdpInit("221,144,254,21", 30001);
