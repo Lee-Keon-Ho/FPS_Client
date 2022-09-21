@@ -48,7 +48,7 @@ public class App : MonoBehaviour
 
     public void UdpInit(String _ip, int _port) // server 인지 client 인지
     {
-        m_udp.Init("221.144.254.21", 30001);
+        m_udp.Init(_ip, _port);
     }
 
     public void SetPlayerInfo(int _boss, int _ready)

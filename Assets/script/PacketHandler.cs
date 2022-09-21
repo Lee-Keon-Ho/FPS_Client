@@ -263,18 +263,11 @@ public class PacketHandler : MonoBehaviour
         CGameManager.Instance.SetTeamBCount(tempBCount);
 
         App app = Transform.FindObjectOfType<App>();
+
         app.UdpInit("221,144,254,21", 30001);
         app.bType = false;
-        //LoadingSceneController.Instance.LoadScene("Game");
-        LoadingSceneController.LoadScene("Game");
-        // int boss = binaryReader.ReadUInt16();
-        // boss 일 경우 udp server를 아닐 경우 udp client
-        /*
-            if(boss == true)
-            {
-                
-            }
-        */
+        
+        LoadingSceneController.LoadScene("Game"); // 로딩에 들어가서 나의 유디피 포트값을 tcp로 보내주자
     }
 
     private void Test()
