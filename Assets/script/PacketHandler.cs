@@ -91,8 +91,8 @@ public class PacketHandler : MonoBehaviour
                 case 13:
                     PlayerInfo();
                     break;
-                case 20:
-                    Test();
+                case 14:
+
                     break;
                 default:
                     break;
@@ -106,6 +106,11 @@ public class PacketHandler : MonoBehaviour
     private void Login()
     {
         ushort scene = binaryReader.ReadUInt16();
+        ushort socket = binaryReader.ReadUInt16();
+
+        App app = Transform.FindObjectOfType<App>();
+        app.SetSocket(socket);
+
         if (scene == 1) SceneManager.LoadScene("Lobby");
     }
 
@@ -270,18 +275,10 @@ public class PacketHandler : MonoBehaviour
         LoadingSceneController.LoadScene("Game"); // 로딩에 들어가서 나의 유디피 포트값을 tcp로 보내주자
     }
 
-    private void Test()
+    private void SockAddr()
     {
-        Vector3 vector;
+        int address = binaryReader.ReadInt32();
 
-        int num = binaryReader.ReadUInt16();
-
-        vector.x = binaryReader.ReadSingle();
-        vector.y = binaryReader.ReadSingle();
-        vector.z = binaryReader.ReadSingle();
-
-        Spawn spawn = Transform.FindObjectOfType<Spawn>();
-
-        spawn.SetPosition(num, vector);
+        App app = Transform.FindObjectOfType<App>();
     }
 }

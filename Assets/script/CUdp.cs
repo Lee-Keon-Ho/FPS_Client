@@ -56,51 +56,7 @@ public class CUdp
             readStream = new MemoryStream(buffer);
             binaryReader = new BinaryReader(readStream);
 
-            int size = binaryReader.ReadUInt16();
-            int type = binaryReader.ReadUInt16();
-
-            if(type == 1)
-            {
-                int myNum = CGameManager.Instance.number;
-
-                ushort number = binaryReader.ReadUInt16();
-                long address = binaryReader.ReadInt32();
-                ushort pont = binaryReader.ReadUInt16();
-
-                if (myNum != number)
-                {
-                    iPEndPoint = new IPEndPoint(address, pont);
-                    end = (EndPoint)iPEndPoint;
-                    m_socket.Connect(iPEndPoint);
-                }
-
-                ushort number2 = binaryReader.ReadUInt16();
-                long address2 = binaryReader.ReadInt32();
-                ushort pont2 = binaryReader.ReadUInt16();
-
-                if (myNum != number2)
-                {
-                    iPEndPoint = new IPEndPoint(address2, pont2);
-                    end = (EndPoint)iPEndPoint;
-                    m_socket.Connect(iPEndPoint);
-                }
-            }
-            if(type == 2)
-            {
-                if(CGameManager.Instance.gameStart)
-                {
-                    // ok를 받으면
-                    Vector3 vector;
-
-                    int num = binaryReader.ReadUInt16();
-
-                    vector.x = binaryReader.ReadSingle();
-                    vector.y = binaryReader.ReadSingle();
-                    vector.z = binaryReader.ReadSingle();
-
-                    CGameManager.Instance.test(num, vector);
-                }
-            }
+            UdpPackHandler();
 
             OnGame = true;
 
@@ -121,7 +77,7 @@ public class CUdp
             time += Time.deltaTime;
             if (time > 1f)
             {
-                byte[] buf = new byte[1000];
+                byte[] buf = new byte[100];
                 writeStream = new MemoryStream(buf);
                 binaryWriter = new BinaryWriter(writeStream);
 
@@ -129,7 +85,7 @@ public class CUdp
                 EndPoint end = (EndPoint)iPEndPoint;
 
                 binaryWriter.Write((ushort)4);
-                binaryWriter.Write((ushort)app.m_player.GetNumber());
+                binaryWriter.Write((ushort)app.GetSocket());
                 m_socket.SendTo(buf, 4, 0, end);
             }
         }
@@ -150,6 +106,55 @@ public class CUdp
             binaryWriter.Write((float)vector.z);
 
             m_socket.SendTo(buf, (int)writeStream.Position, 0, end);
+        }
+    }
+
+    private void UdpPackHandler()
+    {
+        int size = binaryReader.ReadUInt16();
+        int type = binaryReader.ReadUInt16();
+
+        if (type == 1)
+        {
+            int myNum = CGameManager.Instance.number;
+
+            ushort number = binaryReader.ReadUInt16();
+            int address = binaryReader.ReadInt32();
+            ushort pont = binaryReader.ReadUInt16();
+
+            if (myNum != number)
+            {
+                iPEndPoint = new IPEndPoint(address, pont);
+                end = (EndPoint)iPEndPoint;
+                m_socket.Connect(iPEndPoint);
+            }
+
+            ushort number2 = binaryReader.ReadUInt16();
+            int address2 = binaryReader.ReadInt32();
+            ushort pont2 = binaryReader.ReadUInt16();
+
+            if (myNum != number2)
+            {
+                iPEndPoint = new IPEndPoint(address2, pont2);
+                end = (EndPoint)iPEndPoint;
+                m_socket.Connect(iPEndPoint);
+            }
+        }
+        if (type == 2)
+        {
+            if (CGameManager.Instance.gameStart)
+            {
+                // ok를 받으면
+                Vector3 vector;
+
+                int num = binaryReader.ReadUInt16();
+
+                vector.x = binaryReader.ReadSingle();
+                vector.y = binaryReader.ReadSingle();
+                vector.z = binaryReader.ReadSingle();
+
+                CGameManager.Instance.test(num, vector);
+            }
         }
     }
 }

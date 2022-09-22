@@ -125,5 +125,9 @@ public class App : MonoBehaviour
     public int GetReady() { return m_player.GetReady(); }
     public void SetNumber(int _num) { m_player.SetNumber(_num); }
 
+    public void SetSocket(ushort _socket) { m_player.SetSocet(_socket); }
+
+    public uint GetSocket() { return m_player.GetSocket(); }
+
     public CPlayer GetPlayer() { return m_player; }
 }

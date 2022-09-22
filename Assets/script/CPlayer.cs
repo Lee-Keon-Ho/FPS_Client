@@ -4,9 +4,11 @@ using System.Collections.Generic;
 public class CPlayer
 {
     string m_name;
+    uint m_socket;
     int m_boss;
     int m_ready;
     int m_number;
+
     public bool Init()
     {
         m_name = "";
@@ -29,5 +31,9 @@ public class CPlayer
         m_number = _number;
         CGameManager.Instance.number = _number;
     } 
+
+    public void SetSocet(uint _socket) { m_socket = _socket; }
+    public uint GetSocket() { return m_socket; }
+
     public int GetNumber() { return m_number; }
 }
