@@ -269,7 +269,7 @@ public class PacketHandler : MonoBehaviour
 
         App app = Transform.FindObjectOfType<App>();
 
-        app.UdpInit("221,144,254,21", 30001);
+        app.UdpInit("221.144.254.21", 30001);
         app.bType = false;
         
         LoadingSceneController.LoadScene("Game"); // 로딩에 들어가서 나의 유디피 포트값을 tcp로 보내주자

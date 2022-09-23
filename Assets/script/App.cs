@@ -33,11 +33,11 @@ public class App : MonoBehaviour
     {
         if(bType)
         {
-            m_socket.RunLoop();
+            m_socket.RunLoop(); // tcp
         }
         else
         {
-            m_udp.RunLoop();
+            m_udp.RunLoop(); // udp
         }
     }
 

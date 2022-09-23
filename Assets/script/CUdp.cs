@@ -31,7 +31,7 @@ public class CUdp
         try
         {
             iPEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
-
+            
             m_socket.Connect(iPEndPoint);
         }
         catch (Exception e)
