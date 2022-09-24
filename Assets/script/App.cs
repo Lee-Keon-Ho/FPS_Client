@@ -9,7 +9,6 @@ public class App : MonoBehaviour
     public CSocket m_socket;
     public CPlayer m_player;
     public CUdp m_udp;
-    public bool bType;
 
     private void Awake()
     {
@@ -18,7 +17,6 @@ public class App : MonoBehaviour
         m_udp = new CUdp();
         m_player.Init();
         m_socket.Init("221.144.254.21", 30002);
-        bType = true;
         DontDestroyOnLoad(this);
     }
 
@@ -31,14 +29,8 @@ public class App : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(bType)
-        {
-            m_socket.RunLoop(); // tcp
-        }
-        else
-        {
-            m_udp.RunLoop(); // udp
-        }
+        m_socket.RunLoop(); // tcp
+        m_udp.RunLoop(); // udp
     }
 
     private void OnDestroy()
@@ -130,4 +122,6 @@ public class App : MonoBehaviour
     public uint GetSocket() { return m_player.GetSocket(); }
 
     public CPlayer GetPlayer() { return m_player; }
+
+    public void SetAddr(int _addr) { m_player.SetAddr(_addr); }
 }

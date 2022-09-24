@@ -92,7 +92,7 @@ public class PacketHandler : MonoBehaviour
                     PlayerInfo();
                     break;
                 case 14:
-
+                    SockAddr();
                     break;
                 default:
                     break;
@@ -270,7 +270,6 @@ public class PacketHandler : MonoBehaviour
         App app = Transform.FindObjectOfType<App>();
 
         app.UdpInit("221.144.254.21", 30001);
-        app.bType = false;
         
         LoadingSceneController.LoadScene("Game"); // 로딩에 들어가서 나의 유디피 포트값을 tcp로 보내주자
     }
@@ -280,5 +279,12 @@ public class PacketHandler : MonoBehaviour
         int address = binaryReader.ReadInt32();
 
         App app = Transform.FindObjectOfType<App>();
+        app.SetAddr(address);
+    }
+
+    private void Test()
+    {
+        // GameManger를 이용해서 확인하고 자신과 다른 peer들을 구분하자
+        // socket으로 비교 addr을 저장
     }
 }

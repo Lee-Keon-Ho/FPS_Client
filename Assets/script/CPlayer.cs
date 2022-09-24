@@ -5,6 +5,7 @@ public class CPlayer
 {
     string m_name;
     uint m_socket;
+    int m_addr;
     int m_boss;
     int m_ready;
     int m_number;
@@ -36,4 +37,6 @@ public class CPlayer
     public uint GetSocket() { return m_socket; }
 
     public int GetNumber() { return m_number; }
+
+    public void SetAddr(int _addr) { m_addr = _addr; }
 }
