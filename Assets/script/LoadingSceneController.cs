@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class LoadingSceneController : MonoBehaviour
 {
     static string nextScene;
+    private float m_time = 1;
+
+    public TextMeshProUGUI[] textMesh;
 
     [SerializeField]
     Image progressBar;
@@ -20,6 +24,34 @@ public class LoadingSceneController : MonoBehaviour
     void Start()
     {
         StartCoroutine(LoadSceneProcess());
+    }
+
+    private void Update()
+    {
+        App app = Transform.FindObjectOfType<App>();
+
+        if(app.GetBoolUdp() != 1)
+        {
+            if (m_time >= 1f)
+            {
+                CUdp udp = app.GetUdp();
+
+                udp.SendSocket(app.GetSocket());
+
+                m_time = 0f;
+            }
+            m_time += Time.deltaTime;
+        }
+        else
+        {
+            int count = CGameManager.Instance.GetPlayerCount();
+
+            for(int i = 0; i < count; i++)
+            {
+                Debug.Log(CGameManager.Instance.GetPlayer(i).GetSocket().ToString());
+                //textMesh[i].text = CGameManager.Instance.GetPlayer(i).GetSocket().ToString();
+            }
+        }
     }
 
     IEnumerator LoadSceneProcess()
@@ -38,9 +70,7 @@ public class LoadingSceneController : MonoBehaviour
             }
             else
             {
-                App app = Transform.FindObjectOfType<App>();
-                
-                if(app.m_udp.OnGame)
+                if(CGameManager.Instance.gameStartTest == 1)
                 {
                     timer += Time.unscaledDeltaTime;
                     progressBar.fillAmount = Mathf.Lerp(0.9f, 1f, timer);

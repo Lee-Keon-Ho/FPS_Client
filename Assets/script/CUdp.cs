@@ -7,22 +7,22 @@ using System.IO;
 
 public class CUdp
 {
-    byte[] buffer = new byte[65535];
+    CRingBuffer ringBuffer = new CRingBuffer(65535);
+    byte[] sendBuffer = new byte[65535];
 
     Socket m_socket;
     Thread thread;
 
     IPEndPoint iPEndPoint;
-    EndPoint end;
-
-    float time = 0;
+    EndPoint m_end;
 
     MemoryStream writeStream;
     MemoryStream readStream;
     BinaryWriter binaryWriter;
     BinaryReader binaryReader;
 
-    public bool OnGame = false;
+    public bool OnGame = true;
+    public bool GoGame = false;
 
     public void Init(String _ip, int _port)
     {
@@ -31,7 +31,8 @@ public class CUdp
         try
         {
             iPEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
-            
+            m_end = (EndPoint)iPEndPoint;
+
             m_socket.Connect(iPEndPoint);
         }
         catch (Exception e)
@@ -45,116 +46,53 @@ public class CUdp
 
     void Run()
     {
-        IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
-        end = (EndPoint)endPoint;
         while (true)
         {
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint end = (EndPoint)endPoint;
+
+            int writePos = ringBuffer.GetWritePos();
             int recvSize = 0;
 
-            recvSize = m_socket.ReceiveFrom(buffer, 0, ref end); // 여러명일 경우
+            recvSize = m_socket.ReceiveFrom(ringBuffer.GetBuffer(), writePos, ringBuffer.GetWriteBufferSize(),0 , ref end); // 여러명일 경우
 
-            readStream = new MemoryStream(buffer);
-            binaryReader = new BinaryReader(readStream);
-
-            UdpPackHandler();
-
-            OnGame = true;
+            ringBuffer.Write(recvSize);
 
             if (recvSize < 0)
             {
                 //m_socket.Close();
                 continue;
             }
-
-            // 처리를 하고 서버로 sendto 서버에서는 다른 peer로 전달만
         }
     }
 
     public void RunLoop()
     {
-        if(!OnGame)
+        if (ringBuffer.GetRemainSize() > 3)
         {
-            time += Time.deltaTime;
-            if (time > 1f)
-            {
-                byte[] buf = new byte[100];
-                writeStream = new MemoryStream(buf);
-                binaryWriter = new BinaryWriter(writeStream);
-
-                App app = Transform.FindObjectOfType<App>();
-                EndPoint end = (EndPoint)iPEndPoint;
-
-                binaryWriter.Write((ushort)4);
-                binaryWriter.Write((ushort)app.GetSocket());
-                m_socket.SendTo(buf, 4, 0, end);
-            }
-        }
-        else
-        {
-            byte[] buf = new byte[1000];
-            writeStream = new MemoryStream(buf);
-            binaryWriter = new BinaryWriter(writeStream);
-
-            Vector3 vector = CGameManager.Instance.GetPosition();
-
-            binaryWriter.Write((ushort)(sizeof(float) * 3 + 6));
-            binaryWriter.Write(((ushort)2));
-            binaryWriter.Write((ushort)CGameManager.Instance.number); // 자신의 번호
-
-            binaryWriter.Write((float)vector.x);
-            binaryWriter.Write((float)vector.y);
-            binaryWriter.Write((float)vector.z);
-
-            m_socket.SendTo(buf, (int)writeStream.Position, 0, end);
+            ringBuffer.Read(UdpPacketHandler.instance.Handle(this));
         }
     }
 
-    private void UdpPackHandler()
+    public void SendSocket(uint _socket)
     {
-        int size = binaryReader.ReadUInt16();
-        int type = binaryReader.ReadUInt16();
+        IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
+        EndPoint end = (EndPoint)endPoint;
 
-        if (type == 1)
-        {
-            int myNum = CGameManager.Instance.number;
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
 
-            ushort number = binaryReader.ReadUInt16();
-            int address = binaryReader.ReadInt32();
-            ushort pont = binaryReader.ReadUInt16();
+        memoryStream.Position = 0;
 
-            if (myNum != number)
-            {
-                iPEndPoint = new IPEndPoint(address, pont);
-                end = (EndPoint)iPEndPoint;
-                m_socket.Connect(iPEndPoint);
-            }
+        bw.Write((ushort)4);
+        bw.Write((ushort)1);
+        bw.Write((ushort)_socket);
 
-            ushort number2 = binaryReader.ReadUInt16();
-            int address2 = binaryReader.ReadInt32();
-            ushort pont2 = binaryReader.ReadUInt16();
-
-            if (myNum != number2)
-            {
-                iPEndPoint = new IPEndPoint(address2, pont2);
-                end = (EndPoint)iPEndPoint;
-                m_socket.Connect(iPEndPoint);
-            }
-        }
-        if (type == 2)
-        {
-            if (CGameManager.Instance.gameStart)
-            {
-                // ok를 받으면
-                Vector3 vector;
-
-                int num = binaryReader.ReadUInt16();
-
-                vector.x = binaryReader.ReadSingle();
-                vector.y = binaryReader.ReadSingle();
-                vector.z = binaryReader.ReadSingle();
-
-                CGameManager.Instance.test(num, vector);
-            }
-        }
+        int size = m_socket.SendTo(sendBuffer, 6, SocketFlags.None, m_end);
     }
+
+    public bool GetOnGame() { return GoGame; }
+    public void SetOnGame(bool _onGame) { GoGame = _onGame; }
+
+    public CRingBuffer GetRingBuffer() { return ringBuffer; }
 }

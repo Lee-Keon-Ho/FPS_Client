@@ -238,8 +238,5 @@ public class CSocket
             }
         }
     }
-
-   
-
     public CRingBuffer GetRingBuffer() { return ringBuffer; }
 }

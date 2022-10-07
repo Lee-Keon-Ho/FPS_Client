@@ -12,7 +12,7 @@ public class PacketHandler : MonoBehaviour
     BinaryReader binaryReader;
     int readPos;
     int bufferSize;
-
+    
     private void Awake()
     {
         if (instance == null)
@@ -93,6 +93,9 @@ public class PacketHandler : MonoBehaviour
                     break;
                 case 14:
                     SockAddr();
+                    break;
+                case 15:
+                    Test();
                     break;
                 default:
                     break;
@@ -255,28 +258,19 @@ public class PacketHandler : MonoBehaviour
 
     private void GameStart()
     {
-        int tempACount = binaryReader.ReadUInt16();
-        int tempBCount = binaryReader.ReadUInt16();
-
-        int playerNum = binaryReader.ReadUInt16();
-        int playerTeam = binaryReader.ReadUInt16();
-
-        int enemyNum = binaryReader.ReadUInt16();
-        int enemyTeam = binaryReader.ReadUInt16();
-
-        CGameManager.Instance.SetTeamACount(tempACount);
-        CGameManager.Instance.SetTeamBCount(tempBCount);
+        CGameManager.Instance.SetTeamACount(1);
+        CGameManager.Instance.SetTeamBCount(1);
 
         App app = Transform.FindObjectOfType<App>();
 
-        app.UdpInit("221.144.254.21", 30001);
+        app.UdpInit("112.184.241.149", 30001);
         
         LoadingSceneController.LoadScene("Game"); // 로딩에 들어가서 나의 유디피 포트값을 tcp로 보내주자
     }
 
     private void SockAddr()
     {
-        int address = binaryReader.ReadInt32();
+        uint address = binaryReader.ReadUInt32();
 
         App app = Transform.FindObjectOfType<App>();
         app.SetAddr(address);
@@ -284,7 +278,34 @@ public class PacketHandler : MonoBehaviour
 
     private void Test()
     {
-        // GameManger를 이용해서 확인하고 자신과 다른 peer들을 구분하자
-        // socket으로 비교 addr을 저장
+        //GameManger를 이용해서 확인하고 자신과 다른 peer들을 구분하자
+        //socket으로 비교 addr을 저장
+        App app = Transform.FindObjectOfType<App>();
+
+        int boss = binaryReader.ReadUInt16();
+        int count;
+        uint addr;
+        uint socket;
+
+        if (boss == 0)
+        {
+            count = binaryReader.ReadUInt16();
+            CGameManager.Instance.SetPlayerCount(count);
+
+            for (int i = 0; i < count; i++)
+            {
+                addr = binaryReader.ReadUInt32();
+                socket = binaryReader.ReadUInt32();
+                CGameManager.Instance.SetPlayers(i, socket, addr);
+            }
+        }
+        else
+        {
+            addr = binaryReader.ReadUInt32();
+            socket = binaryReader.ReadUInt32();
+            CGameManager.Instance.SetPlayers(0, socket, addr);
+        }
+
+        CGameManager.Instance.gameStartTest = 1;
     }
 }

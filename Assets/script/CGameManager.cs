@@ -13,7 +13,7 @@ public class CGameManager : MonoBehaviour
     public int number;
     private Vector3 teamA;
     private Vector3 teamB;
-    private int iTeamB = 0;
+    public ushort gameStartTest; // 2022-10-07 test
 
     public bool gameStart = false;
     void Awake()
@@ -47,6 +47,11 @@ public class CGameManager : MonoBehaviour
         playerCount = 0;
         teamACount = 0;
         teamBCount = 0;
+
+        for(int i = 0; i < 8; i++)
+        {
+            m_player[i] = new CPlayer();
+        }
     }
 
     public void SetTeamACount(int _num) { teamACount = _num; }
@@ -59,10 +64,18 @@ public class CGameManager : MonoBehaviour
 
     public Vector3 GetPosition() { return teamA; }
 
-    public void test(int num, Vector3 vector) 
-    {
-        iTeamB = num; teamB = vector;
-    }
 
     public Vector3 GetB() { return teamB; }
+
+    public void SetPlayers(int _num, uint _socket, uint _addr)
+    {
+        m_player[_num].SetSocet(_socket);
+        m_player[_num].SetAddr(_addr);
+    }
+
+    public CPlayer GetPlayer(int _num) { return m_player[_num]; }
+
+    public void SetPlayerCount(int _count) { playerCount = _count; }
+
+    public int GetPlayerCount() { return playerCount; }
 }

@@ -9,21 +9,23 @@ public class App : MonoBehaviour
     public CSocket m_socket;
     public CPlayer m_player;
     public CUdp m_udp;
+    private ushort bUdp; // 이름 바꾸자
 
     private void Awake()
     {
         m_socket = new CSocket();
         m_player = new CPlayer();
         m_udp = new CUdp();
+        bUdp = 0;
         m_player.Init();
-        m_socket.Init("221.144.254.21", 30002);
+        m_socket.Init("112.184.241.149", 30002);
         DontDestroyOnLoad(this);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -51,7 +53,7 @@ public class App : MonoBehaviour
 
     public void OnLogin(TextMeshProUGUI _textMesh)
     {
-        if(_textMesh.text.Length > 4)
+        if (_textMesh.text.Length > 4)
         {
             m_socket.Login(_textMesh);
             m_player.SetName(_textMesh.text);
@@ -123,5 +125,15 @@ public class App : MonoBehaviour
 
     public CPlayer GetPlayer() { return m_player; }
 
-    public void SetAddr(int _addr) { m_player.SetAddr(_addr); }
+    public void SetAddr(uint _addr) { m_player.SetAddr(_addr); }
+
+    public bool GetOnGame() { return m_udp.GetOnGame(); }
+
+    public void SetOnGame(bool _onGame) { m_udp.SetOnGame(_onGame); }
+
+    public CUdp GetUdp() { return m_udp; }
+
+    public void SetBoolUdp(ushort _b) { bUdp = _b; }
+
+    public ushort GetBoolUdp() { return bUdp; }
 }
