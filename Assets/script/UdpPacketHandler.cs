@@ -35,8 +35,7 @@ public class UdpPacketHandler : MonoBehaviour
 
     public int Handle(CUdp _udp)
     {
-        if (_udp.GetRingBuffer().GetRemainSize() > 3)
-     
+        if (_udp.GetRemianSize() > 3)
         {
             readPos = _udp.GetRingBuffer().GetReadPos();
             bufferSize = _udp.GetRingBuffer().GetSize();
@@ -44,12 +43,12 @@ public class UdpPacketHandler : MonoBehaviour
             // 여기부터 read에 대한처리
             if (readPos > bufferSize)
             {
-                Array.Copy(_udp.GetRingBuffer().GetBuffer(), readPos, tempBuffer, 0, bufferSize - readPos);
-                Array.Copy(_udp.GetRingBuffer().GetBuffer(), 0, tempBuffer, bufferSize - readPos, _udp.GetRingBuffer().GetRemainSize() - (bufferSize - readPos));
+                Array.Copy(_udp.GetBuffer(), readPos, tempBuffer, 0, bufferSize - readPos);
+                Array.Copy(_udp.GetBuffer(), 0, tempBuffer, bufferSize - readPos, _udp.GetRingBuffer().GetRemainSize() - (bufferSize - readPos));
             }
             else
             {
-                Array.Copy(_udp.GetRingBuffer().GetBuffer(), readPos, tempBuffer, 0, _udp.GetRingBuffer().GetRemainSize());
+                Array.Copy(_udp.GetBuffer(), 0, tempBuffer, 0, _udp.GetRemianSize());
             }
 
             memoryStream.Position = 0;
@@ -63,6 +62,11 @@ public class UdpPacketHandler : MonoBehaviour
                     App app = Transform.FindObjectOfType<App>();
 
                     app.SetBoolUdp(1);
+
+                    break;
+                case 2:
+
+                    CGameManager.Instance.gameStartTest = 1;
 
                     break;
                 default:

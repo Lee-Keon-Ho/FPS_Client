@@ -13,9 +13,10 @@ public class CGameManager : MonoBehaviour
     public int number;
     private Vector3 teamA;
     private Vector3 teamB;
-    public ushort gameStartTest; // 2022-10-07 test
+    public ushort gameStartTest = 0; // 2022-10-07 test
 
     public bool gameStart = false;
+    public ushort gameSocket = 0;
     void Awake()
     {
         if(null == instance)
@@ -67,10 +68,11 @@ public class CGameManager : MonoBehaviour
 
     public Vector3 GetB() { return teamB; }
 
-    public void SetPlayers(int _num, uint _socket, uint _addr)
+    public void SetPlayers(int _num, uint _socket, uint _addr, ushort _port, string _addrStr)
     {
         m_player[_num].SetSocet(_socket);
-        m_player[_num].SetAddr(_addr);
+        m_player[_num].SetAddr(_addr, _port);
+        m_player[_num].SetAddrStr(_addrStr);
     }
 
     public CPlayer GetPlayer(int _num) { return m_player[_num]; }

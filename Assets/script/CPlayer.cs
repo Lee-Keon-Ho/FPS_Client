@@ -6,9 +6,12 @@ public class CPlayer
     string m_name;
     uint m_socket;
     uint m_addr;
+    ushort m_port;
     int m_boss;
     int m_ready;
     int m_number;
+    string m_addrStr;
+
 
     public bool Init()
     {
@@ -35,8 +38,14 @@ public class CPlayer
 
     public void SetSocet(uint _socket) { m_socket = _socket; }
     public uint GetSocket() { return m_socket; }
-
     public int GetNumber() { return m_number; }
-
-    public void SetAddr(uint _addr) { m_addr = _addr; }
+    public void SetAddr(uint _addr, ushort _port) 
+    { 
+        m_addr = _addr;
+        m_port = _port;
+    }
+    public ushort GetPort() { return m_port; }
+    public uint GetAddr() { return m_addr; }
+    public void SetAddrStr(string _str) { m_addrStr = _str; }
+    public string GetAddrStr() { return m_addrStr; }
 }

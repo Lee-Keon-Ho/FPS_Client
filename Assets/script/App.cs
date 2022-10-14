@@ -125,7 +125,7 @@ public class App : MonoBehaviour
 
     public CPlayer GetPlayer() { return m_player; }
 
-    public void SetAddr(uint _addr) { m_player.SetAddr(_addr); }
+    public void SetAddr(uint _addr, ushort _port) { m_player.SetAddr(_addr, _port); }
 
     public bool GetOnGame() { return m_udp.GetOnGame(); }
 

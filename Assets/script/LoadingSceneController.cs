@@ -10,7 +10,13 @@ public class LoadingSceneController : MonoBehaviour
     static string nextScene;
     private float m_time = 1;
 
-    public TextMeshProUGUI[] textMesh;
+    public TextMeshProUGUI[] peer;
+    public TextMeshProUGUI[] ok;
+    public TextMeshProUGUI[] socket;
+    public TextMeshProUGUI[] addr;
+    public TextMeshProUGUI[] port;
+
+    int count;
 
     [SerializeField]
     Image progressBar;
@@ -23,6 +29,13 @@ public class LoadingSceneController : MonoBehaviour
 
     void Start()
     {
+        count = CGameManager.Instance.GetPlayerCount();
+
+        for(int i = 0; i < count; i++)
+        {
+            peer[i].gameObject.SetActive(true);
+        }
+
         StartCoroutine(LoadSceneProcess());
     }
 
@@ -30,7 +43,7 @@ public class LoadingSceneController : MonoBehaviour
     {
         App app = Transform.FindObjectOfType<App>();
 
-        if(app.GetBoolUdp() != 1)
+        if(CGameManager.Instance.gameSocket == 0) // gm에서 다른걸로 해야한다.
         {
             if (m_time >= 1f)
             {
@@ -44,14 +57,27 @@ public class LoadingSceneController : MonoBehaviour
         }
         else
         {
-            int count = CGameManager.Instance.GetPlayerCount();
-
-            for(int i = 0; i < count; i++)
+            if (m_time >= 1f)
             {
-                Debug.Log(CGameManager.Instance.GetPlayer(i).GetSocket().ToString());
-                //textMesh[i].text = CGameManager.Instance.GetPlayer(i).GetSocket().ToString();
+                CUdp udp = app.GetUdp();
+
+                udp.PeerConnect();
+
+                m_time = 0f;
             }
+            m_time += Time.deltaTime;
         }
+
+        int count = CGameManager.Instance.GetPlayerCount();
+
+        for (int i = 0; i < count; i++)
+        {
+            CPlayer player = CGameManager.Instance.GetPlayer(i);
+            socket[i].text = player.GetSocket().ToString();
+            addr[i].text = player.GetAddrStr();
+            port[i].text = player.GetPort().ToString();
+        }
+
     }
 
     IEnumerator LoadSceneProcess()

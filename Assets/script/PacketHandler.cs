@@ -258,8 +258,12 @@ public class PacketHandler : MonoBehaviour
 
     private void GameStart()
     {
-        CGameManager.Instance.SetTeamACount(1);
-        CGameManager.Instance.SetTeamBCount(1);
+        CGameManager gm = CGameManager.Instance;
+        gm.SetTeamACount(1);
+        gm.SetTeamBCount(1);
+
+        int count = binaryReader.ReadInt16();
+        gm.SetPlayerCount(count);
 
         App app = Transform.FindObjectOfType<App>();
 
@@ -271,9 +275,12 @@ public class PacketHandler : MonoBehaviour
     private void SockAddr()
     {
         uint address = binaryReader.ReadUInt32();
+        ushort port = binaryReader.ReadUInt16();
 
         App app = Transform.FindObjectOfType<App>();
-        app.SetAddr(address);
+        app.SetAddr(address, port);
+
+        CGameManager.Instance.gameSocket = 1;
     }
 
     private void Test()
@@ -283,29 +290,32 @@ public class PacketHandler : MonoBehaviour
         App app = Transform.FindObjectOfType<App>();
 
         int boss = binaryReader.ReadUInt16();
-        int count;
+        int count = binaryReader.ReadUInt16();
         uint addr;
         uint socket;
+        ushort port;
+        CGameManager.Instance.SetPlayerCount(count);
 
-        if (boss == 0)
+        for (int i = 0; i < count; i++)
         {
-            count = binaryReader.ReadUInt16();
-            CGameManager.Instance.SetPlayerCount(count);
-
-            for (int i = 0; i < count; i++)
-            {
-                addr = binaryReader.ReadUInt32();
-                socket = binaryReader.ReadUInt32();
-                CGameManager.Instance.SetPlayers(i, socket, addr);
-            }
-        }
-        else
-        {
-            addr = binaryReader.ReadUInt32();
             socket = binaryReader.ReadUInt32();
-            CGameManager.Instance.SetPlayers(0, socket, addr);
+            addr = binaryReader.ReadUInt32();
+
+            memoryStream.Position -= sizeof(uint);
+
+            byte b1 = binaryReader.ReadByte();
+            byte b2 = binaryReader.ReadByte();
+            byte b3 = binaryReader.ReadByte();
+            byte b4 = binaryReader.ReadByte();
+
+            string addrStr = b1.ToString() + "." + b2.ToString() + "." + b3.ToString() + "." + b4.ToString();
+
+            port = binaryReader.ReadUInt16();
+            CGameManager.Instance.SetPlayers(i, socket, addr, port, addrStr);
         }
 
-        CGameManager.Instance.gameStartTest = 1;
+        CGameManager.Instance.gameSocket = 1;
+
+        //CGameManager.Instance.gameStartTest = 1;
     }
 }
