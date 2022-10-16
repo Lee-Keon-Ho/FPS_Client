@@ -61,10 +61,16 @@ public class CUdp
             int recvSize = 0;
 
             //recvSize = m_socket.ReceiveFrom(recvBuffer, writePos, ringBuffer.GetWriteBufferSize(),0 , ref end); // 여러명일 경우
-            recvSize = m_socket.ReceiveFrom(recvBuffer, 0, ringBuffer.GetWriteBufferSize(), 0, ref end);
-            remainSize += recvSize;
-
-            Debug.Log(end.ToString());
+            try
+            {
+                recvSize = m_socket.ReceiveFrom(recvBuffer, ref end);
+                remainSize += recvSize;
+                Debug.Log(end.ToString());
+            }
+            catch(Exception e)
+            {
+                Debug.Log(e);
+            }
             
             //ringBuffer.Write(recvSize);
 
@@ -114,16 +120,17 @@ public class CUdp
         {
             CPlayer player = gm.GetPlayer(i);
 
-            if (app.GetPlayer().GetSocket() != gm.GetPlayer(i).GetSocket())
+            //if (app.GetPlayer().GetSocket() != player.GetSocket())
             {
-                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("118.32.42.195"), 55998);
+                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
                 EndPoint end = (EndPoint)endPoint;
 
-                bw.Write((ushort)6);
+                bw.Write((ushort)8);
                 bw.Write((ushort)2);
-                bw.Write((uint)player.GetAddr());
+                bw.Write(player.GetAddr());
 
-                m_socket.SendTo(sendBuffer, 6, SocketFlags.None, end);
+                m_socket.SendTo(sendBuffer, 8, SocketFlags.None, end);
+                m_socket.SendTo(sendBuffer, 8, SocketFlags.None, m_end);
             }
         }
     }
