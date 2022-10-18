@@ -56,18 +56,33 @@ public class UdpPacketHandler : MonoBehaviour
             ushort size = binaryReader.ReadUInt16();
             ushort type = binaryReader.ReadUInt16();
 
+            App app = Transform.FindObjectOfType<App>();
+
             switch (type)
             {
                 case 1:
-                    App app = Transform.FindObjectOfType<App>();
-
                     app.SetBoolUdp(1);
 
                     break;
                 case 2:
+                    CGameManager gm = CGameManager.Instance;
 
-                    CGameManager.Instance.gameStartTest = 1;
+                    uint socket = binaryReader.ReadUInt32();
 
+                    int count = gm.GetPlayerCount();
+
+                    CPlayer player;
+
+                    for(int i = 0; i < count; i++)
+                    {
+                        player = gm.GetPlayer(i);
+                        if(player.GetSocket() == socket)
+                        {
+                            player.SetUdpConnect(true);
+                        }
+                    }
+
+                    // 모든 유저와 udp 통신이 완료되었다고 하면 peer1에게 완료되었다고 보내기
                     break;
                 default:
                     break;

@@ -37,8 +37,6 @@ public class CUdp
             iPEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
             m_end = (EndPoint)iPEndPoint;
 
-            m_socket.Connect(iPEndPoint);
-
             m_socket.SendTo(sendBuffer, 0, SocketFlags.None, m_end);
         }
         catch (Exception e)
@@ -120,17 +118,17 @@ public class CUdp
         {
             CPlayer player = gm.GetPlayer(i);
 
-            //if (app.GetPlayer().GetSocket() != player.GetSocket())
+            if (app.GetPlayer().GetSocket() != player.GetSocket())
             {
                 IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
                 EndPoint end = (EndPoint)endPoint;
 
                 bw.Write((ushort)8);
                 bw.Write((ushort)2);
-                bw.Write(player.GetAddr());
+                bw.Write(app.GetPlayer().GetSocket());
 
-                m_socket.SendTo(sendBuffer, 8, SocketFlags.None, end);
-                m_socket.SendTo(sendBuffer, 8, SocketFlags.None, m_end);
+                int size = m_socket.SendTo(sendBuffer, 8, SocketFlags.None, end);
+                Debug.Log(size);
             }
         }
     }

@@ -95,7 +95,7 @@ public class PacketHandler : MonoBehaviour
                     SockAddr();
                     break;
                 case 15:
-                    Test();
+                    AddressAll();
                     break;
                 default:
                     break;
@@ -283,7 +283,7 @@ public class PacketHandler : MonoBehaviour
         CGameManager.Instance.gameSocket = 1;
     }
 
-    private void Test()
+    private void AddressAll()
     {
         //GameManger를 이용해서 확인하고 자신과 다른 peer들을 구분하자
         //socket으로 비교 addr을 저장
@@ -298,7 +298,7 @@ public class PacketHandler : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            socket = binaryReader.ReadUInt32();
+            socket = binaryReader.ReadUInt32(); 
             addr = binaryReader.ReadUInt32();
 
             memoryStream.Position -= sizeof(uint);

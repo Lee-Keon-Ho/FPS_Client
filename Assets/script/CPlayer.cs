@@ -11,14 +11,15 @@ public class CPlayer
     int m_ready;
     int m_number;
     string m_addrStr;
-
+    bool m_udpConnect;
 
     public bool Init()
     {
         m_name = "";
         m_boss = 0;
         m_ready = 0;
-        
+        m_udpConnect = false;
+
         if (m_name == null) return false;
 
         return true;
@@ -48,4 +49,6 @@ public class CPlayer
     public uint GetAddr() { return m_addr; }
     public void SetAddrStr(string _str) { m_addrStr = _str; }
     public string GetAddrStr() { return m_addrStr; }
+
+    public void SetUdpConnect(bool _udp) { m_udpConnect = _udp; }
 }
