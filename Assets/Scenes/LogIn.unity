@@ -917,6 +917,7 @@ MonoBehaviour:
   number: 0
   gameStartTest: 0
   gameStart: 0
+  gameSocket: 0
 --- !u!1 &805019543
 GameObject:
   m_ObjectHideFlags: 0

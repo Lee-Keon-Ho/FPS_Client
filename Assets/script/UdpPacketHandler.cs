@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+using System.Net;
 
 public class UdpPacketHandler : MonoBehaviour
 {
     public static UdpPacketHandler instance;
     byte[] tempBuffer;
-    MemoryStream memoryStream;
+    MemoryStream readStream;
+    MemoryStream writeStream;
     BinaryReader binaryReader;
+    BinaryWriter binaryWriter;
     int readPos;
     int bufferSize;
 
@@ -29,8 +32,8 @@ public class UdpPacketHandler : MonoBehaviour
         }
 
         tempBuffer = new byte[65530];
-        memoryStream = new MemoryStream(tempBuffer);
-        binaryReader = new BinaryReader(memoryStream);
+        readStream = new MemoryStream(tempBuffer);
+        binaryReader = new BinaryReader(readStream);
     }
 
     public int Handle(CUdp _udp)
@@ -51,7 +54,7 @@ public class UdpPacketHandler : MonoBehaviour
                 Array.Copy(_udp.GetBuffer(), 0, tempBuffer, 0, _udp.GetRemianSize());
             }
 
-            memoryStream.Position = 0;
+            readStream.Position = 0;
 
             ushort size = binaryReader.ReadUInt16();
             ushort type = binaryReader.ReadUInt16();
@@ -61,28 +64,10 @@ public class UdpPacketHandler : MonoBehaviour
             switch (type)
             {
                 case 1:
-                    app.SetBoolUdp(1);
 
                     break;
                 case 2:
-                    CGameManager gm = CGameManager.Instance;
-
-                    uint socket = binaryReader.ReadUInt32();
-
-                    int count = gm.GetPlayerCount();
-
-                    CPlayer player;
-
-                    for(int i = 0; i < count; i++)
-                    {
-                        player = gm.GetPlayer(i);
-                        if(player.GetSocket() == socket)
-                        {
-                            player.SetUdpConnect(true);
-                        }
-                    }
-
-                    // 모든 유저와 udp 통신이 완료되었다고 하면 peer1에게 완료되었다고 보내기
+                    Udp2();
                     break;
                 default:
                     break;
@@ -91,5 +76,52 @@ public class UdpPacketHandler : MonoBehaviour
             return size;
         }
         return 0;
+    }
+
+    void Udp2()
+    {
+        App app = Transform.FindObjectOfType<App>();
+        LoadingSceneController loading = Transform.FindObjectOfType<LoadingSceneController>();
+        CGameManager gm = CGameManager.Instance;
+
+        uint socket = binaryReader.ReadUInt32();
+
+        int count = gm.GetPlayerCount();
+
+        CPlayer player;
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if (player.GetSocket() == socket)
+            {
+                player.SetUdpConnect(true);
+                loading.SetOk(i);
+
+                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                EndPoint end = (EndPoint)endPoint;
+
+                byte[] buffer = new byte[100];
+                writeStream = new MemoryStream(buffer);
+                binaryWriter = new BinaryWriter(writeStream);
+
+                binaryWriter.Write((ushort)8);
+                binaryWriter.Write((ushort)2);
+                binaryWriter.Write(player.GetSocket());
+
+                int sendSize = app.GetUdp().GetSocket().SendTo(buffer, (int)writeStream.Position, System.Net.Sockets.SocketFlags.None, end);
+                Debug.Log(sendSize);
+            }
+        }
+
+        int connectCount = 0;
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+
+            if (player.GetUdpconnect()) connectCount++;
+        }
+
+        //if (connectCount == count) gm.gameSocket = 2;
     }
 }

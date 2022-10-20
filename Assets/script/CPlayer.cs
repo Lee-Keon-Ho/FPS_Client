@@ -49,6 +49,6 @@ public class CPlayer
     public uint GetAddr() { return m_addr; }
     public void SetAddrStr(string _str) { m_addrStr = _str; }
     public string GetAddrStr() { return m_addrStr; }
-
     public void SetUdpConnect(bool _udp) { m_udpConnect = _udp; }
+    public bool GetUdpconnect() { return m_udpConnect; }
 }

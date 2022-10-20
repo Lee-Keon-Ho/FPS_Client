@@ -132,8 +132,4 @@ public class App : MonoBehaviour
     public void SetOnGame(bool _onGame) { m_udp.SetOnGame(_onGame); }
 
     public CUdp GetUdp() { return m_udp; }
-
-    public void SetBoolUdp(ushort _b) { bUdp = _b; }
-
-    public ushort GetBoolUdp() { return bUdp; }
 }

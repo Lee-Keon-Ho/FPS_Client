@@ -15,6 +15,7 @@ public class LoadingSceneController : MonoBehaviour
     public TextMeshProUGUI[] socket;
     public TextMeshProUGUI[] addr;
     public TextMeshProUGUI[] port;
+    private bool[] bOk = new bool[8];
 
     int count;
 
@@ -55,7 +56,7 @@ public class LoadingSceneController : MonoBehaviour
             }
             m_time += Time.deltaTime;
         }
-        else
+        else 
         {
             if (m_time >= 1f)
             {
@@ -96,7 +97,7 @@ public class LoadingSceneController : MonoBehaviour
             }
             else
             {
-                if(CGameManager.Instance.gameStartTest == 1)
+                if(CGameManager.Instance.gameSocket == 2)
                 {
                     timer += Time.unscaledDeltaTime;
                     progressBar.fillAmount = Mathf.Lerp(0.9f, 1f, timer);
@@ -108,5 +109,10 @@ public class LoadingSceneController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SetOk(int _num) 
+    {
+        ok[_num].gameObject.SetActive(true);
     }
 }

@@ -78,7 +78,6 @@ public class CUdp
                 continue;
             }
         }
-        Debug.Log("Run ≈ª√‚");
     }
 
     public void RunLoop()
@@ -118,6 +117,8 @@ public class CUdp
         {
             CPlayer player = gm.GetPlayer(i);
 
+            if (player.GetUdpconnect()) continue;
+
             if (app.GetPlayer().GetSocket() != player.GetSocket())
             {
                 IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
@@ -127,8 +128,12 @@ public class CUdp
                 bw.Write((ushort)2);
                 bw.Write(app.GetPlayer().GetSocket());
 
-                int size = m_socket.SendTo(sendBuffer, 8, SocketFlags.None, end);
+                int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
                 Debug.Log(size);
+            }
+            else
+            {
+                player.SetUdpConnect(true);
             }
         }
     }
@@ -138,4 +143,6 @@ public class CUdp
     public CRingBuffer GetRingBuffer() { return ringBuffer; }
     public int GetRemianSize() { return remainSize; }
     public byte[] GetBuffer() { return recvBuffer; }
+
+    public Socket GetSocket() { return m_socket; }
 }
