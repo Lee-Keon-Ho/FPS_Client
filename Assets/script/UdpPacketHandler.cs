@@ -84,6 +84,8 @@ public class UdpPacketHandler : MonoBehaviour
         LoadingSceneController loading = Transform.FindObjectOfType<LoadingSceneController>();
         CGameManager gm = CGameManager.Instance;
 
+        if (gm.gameSocket == 2) return;
+
         uint socket = binaryReader.ReadUInt32();
 
         int count = gm.GetPlayerCount();
@@ -122,6 +124,6 @@ public class UdpPacketHandler : MonoBehaviour
             if (player.GetUdpconnect()) connectCount++;
         }
 
-        //if (connectCount == count) gm.gameSocket = 2;
+        if (connectCount == count) gm.gameSocket = 2;
     }
 }

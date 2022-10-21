@@ -70,9 +70,20 @@ public class CGameManager : MonoBehaviour
 
     public void SetPlayers(int _num, uint _socket, uint _addr, ushort _port, string _addrStr)
     {
+        CGameManager gm = CGameManager.Instance;
+        App app = Transform.FindObjectOfType<App>();
+
         m_player[_num].SetSocet(_socket);
         m_player[_num].SetAddr(_addr, _port);
         m_player[_num].SetAddrStr(_addrStr);
+
+        for (int i = 0; i < gm.playerCount; i++)
+        {
+            if (app.GetSocket() == gm.GetPlayer(i).GetSocket())
+            {
+                m_player[_num].SetAddrStr("0");
+            }
+        }
     }
 
     public CPlayer GetPlayer(int _num) { return m_player[_num]; }

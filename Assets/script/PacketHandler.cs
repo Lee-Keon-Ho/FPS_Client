@@ -285,8 +285,6 @@ public class PacketHandler : MonoBehaviour
 
     private void AddressAll()
     {
-        //GameManger를 이용해서 확인하고 자신과 다른 peer들을 구분하자
-        //socket으로 비교 addr을 저장
         App app = Transform.FindObjectOfType<App>();
 
         int boss = binaryReader.ReadUInt16();
@@ -311,11 +309,10 @@ public class PacketHandler : MonoBehaviour
             string addrStr = b1.ToString() + "." + b2.ToString() + "." + b3.ToString() + "." + b4.ToString();
 
             port = binaryReader.ReadUInt16();
+
             CGameManager.Instance.SetPlayers(i, socket, addr, port, addrStr);
         }
 
         CGameManager.Instance.gameSocket = 1;
-
-        //CGameManager.Instance.gameStartTest = 1;
     }
 }

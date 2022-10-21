@@ -63,7 +63,7 @@ public class CUdp
             {
                 recvSize = m_socket.ReceiveFrom(recvBuffer, ref end);
                 remainSize += recvSize;
-                Debug.Log(end.ToString());
+                Debug.Log("Recv : " + end + " type : " + recvBuffer[3]);
             }
             catch(Exception e)
             {
@@ -117,7 +117,7 @@ public class CUdp
         {
             CPlayer player = gm.GetPlayer(i);
 
-            if (player.GetUdpconnect()) continue;
+            //if (player.GetUdpconnect()) continue;
 
             if (app.GetPlayer().GetSocket() != player.GetSocket())
             {
@@ -128,8 +128,12 @@ public class CUdp
                 bw.Write((ushort)2);
                 bw.Write(app.GetPlayer().GetSocket());
 
+                Debug.Log("SendTo : " + end);
                 int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
-                Debug.Log(size);
+                if(size < 0)
+                {
+                    Debug.Log("send gdsg");
+                }
             }
             else
             {
