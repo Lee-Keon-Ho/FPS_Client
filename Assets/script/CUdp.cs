@@ -142,6 +142,36 @@ public class CUdp
         }
     }
 
+    public void PositionTest(Vector3 _vector, uint _socket)
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        bw.Write((ushort)20);
+        bw.Write((ushort)3);
+        bw.Write(_socket);
+        bw.Write(_vector.x);
+        bw.Write(_vector.y);
+        bw.Write(_vector.z);
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+            EndPoint end = (EndPoint)endPoint;
+
+
+
+            int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+            Debug.Log(end);
+        }
+    }
+
+
     public bool GetOnGame() { return GoGame; }
     public void SetOnGame(bool _onGame) { GoGame = _onGame; }
     public CRingBuffer GetRingBuffer() { return ringBuffer; }

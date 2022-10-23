@@ -10,6 +10,7 @@ public class CPlayer
     int m_boss;
     int m_ready;
     int m_number;
+    int m_team;
     string m_addrStr;
     bool m_udpConnect;
 
@@ -31,11 +32,9 @@ public class CPlayer
     public int GetBoss() { return m_boss; }
     public void SetReady(int _ready) { m_ready = _ready; }
     public int GetReady() { return m_ready; }
-    public void SetNumber(int _number) 
-    {
-        m_number = _number;
-        CGameManager.Instance.number = _number;
-    } 
+    public void SetNumber(int _number) { m_number = _number; }
+
+    public void SetTeam(int _team) { m_team = _team; }
 
     public void SetSocet(uint _socket) { m_socket = _socket; }
     public uint GetSocket() { return m_socket; }

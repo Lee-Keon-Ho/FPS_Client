@@ -10,7 +10,6 @@ public class CGameManager : MonoBehaviour
     private int playerCount;
     private CPlayer[] m_player = new CPlayer[8];
 
-    public int number;
     private Vector3 teamA;
     private Vector3 teamB;
     public ushort gameStartTest = 0; // 2022-10-07 test

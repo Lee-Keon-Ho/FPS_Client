@@ -59,8 +59,6 @@ public class UdpPacketHandler : MonoBehaviour
             ushort size = binaryReader.ReadUInt16();
             ushort type = binaryReader.ReadUInt16();
 
-            App app = Transform.FindObjectOfType<App>();
-
             switch (type)
             {
                 case 1:
@@ -68,6 +66,9 @@ public class UdpPacketHandler : MonoBehaviour
                     break;
                 case 2:
                     Udp2();
+                    break;
+                case 3:
+                    Udp3();
                     break;
                 default:
                     break;
@@ -125,5 +126,10 @@ public class UdpPacketHandler : MonoBehaviour
         }
 
         if (connectCount == count) gm.gameSocket = 2;
+    }
+
+    void Udp3()
+    {
+
     }
 }

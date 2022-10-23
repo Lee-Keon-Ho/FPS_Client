@@ -13,6 +13,7 @@ public class App : MonoBehaviour
 
     private void Awake()
     {
+        Screen.SetResolution(1280, 720, false);
         m_socket = new CSocket();
         m_player = new CPlayer();
         m_udp = new CUdp();
@@ -118,7 +119,7 @@ public class App : MonoBehaviour
     public void SetReady(int _ready) { m_player.SetReady(_ready); }
     public int GetReady() { return m_player.GetReady(); }
     public void SetNumber(int _num) { m_player.SetNumber(_num); }
-
+    public void SetTeam(int _team) { m_player.SetTeam(_team); }
     public void SetSocket(ushort _socket) { m_player.SetSocet(_socket); }
 
     public uint GetSocket() { return m_player.GetSocket(); }

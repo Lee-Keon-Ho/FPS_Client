@@ -217,11 +217,14 @@ public class PacketHandler : MonoBehaviour
         int boss = binaryReader.ReadUInt16();
         int ready = binaryReader.ReadUInt16();
         int number = binaryReader.ReadUInt16();
+        int team = binaryReader.ReadUInt16();
+
         App player = Transform.FindObjectOfType<App>();
 
         player.SetBoss(boss);
         player.SetReady(ready);
         player.SetNumber(number);
+        player.SetTeam(team);
     }
 
     private void RoomState()
@@ -286,13 +289,16 @@ public class PacketHandler : MonoBehaviour
     private void AddressAll()
     {
         App app = Transform.FindObjectOfType<App>();
-
-        int boss = binaryReader.ReadUInt16();
+        CGameManager gm = CGameManager.Instance;
         int count = binaryReader.ReadUInt16();
+        int teamA = binaryReader.ReadUInt16();
+        int teamB = binaryReader.ReadUInt16();
         uint addr;
         uint socket;
         ushort port;
-        CGameManager.Instance.SetPlayerCount(count);
+        gm.SetPlayerCount(count);
+        gm.SetTeamACount(teamA);
+        gm.SetTeamBCount(teamB);
 
         for (int i = 0; i < count; i++)
         {

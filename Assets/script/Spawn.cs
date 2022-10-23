@@ -7,19 +7,18 @@ public class Spawn : MonoBehaviour
     public GameObject[] A_spawn;
     public GameObject[] B_spawn;
     public GameObject m_player;
-
+    private CUdp udp;
     void Awake()
     {
-        CGameManager gameManager = CGameManager.Instance;
-        int teamACount = gameManager.GetTeamACount();
-        int teamBCount = gameManager.GetTeamBCount();
+        CGameManager gm = CGameManager.Instance;
+        int teamACount = gm.GetTeamACount();
+        int teamBCount = gm.GetTeamBCount();
 
         App app = Transform.FindObjectOfType<App>();
         CPlayer player = app.GetPlayer();
 
         int team = player.GetNumber();
-        A_spawn[0].SetActive(true);
-        B_spawn[0].SetActive(true);
+
         if (team == 1)
         {
             for (int i = 0; i < teamACount; i++)
@@ -49,6 +48,7 @@ public class Spawn : MonoBehaviour
     {
         App app = Transform.FindObjectOfType<App>();
         CPlayer player = app.GetPlayer();
+        udp = app.GetUdp();
 
         if (player.GetNumber() == 1)
         {
@@ -67,6 +67,8 @@ public class Spawn : MonoBehaviour
     {
         App app = Transform.FindObjectOfType<App>();
         CPlayer player = app.GetPlayer();
+
+        udp.PositionTest(m_player.transform.position, player.GetSocket());
 
         CGameManager.Instance.TeamAPosition(m_player.transform.position);
         if (player.GetNumber() != 1)
