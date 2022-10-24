@@ -164,8 +164,6 @@ public class CUdp
             IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
             EndPoint end = (EndPoint)endPoint;
 
-
-
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
             Debug.Log(end);
         }

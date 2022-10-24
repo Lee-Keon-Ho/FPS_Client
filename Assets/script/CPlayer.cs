@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class CPlayer
 {
@@ -13,6 +14,8 @@ public class CPlayer
     int m_team;
     string m_addrStr;
     bool m_udpConnect;
+    Vector3 m_position;
+
 
     public bool Init()
     {
@@ -35,7 +38,7 @@ public class CPlayer
     public void SetNumber(int _number) { m_number = _number; }
 
     public void SetTeam(int _team) { m_team = _team; }
-
+    public int GetTeam() { return m_team; }
     public void SetSocet(uint _socket) { m_socket = _socket; }
     public uint GetSocket() { return m_socket; }
     public int GetNumber() { return m_number; }
@@ -50,4 +53,6 @@ public class CPlayer
     public string GetAddrStr() { return m_addrStr; }
     public void SetUdpConnect(bool _udp) { m_udpConnect = _udp; }
     public bool GetUdpconnect() { return m_udpConnect; }
+    public void SetPosition(Vector3 _position) { m_position = _position; }
+    public Vector3 GetPosition() { return m_position; }
 }

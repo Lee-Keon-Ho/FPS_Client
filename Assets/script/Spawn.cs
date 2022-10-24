@@ -4,42 +4,33 @@ using UnityEngine;
 
 public class Spawn : MonoBehaviour
 {
-    public GameObject[] A_spawn;
-    public GameObject[] B_spawn;
+    public GameObject[] spawn;
     public GameObject m_player;
     private CUdp udp;
+    private CGameManager gm;
+    int playerCount;
     void Awake()
     {
-        CGameManager gm = CGameManager.Instance;
+        gm = CGameManager.Instance;
         int teamACount = gm.GetTeamACount();
         int teamBCount = gm.GetTeamBCount();
-
+        playerCount = gm.GetPlayerCount();
         App app = Transform.FindObjectOfType<App>();
         CPlayer player = app.GetPlayer();
 
         int team = player.GetNumber();
 
-        if (team == 1)
+        for(int i = 0; i < playerCount; i++)
         {
-            for (int i = 0; i < teamACount; i++)
+            if(player.GetNumber() == i)
             {
-                A_spawn[i].SetActive(false);
+                spawn[i].SetActive(false);
             }
-            for (int i = 0; i < teamBCount; i++)
+            else
             {
-                B_spawn[i].SetActive(true);
+                spawn[i].SetActive(true);
             }
-        }
-        else
-        {
-            for (int i = 0; i < teamACount; i++)
-            {
-                A_spawn[i].SetActive(true);
-            }
-            for (int i = 0; i < teamBCount; i++)
-            {
-                B_spawn[i].SetActive(false);
-            }
+            
         }
     }
 
@@ -50,16 +41,13 @@ public class Spawn : MonoBehaviour
         CPlayer player = app.GetPlayer();
         udp = app.GetUdp();
 
-        if (player.GetNumber() == 1)
+        for(int i = 0; i < playerCount; i++)
         {
-            m_player.transform.position = A_spawn[0].transform.position;
+            if(player.GetNumber() == i)
+            {
+                m_player.transform.position = spawn[i].transform.position;
+            }
         }
-        if (player.GetNumber() == 2)
-        {
-            m_player.transform.position = B_spawn[0].transform.position;
-        }
-        CGameManager.Instance.gameStart = true;
-        //app.Test(m_player.transform.position);
     }
 
     // Update is called once per frame
@@ -70,14 +58,12 @@ public class Spawn : MonoBehaviour
 
         udp.PositionTest(m_player.transform.position, player.GetSocket());
 
-        CGameManager.Instance.TeamAPosition(m_player.transform.position);
-        if (player.GetNumber() != 1)
+        for(int i = 0; i < playerCount; i++)
         {
-            A_spawn[0].transform.position = CGameManager.Instance.GetB();
-        }
-        if (player.GetNumber() != 2)
-        {
-            B_spawn[0].transform.position = CGameManager.Instance.GetB();
+            if(player.GetNumber() != i)
+            {
+                spawn[i].transform.position = gm.GetPosition(i);
+            }
         }
     }
 
@@ -89,11 +75,11 @@ public class Spawn : MonoBehaviour
         {
             if(_num == 1)
             {
-                A_spawn[0].transform.position = _vector;
+                spawn[0].transform.position = _vector;
             }
             else
             {
-                B_spawn[0].transform.position = _vector;
+                spawn[0].transform.position = _vector;
             }
         }
     }

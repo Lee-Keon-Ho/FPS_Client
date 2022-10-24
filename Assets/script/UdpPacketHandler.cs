@@ -130,6 +130,25 @@ public class UdpPacketHandler : MonoBehaviour
 
     void Udp3()
     {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
 
+        uint socket = binaryReader.ReadUInt32();
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+
+            if(player.GetSocket() == socket)
+            {
+                Vector3 vector;
+                vector.x = binaryReader.ReadSingle();
+                vector.y = binaryReader.ReadSingle();
+                vector.z = binaryReader.ReadSingle();
+
+                player.SetPosition(vector);
+            }
+        }
     }
 }
