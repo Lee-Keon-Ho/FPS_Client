@@ -48,6 +48,7 @@ public class CRingBuffer
         else
         {
             writeStream.Position += _recvSize;
+            if (writeStream.Position > bufferSize) writeStream.Position = 0; // 지우고 새로 만들고
         }
         remainDataSize += _recvSize;
     }

@@ -30,31 +30,27 @@ public class UdpPacketHandler : MonoBehaviour
                 Destroy(this.gameObject);
             }
         }
-
-        tempBuffer = new byte[65530];
-        readStream = new MemoryStream(tempBuffer);
-        binaryReader = new BinaryReader(readStream);
     }
 
-    public int Handle(CUdp _udp)
+    public int Handle(byte[] _recvBuffer, int _recvSize) // recvBuffer를 가져와서 써도 된다.
     {
-        if (_udp.GetRemianSize() > 3)
+        if (_recvSize > 3)
         {
-            readPos = _udp.GetRingBuffer().GetReadPos();
-            bufferSize = _udp.GetRingBuffer().GetSize();
+            //readPos = _udp.GetRingBuffer().GetReadPos();
+            //bufferSize = _udp.GetRingBuffer().GetSize();
 
-            // 여기부터 read에 대한처리
-            if (readPos > bufferSize)
-            {
-                Array.Copy(_udp.GetBuffer(), readPos, tempBuffer, 0, bufferSize - readPos);
-                Array.Copy(_udp.GetBuffer(), 0, tempBuffer, bufferSize - readPos, _udp.GetRingBuffer().GetRemainSize() - (bufferSize - readPos));
-            }
-            else
-            {
-                Array.Copy(_udp.GetBuffer(), 0, tempBuffer, 0, _udp.GetRemianSize());
-            }
+            //if (readPos > bufferSize)
+            //{
+            //    Array.Copy(_udp.GetBuffer(), readPos, tempBuffer, 0, bufferSize - readPos);
+            //    Array.Copy(_udp.GetBuffer(), 0, tempBuffer, bufferSize - readPos, _udp.GetRingBuffer().GetRemainSize() - (bufferSize - readPos));
+            //}
+            //else
+            //{
+            //    Array.Copy(_udp.GetBuffer(), readPos, tempBuffer, 0, _udp.GetRemianSize());
+            //}
 
-            readStream.Position = 0;
+            readStream = new MemoryStream(_recvBuffer);
+            binaryReader = new BinaryReader(readStream);
 
             ushort size = binaryReader.ReadUInt16();
             ushort type = binaryReader.ReadUInt16();
@@ -113,7 +109,6 @@ public class UdpPacketHandler : MonoBehaviour
                 binaryWriter.Write(player.GetSocket());
 
                 int sendSize = app.GetUdp().GetSocket().SendTo(buffer, (int)writeStream.Position, System.Net.Sockets.SocketFlags.None, end);
-                Debug.Log(sendSize);
             }
         }
 
@@ -130,6 +125,7 @@ public class UdpPacketHandler : MonoBehaviour
 
     void Udp3()
     {
+        Debug.Log("Udp3");
         CGameManager gm = CGameManager.Instance;
         int count = gm.GetPlayerCount();
         CPlayer player;

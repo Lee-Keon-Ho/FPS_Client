@@ -18,11 +18,9 @@ public class Spawn : MonoBehaviour
         App app = Transform.FindObjectOfType<App>();
         CPlayer player = app.GetPlayer();
 
-        int team = player.GetNumber();
-
         for(int i = 0; i < playerCount; i++)
         {
-            if(player.GetNumber() == i)
+            if(player.GetNumber() == i + 1)
             {
                 spawn[i].SetActive(false);
             }
@@ -43,7 +41,7 @@ public class Spawn : MonoBehaviour
 
         for(int i = 0; i < playerCount; i++)
         {
-            if(player.GetNumber() == i)
+            if(player.GetNumber() == i + 1)
             {
                 m_player.transform.position = spawn[i].transform.position;
             }
@@ -60,7 +58,7 @@ public class Spawn : MonoBehaviour
 
         for(int i = 0; i < playerCount; i++)
         {
-            if(player.GetNumber() != i)
+            if(player.GetSocket() != gm.GetPlayer(i).GetSocket())
             {
                 spawn[i].transform.position = gm.GetPosition(i);
             }

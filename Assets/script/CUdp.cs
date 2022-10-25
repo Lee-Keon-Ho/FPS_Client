@@ -9,8 +9,9 @@ public class CUdp
 {
     CRingBuffer ringBuffer = new CRingBuffer(65535);
     byte[] sendBuffer = new byte[65535];
-    byte[] recvBuffer = new byte[65535];
-        
+    byte[] recvBuffer = new byte[1000];
+    int recvSize;
+
     Socket m_socket;
     Thread thread;
 
@@ -21,12 +22,6 @@ public class CUdp
     MemoryStream readStream;
     BinaryWriter binaryWriter;
     BinaryReader binaryReader;
-
-    public bool OnGame = true;
-    public bool GoGame = false;
-
-    int remainSize = 0;
-    int writePos = 0;
 
     public void Init(String _ip, int _port)
     {
@@ -55,22 +50,22 @@ public class CUdp
 
         while (true)
         {
-            //int writePos = ringBuffer.GetWritePos();
-            int recvSize = 0;
+            int writePos = ringBuffer.GetWritePos();
+            //int recvSize = 0;
 
-            //recvSize = m_socket.ReceiveFrom(recvBuffer, writePos, ringBuffer.GetWriteBufferSize(),0 , ref end); // 여러명일 경우
             try
             {
-                recvSize = m_socket.ReceiveFrom(recvBuffer, ref end);
-                remainSize += recvSize;
-                Debug.Log("Recv : " + end + " type : " + recvBuffer[3]);
+                recvSize = m_socket.ReceiveFrom(recvBuffer, 0, 1000, 0, ref end); // 여러명일 경우
+                //ringBuffer.Write(recvSize); 
+
+                // 받아서 바로 처리
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.Log(e);
+                //ringBuffer.Write(recvSize); // 끊겼을때 멈춰라
+                // 버퍼가 최과 되면 0으로 바꾸는 부분을 새로 만들어서 사용
             }
-            
-            //ringBuffer.Write(recvSize);
 
             if (recvSize < 0)
             {
@@ -82,10 +77,8 @@ public class CUdp
 
     public void RunLoop()
     {
-        if (remainSize > 3)
-        {
-            remainSize -= UdpPacketHandler.instance.Handle(this);
-        }
+        // 패킷이 있다.
+        UdpPacketHandler.instance.Handle(recvBuffer, recvSize);
     }
 
     public void SendSocket(uint _socket)
@@ -130,10 +123,6 @@ public class CUdp
 
                 Debug.Log("SendTo : " + end);
                 int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
-                if(size < 0)
-                {
-                    Debug.Log("send gdsg");
-                }
             }
             else
             {
@@ -165,16 +154,12 @@ public class CUdp
             EndPoint end = (EndPoint)endPoint;
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
-            Debug.Log(end);
         }
     }
 
-
-    public bool GetOnGame() { return GoGame; }
-    public void SetOnGame(bool _onGame) { GoGame = _onGame; }
     public CRingBuffer GetRingBuffer() { return ringBuffer; }
-    public int GetRemianSize() { return remainSize; }
-    public byte[] GetBuffer() { return recvBuffer; }
+    public int GetRemianSize() { return ringBuffer.GetRemainSize(); }
+    public byte[] GetBuffer() { return ringBuffer.GetBuffer(); }
 
     public Socket GetSocket() { return m_socket; }
 }

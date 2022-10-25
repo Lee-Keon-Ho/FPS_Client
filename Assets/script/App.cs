@@ -9,7 +9,6 @@ public class App : MonoBehaviour
     public CSocket m_socket;
     public CPlayer m_player;
     public CUdp m_udp;
-    private ushort bUdp; // 이름 바꾸자
 
     private void Awake()
     {
@@ -17,7 +16,6 @@ public class App : MonoBehaviour
         m_socket = new CSocket();
         m_player = new CPlayer();
         m_udp = new CUdp();
-        bUdp = 0;
         m_player.Init();
         m_socket.Init("112.184.241.149", 30002);
         DontDestroyOnLoad(this);
@@ -33,7 +31,7 @@ public class App : MonoBehaviour
     void Update()
     {
         m_socket.RunLoop(); // tcp
-        m_udp.RunLoop(); // udp
+        m_udp.RunLoop(); // udp // 이건 이제 필요 없어 지고
     }
 
     private void OnDestroy()
@@ -127,10 +125,6 @@ public class App : MonoBehaviour
     public CPlayer GetPlayer() { return m_player; }
 
     public void SetAddr(uint _addr, ushort _port) { m_player.SetAddr(_addr, _port); }
-
-    public bool GetOnGame() { return m_udp.GetOnGame(); }
-
-    public void SetOnGame(bool _onGame) { m_udp.SetOnGame(_onGame); }
 
     public CUdp GetUdp() { return m_udp; }
 }
