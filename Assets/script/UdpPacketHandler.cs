@@ -61,10 +61,10 @@ public class UdpPacketHandler : MonoBehaviour
 
                     break;
                 case 2:
-                    Udp2();
+                    PeerConnect();
                     break;
                 case 3:
-                    Udp3();
+                    PeerPosition();
                     break;
                 default:
                     break;
@@ -75,7 +75,7 @@ public class UdpPacketHandler : MonoBehaviour
         return 0;
     }
 
-    void Udp2()
+    void PeerConnect()
     {
         App app = Transform.FindObjectOfType<App>();
         LoadingSceneController loading = Transform.FindObjectOfType<LoadingSceneController>();
@@ -123,9 +123,8 @@ public class UdpPacketHandler : MonoBehaviour
         if (connectCount == count) gm.gameSocket = 2;
     }
 
-    void Udp3()
+    void PeerPosition()
     {
-        Debug.Log("Udp3");
         CGameManager gm = CGameManager.Instance;
         int count = gm.GetPlayerCount();
         CPlayer player;
@@ -138,12 +137,21 @@ public class UdpPacketHandler : MonoBehaviour
 
             if(player.GetSocket() == socket)
             {
-                Vector3 vector;
-                vector.x = binaryReader.ReadSingle();
-                vector.y = binaryReader.ReadSingle();
-                vector.z = binaryReader.ReadSingle();
+                Vector3 position;
+                Quaternion rotation = Quaternion.identity;
 
-                player.SetPosition(vector);
+                position.x = binaryReader.ReadSingle();
+                position.y = binaryReader.ReadSingle();
+                position.z = binaryReader.ReadSingle();
+
+                rotation.x = binaryReader.ReadSingle();
+                rotation.y = binaryReader.ReadSingle();
+                rotation.z = binaryReader.ReadSingle();
+                rotation.w = binaryReader.ReadSingle();
+
+                Debug.Log(rotation);
+
+                player.SetPosition(position, rotation);
             }
         }
     }

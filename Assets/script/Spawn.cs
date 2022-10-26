@@ -54,13 +54,14 @@ public class Spawn : MonoBehaviour
         App app = Transform.FindObjectOfType<App>();
         CPlayer player = app.GetPlayer();
 
-        udp.PositionTest(m_player.transform.position, player.GetSocket());
-
+        udp.PeerPosition(m_player.transform.position, m_player.transform.rotation, player.GetSocket());
+        Debug.Log(m_player.transform.rotation);
         for(int i = 0; i < playerCount; i++)
         {
             if(player.GetSocket() != gm.GetPlayer(i).GetSocket())
             {
                 spawn[i].transform.position = gm.GetPosition(i);
+                spawn[i].transform.rotation = gm.GetRotation(i);
             }
         }
     }

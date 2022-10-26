@@ -85,4 +85,5 @@ public class CGameManager : MonoBehaviour
     public int GetPlayerCount() { return playerCount; }
 
     public Vector3 GetPosition(int _index) { return m_player[_index].GetPosition(); }
+    public Quaternion GetRotation(int _index) { return m_player[_index].GetRotation(); }
 }

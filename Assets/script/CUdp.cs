@@ -110,8 +110,6 @@ public class CUdp
         {
             CPlayer player = gm.GetPlayer(i);
 
-            //if (player.GetUdpconnect()) continue;
-
             if (app.GetPlayer().GetSocket() != player.GetSocket())
             {
                 IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
@@ -131,7 +129,7 @@ public class CUdp
         }
     }
 
-    public void PositionTest(Vector3 _vector, uint _socket)
+    public void PeerPosition(Vector3 _positon, Quaternion _Rotation, uint _socket)
     {
         CGameManager gm = CGameManager.Instance;
         int count = gm.GetPlayerCount();
@@ -140,13 +138,17 @@ public class CUdp
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
-        bw.Write((ushort)20);
-        bw.Write((ushort)3);
-        bw.Write(_socket);
-        bw.Write(_vector.x);
-        bw.Write(_vector.y);
-        bw.Write(_vector.z);
-
+        bw.Write((ushort)36); // 2
+        bw.Write((ushort)3); // 2
+        bw.Write(_socket); // 4
+        bw.Write(_positon.x); // 4
+        bw.Write(_positon.y); // 4
+        bw.Write(_positon.z); // 4
+        bw.Write(_Rotation.x); // 4
+        bw.Write(_Rotation.y); // 4
+        bw.Write(_Rotation.z); // 4
+        bw.Write(_Rotation.w);
+        
         for (int i = 0; i < count; i++)
         {
             player = gm.GetPlayer(i);
