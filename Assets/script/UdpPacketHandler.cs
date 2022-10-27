@@ -149,9 +149,10 @@ public class UdpPacketHandler : MonoBehaviour
                 rotation.z = binaryReader.ReadSingle();
                 rotation.w = binaryReader.ReadSingle();
 
-                Debug.Log(rotation);
+                int action = binaryReader.ReadInt32();
 
                 player.SetPosition(position, rotation);
+                player.SetAction(action);
             }
         }
     }

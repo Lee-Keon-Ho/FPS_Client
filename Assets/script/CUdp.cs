@@ -4,24 +4,21 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Collections;
 
 public class CUdp
 {
-    CRingBuffer ringBuffer = new CRingBuffer(65535);
-    byte[] sendBuffer = new byte[65535];
+    byte[] sendBuffer = new byte[1000];
     byte[] recvBuffer = new byte[1000];
     int recvSize;
+
+    Queue que = new Queue();
 
     Socket m_socket;
     Thread thread;
 
     IPEndPoint iPEndPoint;
     EndPoint m_end;
-
-    MemoryStream writeStream;
-    MemoryStream readStream;
-    BinaryWriter binaryWriter;
-    BinaryReader binaryReader;
 
     public void Init(String _ip, int _port)
     {
@@ -50,12 +47,13 @@ public class CUdp
 
         while (true)
         {
-            int writePos = ringBuffer.GetWritePos();
             //int recvSize = 0;
 
             try
             {
                 recvSize = m_socket.ReceiveFrom(recvBuffer, 0, 1000, 0, ref end); // 여러명일 경우
+                que.Enqueue(recvBuffer);
+                Debug.Log(que.Count);
                 //ringBuffer.Write(recvSize); 
 
                 // 받아서 바로 처리
@@ -129,7 +127,7 @@ public class CUdp
         }
     }
 
-    public void PeerPosition(Vector3 _positon, Quaternion _Rotation, uint _socket)
+    public void PeerPosition(Vector3 _positon, Quaternion _Rotation, uint _socket, int _action)
     {
         CGameManager gm = CGameManager.Instance;
         int count = gm.GetPlayerCount();
@@ -138,7 +136,7 @@ public class CUdp
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
-        bw.Write((ushort)36); // 2
+        bw.Write((ushort)40); // 2
         bw.Write((ushort)3); // 2
         bw.Write(_socket); // 4
         bw.Write(_positon.x); // 4
@@ -148,7 +146,8 @@ public class CUdp
         bw.Write(_Rotation.y); // 4
         bw.Write(_Rotation.z); // 4
         bw.Write(_Rotation.w);
-        
+        bw.Write(_action);
+
         for (int i = 0; i < count; i++)
         {
             player = gm.GetPlayer(i);
@@ -158,10 +157,5 @@ public class CUdp
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
     }
-
-    public CRingBuffer GetRingBuffer() { return ringBuffer; }
-    public int GetRemianSize() { return ringBuffer.GetRemainSize(); }
-    public byte[] GetBuffer() { return ringBuffer.GetBuffer(); }
-
     public Socket GetSocket() { return m_socket; }
 }

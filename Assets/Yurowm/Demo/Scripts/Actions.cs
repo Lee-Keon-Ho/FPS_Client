@@ -82,20 +82,20 @@ public class Actions : MonoBehaviour {
 
     void Update()
     {
-		if(player.GetNumber() == 1)
-        {
-			if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
-			{
-				Run();
-			}
-			else if (Input.GetKey(KeyCode.W))
-			{
-				Walk();
-			}
-			else
-			{
-				Stay();
-			}
+		if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
+		{
+			Run();
+			player.SetAction(2);
+		}
+		else if (Input.GetKey(KeyCode.W))
+		{
+			Walk();
+			player.SetAction(1);
+		}
+		else
+		{
+			Stay();
+			player.SetAction(0);
 		}
 	}
 }

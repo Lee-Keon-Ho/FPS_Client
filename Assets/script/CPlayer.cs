@@ -16,6 +16,7 @@ public class CPlayer
     bool m_udpConnect;
     Vector3 m_position;
     Quaternion m_rotation;
+    int m_action;
 
     public bool Init()
     {
@@ -60,4 +61,6 @@ public class CPlayer
     }
     public Vector3 GetPosition() { return m_position; }
     public Quaternion GetRotation() { return m_rotation; }
+    public void SetAction(int _action) { m_action = _action; }
+    public int GetAction() { return m_action; }
 }
