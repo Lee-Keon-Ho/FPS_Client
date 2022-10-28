@@ -32,47 +32,30 @@ public class UdpPacketHandler : MonoBehaviour
         }
     }
 
-    public int Handle(byte[] _recvBuffer, int _recvSize) // recvBuffer를 가져와서 써도 된다.
+    public int Handle(byte[] _recvBuffer)
     {
-        if (_recvSize > 3)
+        readStream = new MemoryStream(_recvBuffer);
+        binaryReader = new BinaryReader(readStream);
+
+        ushort size = binaryReader.ReadUInt16();
+        ushort type = binaryReader.ReadUInt16();
+
+        switch (type)
         {
-            //readPos = _udp.GetRingBuffer().GetReadPos();
-            //bufferSize = _udp.GetRingBuffer().GetSize();
+            case 1:
 
-            //if (readPos > bufferSize)
-            //{
-            //    Array.Copy(_udp.GetBuffer(), readPos, tempBuffer, 0, bufferSize - readPos);
-            //    Array.Copy(_udp.GetBuffer(), 0, tempBuffer, bufferSize - readPos, _udp.GetRingBuffer().GetRemainSize() - (bufferSize - readPos));
-            //}
-            //else
-            //{
-            //    Array.Copy(_udp.GetBuffer(), readPos, tempBuffer, 0, _udp.GetRemianSize());
-            //}
-
-            readStream = new MemoryStream(_recvBuffer);
-            binaryReader = new BinaryReader(readStream);
-
-            ushort size = binaryReader.ReadUInt16();
-            ushort type = binaryReader.ReadUInt16();
-
-            switch (type)
-            {
-                case 1:
-
-                    break;
-                case 2:
-                    PeerConnect();
-                    break;
-                case 3:
-                    PeerPosition();
-                    break;
-                default:
-                    break;
-            }
-
-            return size;
+                break;
+            case 2:
+                PeerConnect();
+                break;
+            case 3:
+                PeerPosition();
+                break;
+            default:
+                break;
         }
-        return 0;
+
+        return size;
     }
 
     void PeerConnect()

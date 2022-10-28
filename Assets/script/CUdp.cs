@@ -9,10 +9,9 @@ using System.Collections;
 public class CUdp
 {
     byte[] sendBuffer = new byte[1000];
-    byte[] recvBuffer = new byte[1000];
     int recvSize;
 
-    Queue que = new Queue();
+    Queue que = new Queue(); // 2022-10-28 concurrentqueue // C# que 락
 
     Socket m_socket;
     Thread thread;
@@ -47,22 +46,15 @@ public class CUdp
 
         while (true)
         {
-            //int recvSize = 0;
-
             try
             {
+                byte[] recvBuffer = new byte[1000];
                 recvSize = m_socket.ReceiveFrom(recvBuffer, 0, 1000, 0, ref end); // 여러명일 경우
                 que.Enqueue(recvBuffer);
-                Debug.Log(que.Count);
-                //ringBuffer.Write(recvSize); 
-
-                // 받아서 바로 처리
             }
             catch (Exception e)
             {
                 Debug.Log(e);
-                //ringBuffer.Write(recvSize); // 끊겼을때 멈춰라
-                // 버퍼가 최과 되면 0으로 바꾸는 부분을 새로 만들어서 사용
             }
 
             if (recvSize < 0)
@@ -76,7 +68,11 @@ public class CUdp
     public void RunLoop()
     {
         // 패킷이 있다.
-        UdpPacketHandler.instance.Handle(recvBuffer, recvSize);
+        while(que.Count > 0)
+        {
+            UdpPacketHandler.instance.Handle((byte[])que.Dequeue()); // 당장은 고민할 필요가 없다.
+            Debug.Log(que.Count);
+        }
     }
 
     public void SendSocket(uint _socket)

@@ -31,7 +31,7 @@ public class App : MonoBehaviour
     void Update()
     {
         m_socket.RunLoop(); // tcp
-        m_udp.RunLoop(); // udp // 이건 이제 필요 없어 지고
+        m_udp.RunLoop(); // queue 
     }
 
     private void OnDestroy()
