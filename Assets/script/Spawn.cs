@@ -10,6 +10,8 @@ public class Spawn : MonoBehaviour
     private CGameManager gm;
     int playerCount;
     public PeerActions[] pa;
+
+    private float timer = 0f;
     void Awake()
     {
         gm = CGameManager.Instance;
@@ -46,6 +48,10 @@ public class Spawn : MonoBehaviour
             {
                 m_player.transform.position = spawn[i].transform.position;
             }
+            else
+            {
+                spawn[i].transform.position = gm.GetPosition(i);
+            }
         }
     }
 
@@ -55,13 +61,22 @@ public class Spawn : MonoBehaviour
         App app = Transform.FindObjectOfType<App>();
         CPlayer player = app.GetPlayer();
 
-        udp.PeerPosition(m_player.transform.position, m_player.transform.rotation, player.GetSocket(), player.GetAction());
+        timer += Time.deltaTime;
+
+        if(timer >= 0.5f) // 누른다는 생각을 가져라 키보드 값을 보내야 한다.
+        {
+            udp.PeerPosition(m_player.transform.position, m_player.transform.rotation, player.GetSocket(), player.GetAction());
+            timer = 0f;
+        }
+        
         
         for(int i = 0; i < playerCount; i++)
         {
             if(player.GetSocket() != gm.GetPlayer(i).GetSocket())
             {
-                spawn[i].transform.position = gm.GetPosition(i);
+                Vector3 speed = Vector3.zero;
+                spawn[i].transform.position = Vector3.SmoothDamp(spawn[i].transform.position, gm.GetPosition(i), ref speed, 0.1f);
+                //spawn[i].transform.position = gm.GetPosition(i);
                 spawn[i].transform.rotation = gm.GetRotation(i);
                 pa[i].SetAction(gm.GetPlayer(i).GetAction());
             }
