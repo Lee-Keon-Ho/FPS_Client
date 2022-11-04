@@ -8,11 +8,17 @@ public class PeerActions : MonoBehaviour
 	const int countOfDamageAnimations = 3;
 	int lastDamageAnimation = -1;
 	public int action;
+	public GameObject peer;
+	CharacterController controller;
 
-    void Awake()
+	private int peerNum;
+	private CPlayer player;
+
+	void Awake()
     {
         animator = GetComponent<Animator>();
-    }
+		controller = this.GetComponent<CharacterController>();
+	}
 
 	public void Stay()
 	{
@@ -81,12 +87,18 @@ public class PeerActions : MonoBehaviour
 
 	void Update()
     {
-        switch(action)
+		player = CGameManager.Instance.GetPlayer(peerNum);
+		action = player.GetAction();
+		switch (action)
         {
             case 0:
+				this.transform.position = player.GetPosition();
+				this.transform.rotation = Quaternion.Euler(0f, player.GetRotation(), 0f);
 				Stay();
 				break;
             case 1:
+				this.transform.position = player.GetPosition();
+				this.transform.rotation = Quaternion.Euler(0f, player.GetRotation(), 0f);
 				Walk();
 				break;
 			case 2:
@@ -95,5 +107,17 @@ public class PeerActions : MonoBehaviour
 		}
     }
 
-	public void SetAction(int _action) { action = _action; }
+    private void LateUpdate()
+    {
+        if(action == 0)
+        {
+			
+		}
+		if(action == 1)
+        {
+			transform.Translate(Vector3.right * 2 * Time.deltaTime);
+		}
+    }
+	public void SetPlayer(int _peerNum) { peerNum = _peerNum; }
+    public void SetAction(int _action) { action = _action; }
 }

@@ -15,7 +15,7 @@ public class CPlayer
     string m_addrStr;
     bool m_udpConnect;
     Vector3 m_position;
-    Quaternion m_rotation;
+    float m_rotation;
     int m_action;
 
     public bool Init()
@@ -54,13 +54,13 @@ public class CPlayer
     public string GetAddrStr() { return m_addrStr; }
     public void SetUdpConnect(bool _udp) { m_udpConnect = _udp; }
     public bool GetUdpconnect() { return m_udpConnect; }
-    public void SetPosition(Vector3 _position, Quaternion _rotation)
+    public void SetPosition(Vector3 _position, float _rotation)
     {
         m_position = _position;
         m_rotation = _rotation;
     }
     public Vector3 GetPosition() { return m_position; }
-    public Quaternion GetRotation() { return m_rotation; }
+    public float GetRotation() { return m_rotation; }
     public void SetAction(int _action) { m_action = _action; }
     public int GetAction() { return m_action; }
 }

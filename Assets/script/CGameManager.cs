@@ -12,7 +12,6 @@ public class CGameManager : MonoBehaviour
 
     private Vector3 teamA;
     private Vector3 teamB;
-    public ushort gameStartTest = 0; // 2022-10-07 test
 
     public ushort gameSocket = 0;
     void Awake()
@@ -85,5 +84,5 @@ public class CGameManager : MonoBehaviour
     public int GetPlayerCount() { return playerCount; }
 
     public Vector3 GetPosition(int _index) { return m_player[_index].GetPosition(); }
-    public Quaternion GetRotation(int _index) { return m_player[_index].GetRotation(); }
+    public float GetRotation(int _index) { return m_player[_index].GetRotation(); }
 }

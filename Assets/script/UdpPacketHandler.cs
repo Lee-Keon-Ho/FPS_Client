@@ -51,6 +51,12 @@ public class UdpPacketHandler : MonoBehaviour
             case 3:
                 PeerPosition();
                 break;
+            case 4:
+                PeerWalk();
+                break;
+            case 5:
+                PeerStop();
+                break;
             default:
                 break;
         }
@@ -121,23 +127,70 @@ public class UdpPacketHandler : MonoBehaviour
             if(player.GetSocket() == socket)
             {
                 Vector3 position;
-                Quaternion rotation = Quaternion.identity;
 
                 position.x = binaryReader.ReadSingle();
                 position.y = binaryReader.ReadSingle();
                 position.z = binaryReader.ReadSingle();
 
-                rotation.x = binaryReader.ReadSingle();
-                rotation.y = binaryReader.ReadSingle();
-                rotation.z = binaryReader.ReadSingle();
-                rotation.w = binaryReader.ReadSingle();
-
-                Debug.Log(rotation);
-                Debug.Log(socket);
+                float rotation = binaryReader.ReadSingle();
 
                 int action = binaryReader.ReadInt32();
 
                 player.SetPosition(position, rotation);
+                player.SetAction(action);
+            }
+        }
+    }
+
+    void PeerWalk()
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        uint socket = binaryReader.ReadUInt32();
+        int action = binaryReader.ReadInt32();
+
+        Vector3 position;
+        position.x = binaryReader.ReadSingle();
+        position.y = binaryReader.ReadSingle();
+        position.z = binaryReader.ReadSingle();
+
+        float rotation = binaryReader.ReadSingle();
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i); 
+            if (player.GetSocket() == socket)
+            {
+                player.SetPosition(position, rotation); // 받기는 했고 처리 해주는 부분
+                player.SetAction(action);
+            }
+        }
+    }
+
+    void PeerStop()
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        uint socket = binaryReader.ReadUInt32();
+        int action = binaryReader.ReadInt32();
+
+        Vector3 position;
+        position.x = binaryReader.ReadSingle();
+        position.y = binaryReader.ReadSingle();
+        position.z = binaryReader.ReadSingle();
+
+        float rotation = binaryReader.ReadSingle();
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if (player.GetSocket() == socket)
+            {
+                player.SetPosition(position, rotation); // 받기는 했고 처리 해주는 부분
                 player.SetAction(action);
             }
         }

@@ -1193,9 +1193,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bb86eee63191c94cbfb71646267ea32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  number: 0
-  gameStartTest: 0
-  gameStart: 0
   gameSocket: 0
 --- !u!1 &805019543
 GameObject:

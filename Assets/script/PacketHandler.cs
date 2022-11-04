@@ -219,6 +219,8 @@ public class PacketHandler : MonoBehaviour
         int number = binaryReader.ReadUInt16();
         int team = binaryReader.ReadUInt16();
 
+        Debug.Log(number);
+
         App player = Transform.FindObjectOfType<App>();
 
         player.SetBoss(boss);

@@ -71,7 +71,6 @@ public class CUdp
         while(que.Count > 0)
         {
             UdpPacketHandler.instance.Handle((byte[])que.Dequeue()); // 당장은 고민할 필요가 없다.
-            Debug.Log(que.Count);
         }
     }
 
@@ -132,16 +131,13 @@ public class CUdp
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
-        bw.Write((ushort)40); // 2
+        bw.Write((ushort)28); // 2
         bw.Write((ushort)3); // 2
         bw.Write(_socket); // 4
         bw.Write(_positon.x); // 4
         bw.Write(_positon.y); // 4
         bw.Write(_positon.z); // 4
-        bw.Write(_Rotation.x); // 4
         bw.Write(_Rotation.y); // 4
-        bw.Write(_Rotation.z); // 4
-        bw.Write(_Rotation.w);
         bw.Write(_action);
 
         for (int i = 0; i < count; i++)
@@ -153,5 +149,68 @@ public class CUdp
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
     }
+
+    public void KeyDownW(uint _socket, int _action, Vector3 _position, float _rotation)
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)28);
+        bw.Write((ushort)4);
+        bw.Write(_socket);
+        bw.Write(_action);
+        bw.Write(_position.x);
+        bw.Write(_position.y);
+        bw.Write(_position.z);
+        bw.Write(_rotation);
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+            EndPoint end = (EndPoint)endPoint;
+
+            int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+        }
+    }
+
+    public void KeyUpW(uint _socket, int _action, Vector3 _position, float _rotation)
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)28);
+        bw.Write((ushort)5);
+        bw.Write(_socket);
+        bw.Write(_action);
+        bw.Write(_position.x);
+        bw.Write(_position.y);
+        bw.Write(_position.z);
+        bw.Write(_rotation);
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+            EndPoint end = (EndPoint)endPoint;
+
+            int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+        }
+    }
+
+
+
     public Socket GetSocket() { return m_socket; }
 }
