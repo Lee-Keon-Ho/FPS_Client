@@ -58,9 +58,12 @@ public class CPlayer
     {
         m_position = _position;
         m_rotation = _rotation;
+        Debug.Log(m_rotation);
     }
     public Vector3 GetPosition() { return m_position; }
     public float GetRotation() { return m_rotation; }
     public void SetAction(int _action) { m_action = _action; }
     public int GetAction() { return m_action; }
+
+    public void SetRotation(float _rotation) { m_rotation = _rotation; }
 }

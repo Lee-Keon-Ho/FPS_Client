@@ -57,6 +57,9 @@ public class UdpPacketHandler : MonoBehaviour
             case 5:
                 PeerStop();
                 break;
+            case 6:
+                MouseMove();
+                break;
             default:
                 break;
         }
@@ -138,6 +141,7 @@ public class UdpPacketHandler : MonoBehaviour
 
                 player.SetPosition(position, rotation);
                 player.SetAction(action);
+                break;
             }
         }
     }
@@ -165,6 +169,7 @@ public class UdpPacketHandler : MonoBehaviour
             {
                 player.SetPosition(position, rotation); // 받기는 했고 처리 해주는 부분
                 player.SetAction(action);
+                break;
             }
         }
     }
@@ -192,6 +197,28 @@ public class UdpPacketHandler : MonoBehaviour
             {
                 player.SetPosition(position, rotation); // 받기는 했고 처리 해주는 부분
                 player.SetAction(action);
+                break;
+            }
+        }
+    }
+
+    void MouseMove()
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        uint socket = binaryReader.ReadUInt32();
+
+        float rotation = binaryReader.ReadSingle();
+
+        for(int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if(player.GetSocket() == socket)
+            {
+                player.SetRotation(rotation);
+                break;
             }
         }
     }

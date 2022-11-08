@@ -972,7 +972,7 @@ AnimatorState:
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
-  m_TimeParameter: 
+  m_TimeParameter: Speed
 --- !u!1102 &110258489
 AnimatorState:
   serializedVersion: 6
@@ -1219,7 +1219,7 @@ AnimatorStateMachine:
     m_Position: {x: 684, y: 0, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 110299060}
-    m_Position: {x: 912, y: 0, z: 0}
+    m_Position: {x: 910, y: 0, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 110219644}
     m_Position: {x: 456, y: 60, z: 0}

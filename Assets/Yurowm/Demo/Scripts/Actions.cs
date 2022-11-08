@@ -80,20 +80,6 @@ public class Actions : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift)) // 0.5초에 한번 1초에 한번으로
-        {
-            Run();
-            //player.SetAction(2);
-        }
-        else if (Input.GetKey(KeyCode.W))
-        {
-            Walk();
-            //player.SetAction(1);
-        }
-        else
-        {
-            Stay();
-            //player.SetAction(0);
-        }
+		
     }
 }

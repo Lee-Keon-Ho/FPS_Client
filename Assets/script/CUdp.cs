@@ -210,7 +210,32 @@ public class CUdp
         }
     }
 
+    public void MouseMove(uint _socket, float _rotation)
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
 
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)12);
+        bw.Write((ushort)6);
+        bw.Write(_socket);
+        bw.Write(_rotation);
+
+        for(int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+            EndPoint end = (EndPoint)endPoint;
+
+            int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+
+        }
+    }
 
     public Socket GetSocket() { return m_socket; }
 }
