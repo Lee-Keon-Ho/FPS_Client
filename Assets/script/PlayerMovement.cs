@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private CPlayer player;
     CUdp udp;
 
+    bool stop = false;
 
     //Action
     const int countOfDamageAnimations = 3;
@@ -41,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
         animator = this.GetComponent<Animator>();
         camera = Camera.main;
-        controller = this.GetComponent<CharacterController>();
+        //controller = this.GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
@@ -65,15 +66,18 @@ public class PlayerMovement : MonoBehaviour
             {
                 run = true;
                 udp.KeyDownW(player.GetSocket(), 2, this.transform.position, this.transform.eulerAngles.y); // 현재 위치와 방향을 같이 보낸다.
+                this.transform.Translate(Vector3.forward * 2 * Time.deltaTime);
                 Run();
             }
             else if (Input.GetKey(KeyCode.W))
             {
                 udp.KeyDownW(player.GetSocket(), 1, this.transform.position, this.transform.eulerAngles.y);
                 Walk();
+                this.transform.Translate(Vector3.forward * 1 * Time.deltaTime);
             }
             else if (Input.GetKeyUp(KeyCode.W))
             {
+                stop = true;
                 udp.KeyUpW(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
                 Stay();
             }
@@ -98,15 +102,18 @@ public class PlayerMovement : MonoBehaviour
             {
                 run = true;
                 udp.KeyDownW(player.GetSocket(), 2, this.transform.position, this.transform.eulerAngles.y); // 현재 위치와 방향을 같이 보낸다.
+                this.transform.Translate(Vector3.forward * 2 * Time.deltaTime);
                 Run();
             }
             else if (Input.GetKey(KeyCode.W))
             {
                 udp.KeyDownW(player.GetSocket(), 1, this.transform.position, this.transform.eulerAngles.y);
                 Walk();
+                this.transform.Translate(Vector3.forward * 1 * Time.deltaTime);
             }
             else if (Input.GetKeyUp(KeyCode.W))
             {
+                stop = true;
                 udp.KeyUpW(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
                 Stay();
             }
@@ -121,8 +128,12 @@ public class PlayerMovement : MonoBehaviour
                 Stay();
             }
         }
-
-        InputMovement();
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") && stop)
+        {
+            udp.KeyUpW(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
+            stop = false;
+        }
+        //InputMovement();
     }
 
     void LateUpdate()
@@ -143,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 moveDirection = forward * Input.GetAxisRaw("Vertical") + right * Input.GetAxisRaw("Horizontal");
 
-        controller.Move(moveDirection.normalized * finalSpeed * Time.deltaTime);
+        //controller.Move(moveDirection.normalized * finalSpeed * Time.deltaTime);
     }
 
     public void Stay()

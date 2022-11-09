@@ -30,12 +30,14 @@ public class Spawn : MonoBehaviour
         {
             if (player.GetNumber() == i + 1)
             {
-                //m_player.transform.position = spawn[i].transform.position;
+                spawn[i].SetActive(true);
+                m_player.transform.position = spawn[i].transform.position;
+                gm.GetPlayer(i).SetPosition(m_player.transform.position);
                 spawn[i].SetActive(false);
             }
             else
             {
-                spawn[i].transform.position = m_player.transform.position;
+                gm.GetPlayer(i).SetPosition(spawn[i].transform.position);
                 spawn[i].SetActive(true);
                 pa[i].SetPlayer(i);
             }

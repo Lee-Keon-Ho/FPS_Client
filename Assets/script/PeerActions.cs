@@ -89,47 +89,31 @@ public class PeerActions : MonoBehaviour
     {
 		player = CGameManager.Instance.GetPlayer(peerNum);
 		action = player.GetAction();
-		switch (action)
-        {
-            case 0:
-				Stay();
-				break;
-            case 1:
-				Walk();
-				break;
-			case 2:
-				Run();
-				break;
-			case 3:
-				Walk();
-				break;
-		}
-    }
-
-	private void LateUpdate()
-	{
 		if (action == 0) // stay
 		{
-			transform.position = player.GetPosition();
-			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
+			Stay();
+			peer.transform.position = player.GetPosition();
+			peer.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
 		}
 		if (action == 1) // Walk
 		{
-			transform.Translate(Vector3.forward * 2f * Time.deltaTime);
-			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
+			Walk();
+			peer.transform.Translate(Vector3.forward * 1f * Time.deltaTime);
+			peer.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
 		}
 		if (action == 2) // Run
 		{
-			transform.Translate(Vector3.forward * 4f * Time.deltaTime);
-			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
+			Run();
+			peer.transform.Translate(Vector3.forward * 2f * Time.deltaTime);
+			peer.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
 		}
-		if (action == 3) // BackWalk
-        {
-			transform.Translate(Vector3.back * 2f * Time.deltaTime);
-			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
-		}
-
 	}
+
+	void LateUpdate()
+    {
+
+    }
+
 	public void SetPlayer(int _peerNum) { peerNum = _peerNum; }
     public void SetAction(int _action) { action = _action; }
 }

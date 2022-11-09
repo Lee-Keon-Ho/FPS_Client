@@ -82,7 +82,4 @@ public class CGameManager : MonoBehaviour
     public void SetPlayerCount(int _count) { playerCount = _count; }
 
     public int GetPlayerCount() { return playerCount; }
-
-    public Vector3 GetPosition(int _index) { return m_player[_index].GetPosition(); }
-    public float GetRotation(int _index) { return m_player[_index].GetRotation(); }
 }

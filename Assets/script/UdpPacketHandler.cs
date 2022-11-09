@@ -139,7 +139,8 @@ public class UdpPacketHandler : MonoBehaviour
 
                 int action = binaryReader.ReadInt32();
 
-                player.SetPosition(position, rotation);
+                player.SetPosition(position);
+                player.SetRotation(rotation);
                 player.SetAction(action);
                 break;
             }
@@ -167,7 +168,8 @@ public class UdpPacketHandler : MonoBehaviour
             player = gm.GetPlayer(i); 
             if (player.GetSocket() == socket)
             {
-                player.SetPosition(position, rotation); // 받기는 했고 처리 해주는 부분
+                player.SetPosition(position);
+                player.SetRotation(rotation);
                 player.SetAction(action);
                 break;
             }
@@ -195,7 +197,8 @@ public class UdpPacketHandler : MonoBehaviour
             player = gm.GetPlayer(i);
             if (player.GetSocket() == socket)
             {
-                player.SetPosition(position, rotation); // 받기는 했고 처리 해주는 부분
+                player.SetPosition(position);
+                player.SetRotation(rotation);
                 player.SetAction(action);
                 break;
             }
