@@ -17,7 +17,7 @@ public class App : MonoBehaviour
         m_player = new CPlayer();
         m_udp = new CUdp();
         m_player.Init();
-        m_socket.Init("112.184.241.149", 30002);
+        m_socket.Init("183.108.148.83", 30002);
         DontDestroyOnLoad(this);
     }
 

@@ -104,7 +104,7 @@ public class PeerActions : MonoBehaviour
 		if (action == 2) // Run
 		{
 			Run();
-			peer.transform.Translate(Vector3.forward * 2f * Time.deltaTime);
+			peer.transform.Translate(Vector3.forward * 5f * Time.deltaTime);
 			peer.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
 		}
 	}

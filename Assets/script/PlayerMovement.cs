@@ -6,32 +6,49 @@ public class PlayerMovement : MonoBehaviour
 {
     Animator animator;
     Camera camera;
-    CharacterController controller;
 
     public float speed = 2f;
     public float runSpeed = 4f;
     public float finalSpeed;
 
     public bool toggleCameraRotation;
-    public bool run;
 
     public float smoothness = 10f;
 
     private float rotX;
     private float rotY;
 
+    private int state;
+
     private CPlayer player;
     CUdp udp;
 
-    bool stop = false;
+    bool run;
+    bool walk;
+    bool aiming;
+    bool Key_Up_Down;
 
     //Action
     const int countOfDamageAnimations = 3;
     int lastDamageAnimation = -1;
 
+    public GameObject bullet;
+    public GameObject firePosition;
+    public GameObject character;
+
+    private GUIStyle style = new GUIStyle();
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
+
+        run = false;
+        walk = false;
+        aiming = false;
+        Key_Up_Down = false;
+
+        style.normal.textColor = Color.red;
+        style.fontSize = 20;
     }
 
     void Start()
@@ -42,14 +59,32 @@ public class PlayerMovement : MonoBehaviour
 
         animator = this.GetComponent<Animator>();
         camera = Camera.main;
-        //controller = this.GetComponent<CharacterController>();
+
+        state = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        switch (state)
+        {
+            case 1: 
+                // 함수화 해서 넣어주고
+                break;
+            case 2:
+                // 함수화
+                break;
+            case 3:
+                // 함수화
+                break;
+        }
+
+        // 마우스는 별도로
+        // 마우스는 초당 위치로 5번을 넘을 수 없다.
+
         rotX = -(Input.GetAxis("Mouse Y"));
         rotY = Input.GetAxis("Mouse X"); 
+
         if (Input.GetKey(KeyCode.LeftAlt))
         {
             toggleCameraRotation = true;
@@ -59,37 +94,63 @@ public class PlayerMovement : MonoBehaviour
             toggleCameraRotation = false;
         }
 
-        run = false;
-        if (rotX != 0 || rotY != 0)
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
+            if (walk) state = 2;
+            run = true;
+            Key_Up_Down = true;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            if (walk) state = 1;
+            run = false;
+            Key_Up_Down = true;
+        }
+
+
+        if (rotX != 0 || rotY != 0) // 마우스는 초당 위치로 5번을 넘을 수 없다.
+        {
+            if (Input.GetKeyDown(KeyCode.W))
             {
-                run = true;
-                udp.KeyDownW(player.GetSocket(), 2, this.transform.position, this.transform.eulerAngles.y); // 현재 위치와 방향을 같이 보낸다.
-                this.transform.Translate(Vector3.forward * 2 * Time.deltaTime);
-                Run();
-            }
-            else if (Input.GetKey(KeyCode.W))
-            {
-                udp.KeyDownW(player.GetSocket(), 1, this.transform.position, this.transform.eulerAngles.y);
-                Walk();
-                this.transform.Translate(Vector3.forward * 1 * Time.deltaTime);
+                walk = true;
+                Key_Up_Down = true;
+
+                if (run) state = 2;
+                else state = 1;
             }
             else if (Input.GetKeyUp(KeyCode.W))
             {
-                stop = true;
-                udp.KeyUpW(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
-                Stay();
+                walk = false;
+                Key_Up_Down = true;
+
+                state = 0;
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                udp.KeyDownW(player.GetSocket(), 3, this.transform.position, this.transform.eulerAngles.y);
-                Walk();
+                Key_Up_Down = true;
+                state = 3;
             }
             else if (Input.GetKeyUp(KeyCode.S))
             {
-                udp.KeyUpW(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
-                Stay();
+                Key_Up_Down = true;
+                state = 0;
+            }
+            else if(Input.GetMouseButtonDown(1))
+            {
+                if(aiming)
+                {
+                    //udp.KeyDown(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
+                    character.SetActive(true);
+                    Idle();
+                    aiming = false;
+                }
+                else
+                {
+                    //udp.KeyDown(player.GetSocket(), 4, this.transform.position, this.transform.eulerAngles.y);
+                    character.SetActive(false);
+                    Aiming();
+                    aiming = true;
+                }
             }
             else
             {
@@ -98,44 +159,69 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetKeyDown(KeyCode.W))
             {
-                run = true;
-                udp.KeyDownW(player.GetSocket(), 2, this.transform.position, this.transform.eulerAngles.y); // 현재 위치와 방향을 같이 보낸다.
-                this.transform.Translate(Vector3.forward * 2 * Time.deltaTime);
-                Run();
-            }
-            else if (Input.GetKey(KeyCode.W))
-            {
-                udp.KeyDownW(player.GetSocket(), 1, this.transform.position, this.transform.eulerAngles.y);
-                Walk();
-                this.transform.Translate(Vector3.forward * 1 * Time.deltaTime);
+                walk = true;
+                Key_Up_Down = true;
+
+                if (run) state = 2;
+                else state = 1;
             }
             else if (Input.GetKeyUp(KeyCode.W))
             {
-                stop = true;
-                udp.KeyUpW(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
-                Stay();
+                walk = false;
+                Key_Up_Down = true;
+                state = 0;
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                udp.KeyDownW(player.GetSocket(), 3, this.transform.position, this.transform.eulerAngles.y);
-                Walk();
+                Key_Up_Down = true;
+                state = 3;
             }
             else if (Input.GetKeyUp(KeyCode.S))
             {
-                udp.KeyUpW(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
-                Stay();
+                Key_Up_Down = true;
+                state = 0;
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                if (aiming)
+                {
+                    //udp.KeyDown(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
+                    character.SetActive(true);
+                    Idle();
+                    aiming = false;
+                }
+                else
+                {
+                    //udp.KeyDown(player.GetSocket(), 4, this.transform.position, this.transform.eulerAngles.y);
+                    character.SetActive(false);
+                    Aiming();
+                    aiming = true;
+                }
             }
         }
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") && stop)
+
+        if (Input.GetMouseButtonDown(0))
         {
-            udp.KeyUpW(player.GetSocket(), 0, this.transform.position, this.transform.eulerAngles.y);
-            stop = false;
+            Instantiate(bullet, firePosition.transform.position, firePosition.transform.rotation);
         }
-        //InputMovement();
+
+        if(Key_Up_Down)
+        {
+            udp.InputKey(player.GetSocket(), state, this.transform.position, this.transform.eulerAngles.y);
+            Key_Up_Down = false;
+        }
+
+        PlayerState();
     }
 
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(5f, 5f, Screen.width, 20f), "player : " + state.ToString(), style);
+        GUI.Label(new Rect(5f, 5f + 20f, Screen.width, 20f), "Run : " + run.ToString(), style);
+        GUI.Label(new Rect(5f, 5f + 40f, Screen.width, 20f), "Walk : " + walk.ToString(), style);
+    }
     void LateUpdate()
     {
         if(toggleCameraRotation != true)
@@ -145,19 +231,25 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void InputMovement()
+    private void PlayerState()
     {
-        finalSpeed = (run) ? runSpeed : speed;
-
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
-
-        Vector3 moveDirection = forward * Input.GetAxisRaw("Vertical") + right * Input.GetAxisRaw("Horizontal");
-
-        //controller.Move(moveDirection.normalized * finalSpeed * Time.deltaTime);
+        switch (state)
+        {
+            case 0:
+                Idle();
+                break;
+            case 1:
+                Walk();
+                this.transform.Translate(Vector3.forward * 1 * Time.deltaTime);
+                break;
+            case 2:
+                Run();
+                this.transform.Translate(Vector3.forward * 5 * Time.deltaTime);
+                break;
+        }
     }
 
-    public void Stay()
+    public void Idle() // state를 변경하는 함수 // 한번만 사용하면 된다.
     {
         animator.SetBool("Aiming", false);
         animator.SetFloat("Speed", 0f);
