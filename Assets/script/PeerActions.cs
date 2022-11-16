@@ -85,7 +85,7 @@ public class PeerActions : MonoBehaviour
 		animator.SetBool("Aiming", false);
 	}
 
-	void Update()
+	void Update() // 2022-11-16 여기도 수정
     {
 		player = CGameManager.Instance.GetPlayer(peerNum);
 		action = player.GetAction();
@@ -93,19 +93,19 @@ public class PeerActions : MonoBehaviour
 		{
 			Stay();
 			peer.transform.position = player.GetPosition();
-			peer.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
+			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 2f * Time.deltaTime); // 1f 속도만 수정하면될듯하다
 		}
 		if (action == 1) // Walk
 		{
 			Walk();
 			peer.transform.Translate(Vector3.forward * 1f * Time.deltaTime);
-			peer.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
+			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 2f * Time.deltaTime);
 		}
 		if (action == 2) // Run
 		{
 			Run();
-			peer.transform.Translate(Vector3.forward * 5f * Time.deltaTime);
-			peer.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), Time.deltaTime * 100);
+			peer.transform.Translate(Vector3.forward * 3f * Time.deltaTime);
+			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 2f * Time.deltaTime);
 		}
 	}
 

@@ -192,7 +192,7 @@ public class CUdp
         memoryStream.Position = 0;
 
         bw.Write((ushort)12);
-        bw.Write((ushort)6);
+        bw.Write((ushort)5);
         bw.Write(_socket);
         bw.Write(_rotation);
 
