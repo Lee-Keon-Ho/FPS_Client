@@ -13,7 +13,7 @@ public class MainController : MonoBehaviour
 
     public float followSpeed = 30f;
     public float sensitivity = 100f;
-    public float clampAngle = 70f;
+    public float clampAngle = 30f;
 
     private float rotX;
     private float rotY;
@@ -25,6 +25,8 @@ public class MainController : MonoBehaviour
     public float maxDistance;
     public float finalDistance;
     public float smoothness = 10;
+
+    private bool aiming;
     void Start()
     {
         rotX = transform.localRotation.eulerAngles.x;
@@ -32,6 +34,8 @@ public class MainController : MonoBehaviour
 
         dirNormalized = realCamera.localPosition.normalized;
         finalDistance = realCamera.localPosition.magnitude;
+
+        aiming = false;
 
         //Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
@@ -45,6 +49,12 @@ public class MainController : MonoBehaviour
         rotX = Mathf.Clamp(rotX, -clampAngle, clampAngle);
         Quaternion rot = Quaternion.Euler(rotX, rotY, 0);
         transform.rotation = rot;
+
+        if(Input.GetMouseButtonDown(1)) // 걷기 중일때는 막아야 한다.
+        {
+            if (aiming) aiming = false;
+            else aiming = true;
+        }
     }
 
     private void LateUpdate()
@@ -57,11 +67,25 @@ public class MainController : MonoBehaviour
 
         if(Physics.Linecast(transform.position, finalDir, out hit))
         {
-            finalDistance = Mathf.Clamp(hit.distance, minDistance, maxDistance);
+            if (aiming)
+            {
+                finalDistance = -1.5f;
+            }
+            else
+            {
+                finalDistance = Mathf.Clamp(hit.distance, minDistance, maxDistance);
+            }
         }
         else
         {
-            finalDistance = maxDistance;
+            if(aiming)
+            {
+                finalDistance = -1.5f;
+            }
+            else
+            {
+                finalDistance = maxDistance;
+            }
         }
         realCamera.localPosition = Vector3.Lerp(realCamera.localPosition, dirNormalized * finalDistance, Time.deltaTime * smoothness);
     }

@@ -93,19 +93,24 @@ public class PeerActions : MonoBehaviour
 		{
 			Stay();
 			peer.transform.position = player.GetPosition();
-			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 2f * Time.deltaTime); // 1f 속도만 수정하면될듯하다
+			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime); // 1f 속도만 수정하면될듯하다
 		}
 		if (action == 1) // Walk
 		{
 			Walk();
 			peer.transform.Translate(Vector3.forward * 1f * Time.deltaTime);
-			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 2f * Time.deltaTime);
+			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
 		}
 		if (action == 2) // Run
 		{
 			Run();
 			peer.transform.Translate(Vector3.forward * 3f * Time.deltaTime);
-			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 2f * Time.deltaTime);
+			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
+		}
+		if(action == 3) // Aiming
+        {
+			Aiming();
+			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
 		}
 	}
 
@@ -116,4 +121,12 @@ public class PeerActions : MonoBehaviour
 
 	public void SetPlayer(int _peerNum) { peerNum = _peerNum; }
     public void SetAction(int _action) { action = _action; }
+
+	private void OnCollisionEnter(Collision collision)
+	{
+		if (collision.gameObject.tag == "bullet")
+		{
+			Destroy(collision.gameObject);
+		}
+	}
 }

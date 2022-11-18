@@ -16,6 +16,8 @@ public class UdpPacketHandler : MonoBehaviour
     int readPos;
     int bufferSize;
 
+    public GameObject bullet;
+
     private void Awake()
     {
         if (instance == null)
@@ -56,6 +58,9 @@ public class UdpPacketHandler : MonoBehaviour
                 break;
             case 5:
                 MouseMove();
+                break;
+            case 6:
+                FireBullet();
                 break;
             default:
                 break;
@@ -192,5 +197,29 @@ public class UdpPacketHandler : MonoBehaviour
                 break;
             }
         }
+    }
+
+    void FireBullet()
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        Vector3 position;
+        position.x = binaryReader.ReadSingle();
+        position.y = binaryReader.ReadSingle();
+        position.z = binaryReader.ReadSingle();
+
+        Quaternion rotate;
+
+        rotate.x = binaryReader.ReadSingle();
+        rotate.y = binaryReader.ReadSingle();
+        rotate.z = binaryReader.ReadSingle();
+        rotate.w = binaryReader.ReadSingle();
+
+        Debug.Log("x " + rotate.x + " / " + "y " + rotate.y + " / " + "z " + rotate.z + " / " + "w " + rotate.w);
+
+        Instantiate(bullet, position, rotate);
+        Debug.Log(rotate);
     }
 }

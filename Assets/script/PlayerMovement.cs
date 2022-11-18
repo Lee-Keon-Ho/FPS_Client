@@ -34,17 +34,19 @@ public class PlayerMovement : MonoBehaviour
 
     private GUIStyle style;
 
+    private Vector3 dir;
+    private Ray ray;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
         style = new GUIStyle();
 
-        rateTime = 0.2f;
+        rateTime = 0.1f;
         nextTime = 0.0f;
 
         run = false;
         walk = false;
-        aiming = false;
 
         style.normal.textColor = Color.red;
         style.fontSize = 20;
@@ -67,8 +69,8 @@ public class PlayerMovement : MonoBehaviour
     {
         // 마우스는 별도로
         // 마우스는 초당 위치로 5번을 넘을 수 없다.
-        rotX = -(Input.GetAxis("Mouse Y"));
-        rotY = Input.GetAxis("Mouse X");
+        //rotX = -(Input.GetAxis("Mouse Y"));
+        //rotY = Input.GetAxis("Mouse X");
 
         switch (m_state)
         {
@@ -82,19 +84,11 @@ public class PlayerMovement : MonoBehaviour
                 Run();
                 break;
             case 3:
-                // 함수화
+                Aiming();
                 break;
         }
 
-        if (rotX != 0 || rotY != 0) // 마우스는 초당 위치로 5번을 넘을 수 없다.
-        {
-            MouseMove();
-        }
-
-        if (Input.GetMouseButtonDown(0)) // 이건 에이밍 일대만
-        {
-            Instantiate(bullet, firePosition.transform.position, firePosition.transform.rotation);
-        }
+        MouseMove();
     }
     
     void LateUpdate()
@@ -103,18 +97,11 @@ public class PlayerMovement : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(playerRotate), Time.deltaTime * smoothness);
     }
 
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(5f, 5f, Screen.width, 20f), "player : " + m_state.ToString(), style);
-        GUI.Label(new Rect(5f, 5f + 20f, Screen.width, 20f), "Run : " + run.ToString(), style);
-        GUI.Label(new Rect(5f, 5f + 40f, Screen.width, 20f), "Walk : " + walk.ToString(), style);
-    }
-
     private void Idle()
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            run = true;
+            run = true; // 이걸 speed
         }
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
@@ -124,6 +111,10 @@ public class PlayerMovement : MonoBehaviour
         {
             if(run) ChangeStateRun();
             else ChangeStateWalk();
+        }
+        if(Input.GetMouseButtonDown(1))
+        {
+            ChangeStateAiming();
         }
     }
 
@@ -164,6 +155,22 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void Aiming()
+    {
+        if(Input.GetMouseButtonDown(1))
+        {
+            ChangeStateIdle();
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            dir = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2);
+
+            FireBullet(firePosition.transform.position, camera.transform.rotation);
+
+            Instantiate(bullet, firePosition.transform.position, camera.transform.rotation);
+        }
+    }
+
     public void ChangeStateIdle() // state를 변경하는 함수 // 한번만 사용하면 된다.
     {
         m_state = 0;
@@ -196,7 +203,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Attack()
     {
-        Aiming();
+        ChangeStateAiming();
         animator.SetTrigger("Attack");
     }
 
@@ -228,8 +235,12 @@ public class PlayerMovement : MonoBehaviour
         animator.SetTrigger("Jump");
     }
 
-    public void Aiming()
+    public void ChangeStateAiming()
     {
+        m_state = 3;
+
+        InputKey();
+
         animator.SetBool("Squat", false);
         animator.SetFloat("Speed", 0f);
         animator.SetBool("Aiming", true);
@@ -253,5 +264,23 @@ public class PlayerMovement : MonoBehaviour
     private void InputKey()
     {
         udp.InputKey(player.GetSocket(), m_state, this.transform.position, this.transform.eulerAngles.y);
+    }
+
+    private void FireBullet(Vector3 _position, Quaternion _rotate)
+    {
+        udp.FireBullet(player.GetSocket(), _position, _rotate);
+    }
+
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(5f, 5f, 20f, 20f), this.transform.eulerAngles.y.ToString(), style);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "bullet")
+        {
+            Destroy(collision.gameObject);
+        }
     }
 }

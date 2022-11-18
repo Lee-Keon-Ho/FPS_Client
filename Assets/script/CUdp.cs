@@ -203,7 +203,44 @@ public class CUdp
             EndPoint end = (EndPoint)endPoint;
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+        }
+    }
 
+    public void FireBullet(uint _socket, Vector3 _position, Quaternion _rotation)
+    {
+        App app = Transform.FindObjectOfType<App>();
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)32);
+        bw.Write((ushort)6);
+        bw.Write(_position.x);
+        bw.Write(_position.y);
+        bw.Write(_position.z);
+        bw.Write(_rotation.x);
+        bw.Write(_rotation.y);
+        bw.Write(_rotation.z);
+        bw.Write(_rotation.w);
+
+        Debug.Log("x " + _rotation.x + " / " + "y " + _rotation.y + " / " + "z " + _rotation.z + " / " + "w " + _rotation.w);
+
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if(player.GetSocket() != app.GetSocket())
+            {
+                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                EndPoint end = (EndPoint)endPoint;
+
+                int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+            }
         }
     }
 
