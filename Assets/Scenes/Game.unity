@@ -7111,6 +7111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
+  nextAction: 0
   peer: {fileID: 457031403}
 --- !u!136 &457031406
 CapsuleCollider:
@@ -8995,6 +8996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
+  nextAction: 0
   peer: {fileID: 578136771}
 --- !u!136 &578136774
 CapsuleCollider:
@@ -11238,6 +11240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
+  nextAction: 0
   peer: {fileID: 691288893}
 --- !u!136 &691288896
 CapsuleCollider:
@@ -15168,6 +15171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
+  nextAction: 0
   peer: {fileID: 897707720}
 --- !u!136 &897707723
 CapsuleCollider:
@@ -21008,6 +21012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
+  nextAction: 0
   peer: {fileID: 1182229891}
 --- !u!136 &1182229894
 CapsuleCollider:
@@ -22272,6 +22277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
+  nextAction: 0
   peer: {fileID: 1238309560}
 --- !u!136 &1238309563
 CapsuleCollider:
@@ -25938,7 +25944,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1432148935}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.2, z: 1}
+  m_LocalPosition: {x: 0, y: 0.9, z: 0.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -29478,6 +29484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
+  nextAction: 0
   peer: {fileID: 1607649341}
 --- !u!136 &1607649344
 CapsuleCollider:
@@ -31492,6 +31499,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: 0
+  nextAction: 0
   peer: {fileID: 1691074295}
 --- !u!136 &1691074298
 CapsuleCollider:
@@ -32024,6 +32032,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1738242294}
   - component: {fileID: 1738242295}
+  - component: {fileID: 1738242296}
   m_Layer: 0
   m_Name: scriptObject
   m_TagString: Untagged
@@ -32077,6 +32086,19 @@ MonoBehaviour:
   - {fileID: 1238309562}
   - {fileID: 1607649343}
   - {fileID: 457031405}
+--- !u!114 &1738242296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738242292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d0dc52ed1f2f841881897165730108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HP: {fileID: 1800185434}
 --- !u!1 &1744773033
 GameObject:
   m_ObjectHideFlags: 0

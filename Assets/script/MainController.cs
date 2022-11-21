@@ -37,8 +37,8 @@ public class MainController : MonoBehaviour
 
         aiming = false;
 
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()

@@ -150,7 +150,7 @@ public class CUdp
         }
     }
 
-    public void InputKey(uint _socket, int _action, Vector3 _position, float _rotation)
+    public void InputKey(uint _socket, int _action, Vector3 _position, float _rotation, int _key)
     {
         CGameManager gm = CGameManager.Instance;
         int count = gm.GetPlayerCount();

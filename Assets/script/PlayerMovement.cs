@@ -4,6 +4,24 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    enum eState
+    {
+        IDLE,
+        WALK,
+        RUN,
+        AIMING
+    }
+
+    enum eKey
+    {
+        NULL,
+        W_DOWN,
+        W_UP,
+        SHIFT_DOWN,
+        SHIFT_UP,
+        L_MOUSE_DOWN
+    }
+
     Animator animator;
     Camera camera;
 
@@ -21,8 +39,8 @@ public class PlayerMovement : MonoBehaviour
     CUdp udp;
 
     bool run;
-    bool walk;
-    bool aiming;
+
+    int m_key;
 
     //Action
     const int countOfDamageAnimations = 3;
@@ -34,9 +52,6 @@ public class PlayerMovement : MonoBehaviour
 
     private GUIStyle style;
 
-    private Vector3 dir;
-    private Ray ray;
-
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -46,10 +61,11 @@ public class PlayerMovement : MonoBehaviour
         nextTime = 0.0f;
 
         run = false;
-        walk = false;
 
         style.normal.textColor = Color.red;
         style.fontSize = 20;
+
+        m_key = (int)eKey.NULL;
     }
 
     void Start()
@@ -74,20 +90,20 @@ public class PlayerMovement : MonoBehaviour
 
         switch (m_state)
         {
-            case 0: // Idle
+            case (int)eState.IDLE:
                 Idle();
                 break;
-            case 1: // Walk
+            case (int)eState.WALK:
                 Walk();
                 break;
-            case 2: // Run
+            case (int)eState.RUN:
                 Run();
                 break;
-            case 3:
+            case (int)eState.AIMING:
                 Aiming();
                 break;
         }
-
+        
         MouseMove();
     }
     
@@ -101,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            run = true; // ÀÌ°É speed
+            run = true;
         }
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
@@ -109,11 +125,14 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
-            if(run) ChangeStateRun();
+            m_key = (int)eKey.W_DOWN;
+
+            if (run) ChangeStateRun();
             else ChangeStateWalk();
         }
         if(Input.GetMouseButtonDown(1))
         {
+            m_key = (int)eKey.L_MOUSE_DOWN;
             ChangeStateAiming();
         }
     }
@@ -130,6 +149,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if(Input.GetKeyUp(KeyCode.W))
             {
+                m_key = (int)eKey.W_UP;
                 ChangeStateIdle();
             }
             if(Input.GetKeyDown(KeyCode.LeftShift))
@@ -151,6 +171,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.W))
         {
+            m_key = (int)eKey.W_UP;
             ChangeStateIdle();
         }
     }
@@ -159,11 +180,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(1))
         {
+            m_key = (int)eKey.L_MOUSE_DOWN;
             ChangeStateIdle();
         }
         if (Input.GetMouseButtonDown(0))
-        {
-            dir = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2);
+        { 
+
+            //Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+
+            //Debug.DrawRay(ray.origin, ray.direction * 20, Color.red, 10f);
 
             FireBullet(firePosition.transform.position, camera.transform.rotation);
 
@@ -263,7 +288,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void InputKey()
     {
-        udp.InputKey(player.GetSocket(), m_state, this.transform.position, this.transform.eulerAngles.y);
+        udp.InputKey(player.GetSocket(), m_state, this.transform.position, this.transform.eulerAngles.y, m_key);
     }
 
     private void FireBullet(Vector3 _position, Quaternion _rotate)
@@ -273,7 +298,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(5f, 5f, 20f, 20f), this.transform.eulerAngles.y.ToString(), style);
+        GUI.Label(new Rect(5f, 5f, 20f, 20f), this.transform.position.ToString(), style);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -281,6 +306,17 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.tag == "bullet")
         {
             Destroy(collision.gameObject);
+            App app = FindObjectOfType<App>();
+            int hp = app.GetPlayer().GetHp();
+            hp -= 34;
+            if(hp > 0)
+            {
+                app.GetPlayer().SetHp(hp);
+            }
+            else
+            {
+                app.GetPlayer().SetHp(0);
+            }
         }
     }
 }

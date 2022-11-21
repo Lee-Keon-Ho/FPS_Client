@@ -17,6 +17,9 @@ public class CPlayer
     Vector3 m_position;
     float m_rotation;
     int m_action;
+    int m_key;
+
+    private int m_HP;
 
     public bool Init()
     {
@@ -24,8 +27,11 @@ public class CPlayer
         m_boss = 0;
         m_ready = 0;
         m_udpConnect = false;
-
+        
         if (m_name == null) return false;
+
+        m_position = Vector3.zero;
+        m_HP = 100;
 
         return true;
     }
@@ -60,4 +66,8 @@ public class CPlayer
     public float GetRotation() { return m_rotation; }
     public void SetAction(int _action) { m_action = _action; }
     public int GetAction() { return m_action; }
+    public void SetKey(int _key) { m_key = _key; }
+    public int GetKey() { return m_key; }
+    public int GetHp() { return m_HP; }
+    public void SetHp(int _hp) { m_HP = _hp; }
 }
