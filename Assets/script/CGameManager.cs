@@ -10,9 +10,6 @@ public class CGameManager : MonoBehaviour
     private int playerCount;
     private CPlayer[] m_player = new CPlayer[8];
 
-    private Vector3 teamA;
-    private Vector3 teamB;
-
     public ushort gameSocket = 0;
     void Awake()
     {
@@ -20,6 +17,10 @@ public class CGameManager : MonoBehaviour
         {
             instance = this;
             instance.Init();
+            for(int i = 0; i < 8; i++)
+            {
+                m_player[i].Init();
+            }
             DontDestroyOnLoad(this.gameObject);
         }
         else
@@ -56,8 +57,6 @@ public class CGameManager : MonoBehaviour
     public void SetTeamBCount(int _num) { teamBCount = _num; }
     public int GetTeamACount() { return teamACount; }
     public int GetTeamBCount() { return teamBCount; }
-
-    public Vector3 GetB() { return teamB; }
 
     public void SetPlayers(int _num, uint _socket, uint _addr, ushort _port, string _addrStr)
     {

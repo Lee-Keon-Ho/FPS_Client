@@ -27,11 +27,10 @@ public class CPlayer
         m_boss = 0;
         m_ready = 0;
         m_udpConnect = false;
-        
+        m_HP = 100;
         if (m_name == null) return false;
 
         m_position = Vector3.zero;
-        m_HP = 100;
 
         return true;
     }

@@ -9,7 +9,9 @@ public class PlayerMovement : MonoBehaviour
         IDLE,
         WALK,
         RUN,
-        AIMING
+        AIMING,
+        DAMAGE,
+        DAETH
     }
 
     enum eKey
@@ -101,6 +103,10 @@ public class PlayerMovement : MonoBehaviour
                 break;
             case (int)eState.AIMING:
                 Aiming();
+                break;
+            case (int)eState.DAMAGE:
+                break;
+            case (int)eState.DAETH:
                 break;
         }
         
@@ -234,14 +240,26 @@ public class PlayerMovement : MonoBehaviour
 
     public void Death()
     {
+        m_state = 5;
+
+        InputKey();
+
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Death"))
-            animator.Play("Idle", 0);
+        {
+            player.SetHp(100);
+            ChangeStateIdle();
+            //animator.Play("Idle", 0);
+        }
         else
             animator.SetTrigger("Death");
     }
 
     public void Damage()
     {
+        //m_state = 4;
+
+        //InputKey();
+
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Death")) return;
         int id = Random.Range(0, countOfDamageAnimations);
         if (countOfDamageAnimations > 1)
@@ -303,19 +321,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "bullet")
+        if (collision.gameObject.tag == "bullet")
         {
+            //Damage();
             Destroy(collision.gameObject);
-            App app = FindObjectOfType<App>();
-            int hp = app.GetPlayer().GetHp();
-            hp -= 34;
-            if(hp > 0)
+
+            if (player.GetBoss() == 0)
             {
-                app.GetPlayer().SetHp(hp);
-            }
-            else
-            {
-                app.GetPlayer().SetHp(0);
+                App app = FindObjectOfType<App>();
+                int hp = app.GetPlayer().GetHp();
+                hp -= 34;
+                if (hp > 0)
+                {
+                    app.GetPlayer().SetHp(hp);
+                }
+                else
+                {
+                    Death();
+                    app.GetPlayer().SetHp(0);
+                }
             }
         }
     }

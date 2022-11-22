@@ -62,6 +62,9 @@ public class UdpPacketHandler : MonoBehaviour
             case 6:
                 FireBullet();
                 break;
+            case 7:
+                PeerHit();
+                break;
             default:
                 break;
         }
@@ -201,8 +204,6 @@ public class UdpPacketHandler : MonoBehaviour
 
     void FireBullet()
     {
-        CGameManager gm = CGameManager.Instance;
-        int count = gm.GetPlayerCount();
         CPlayer player;
 
         Vector3 position;
@@ -217,9 +218,19 @@ public class UdpPacketHandler : MonoBehaviour
         rotate.z = binaryReader.ReadSingle();
         rotate.w = binaryReader.ReadSingle();
 
-        Debug.Log("x " + rotate.x + " / " + "y " + rotate.y + " / " + "z " + rotate.z + " / " + "w " + rotate.w);
+        //Debug.Log("x " + rotate.x + " / " + "y " + rotate.y + " / " + "z " + rotate.z + " / " + "w " + rotate.w);
 
         Instantiate(bullet, position, rotate);
-        Debug.Log(rotate);
+    }
+
+    void PeerHit()
+    {
+        App app = FindObjectOfType<App>();
+
+        CPlayer player = app.GetPlayer();
+
+        int hp = binaryReader.ReadInt32();
+
+        player.SetHp(hp);
     }
 }

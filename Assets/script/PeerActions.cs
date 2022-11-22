@@ -9,7 +9,9 @@ public class PeerActions : MonoBehaviour
 		IDLE,
 		WALK,
 		RUN,
-		AIMING
+		AIMING,
+		DAMAGE,
+		DAETH
 	}
 
 	private Animator animator;
@@ -45,7 +47,15 @@ public class PeerActions : MonoBehaviour
 	public void Death()
 	{
 		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Death"))
-			animator.Play("Idle", 0);
+        {
+			player.SetHp(100);
+			//animator.Play("Idle", 0);
+			Idle();
+
+			App app = Transform.FindObjectOfType<App>();
+			CUdp udp = app.GetUdp();
+			udp.PeerHit(player.GetSocket(), 100);
+		}
 		else
 			animator.SetTrigger("Death");
 	}
@@ -96,7 +106,7 @@ public class PeerActions : MonoBehaviour
 
 	void Update() // 2022-11-16 여기도 수정
     {
-		player = CGameManager.Instance.GetPlayer(peerNum);
+		player = CGameManager.Instance.GetPlayer(peerNum); // 2022-11-22 state로 작업을 하자
 		action = player.GetAction();
 		//switch(action)
 		//      {
@@ -137,6 +147,11 @@ public class PeerActions : MonoBehaviour
 			Aiming();
 			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
 		}
+		if(action == 4)
+        {
+			Damage();
+			action = 0;
+        }
 	}
 
 	void LateUpdate()
@@ -152,6 +167,21 @@ public class PeerActions : MonoBehaviour
 		if (collision.gameObject.tag == "bullet")
 		{
 			Destroy(collision.gameObject);
+			int hp = player.GetHp();
+			Debug.Log(hp);
+			hp -= 34;
+			if (hp > 0)
+			{
+				player.SetHp(hp);
+			}
+			else
+			{
+				Death();
+				player.SetHp(0);
+			}
+			App app = Transform.FindObjectOfType<App>();
+			CUdp udp = app.GetUdp();
+			udp.PeerHit(player.GetSocket(), hp);
 		}
 	}
 }

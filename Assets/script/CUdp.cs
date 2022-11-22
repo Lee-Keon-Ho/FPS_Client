@@ -228,9 +228,6 @@ public class CUdp
         bw.Write(_rotation.z);
         bw.Write(_rotation.w);
 
-        Debug.Log("x " + _rotation.x + " / " + "y " + _rotation.y + " / " + "z " + _rotation.z + " / " + "w " + _rotation.w);
-
-
         for (int i = 0; i < count; i++)
         {
             player = gm.GetPlayer(i);
@@ -240,6 +237,36 @@ public class CUdp
                 EndPoint end = (EndPoint)endPoint;
 
                 int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+            }
+        }
+    }
+
+    public void PeerHit(uint _socket, int _hp)
+    {
+        App app = Transform.FindObjectOfType<App>();
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)8);
+        bw.Write((ushort)7);
+        bw.Write(_hp);
+
+        for(int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if (player.GetSocket() == _socket)
+            {
+                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                EndPoint end = (EndPoint)endPoint;
+
+                int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+                break;
             }
         }
     }
