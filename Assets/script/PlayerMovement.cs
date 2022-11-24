@@ -14,16 +14,6 @@ public class PlayerMovement : MonoBehaviour
         DAETH
     }
 
-    enum eKey
-    {
-        NULL,
-        W_DOWN,
-        W_UP,
-        SHIFT_DOWN,
-        SHIFT_UP,
-        L_MOUSE_DOWN
-    }
-
     Animator animator;
     Camera camera;
 
@@ -32,17 +22,12 @@ public class PlayerMovement : MonoBehaviour
 
     public float smoothness = 10f;
 
-    private float rotX;
-    private float rotY;
-
     private int m_state;
 
     private CPlayer player;
     CUdp udp;
 
     bool run;
-
-    int m_key;
 
     //Action
     const int countOfDamageAnimations = 3;
@@ -54,6 +39,8 @@ public class PlayerMovement : MonoBehaviour
 
     private GUIStyle style;
 
+    private float DeathTime;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -64,10 +51,10 @@ public class PlayerMovement : MonoBehaviour
 
         run = false;
 
+        DeathTime = 0.0f;
+
         style.normal.textColor = Color.red;
         style.fontSize = 20;
-
-        m_key = (int)eKey.NULL;
     }
 
     void Start()
@@ -89,6 +76,10 @@ public class PlayerMovement : MonoBehaviour
         // 마우스는 초당 위치로 5번을 넘을 수 없다.
         //rotX = -(Input.GetAxis("Mouse Y"));
         //rotY = Input.GetAxis("Mouse X");
+        if (player.GetHp() == 0)
+        {
+            ChangeStateDeath();
+        }
 
         switch (m_state)
         {
@@ -105,11 +96,13 @@ public class PlayerMovement : MonoBehaviour
                 Aiming();
                 break;
             case (int)eState.DAMAGE:
+                Damage();
                 break;
             case (int)eState.DAETH:
+                Death();
                 break;
         }
-        
+
         MouseMove();
     }
     
@@ -131,14 +124,11 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
-            m_key = (int)eKey.W_DOWN;
-
             if (run) ChangeStateRun();
             else ChangeStateWalk();
         }
         if(Input.GetMouseButtonDown(1))
         {
-            m_key = (int)eKey.L_MOUSE_DOWN;
             ChangeStateAiming();
         }
     }
@@ -155,7 +145,6 @@ public class PlayerMovement : MonoBehaviour
         {
             if(Input.GetKeyUp(KeyCode.W))
             {
-                m_key = (int)eKey.W_UP;
                 ChangeStateIdle();
             }
             if(Input.GetKeyDown(KeyCode.LeftShift))
@@ -177,7 +166,6 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.W))
         {
-            m_key = (int)eKey.W_UP;
             ChangeStateIdle();
         }
     }
@@ -186,23 +174,24 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(1))
         {
-            m_key = (int)eKey.L_MOUSE_DOWN;
             ChangeStateIdle();
         }
         if (Input.GetMouseButtonDown(0))
-        { 
-
-            //Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-
-            //Debug.DrawRay(ray.origin, ray.direction * 20, Color.red, 10f);
-
+        {
             FireBullet(firePosition.transform.position, camera.transform.rotation);
 
             Instantiate(bullet, firePosition.transform.position, camera.transform.rotation);
         }
     }
 
-    public void ChangeStateIdle() // state를 변경하는 함수 // 한번만 사용하면 된다.
+    private void Damage()
+    {
+        m_state = 0;
+
+        InputKey();
+    }
+
+    public void ChangeStateIdle() 
     {
         m_state = 0;
 
@@ -232,6 +221,15 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat("Speed", 1f);
     }
 
+    public void ChangeStateDeath()
+    {
+        m_state = 5;
+
+        InputKey();
+        
+        animator.Play("Death");
+    }
+
     public void Attack()
     {
         ChangeStateAiming();
@@ -240,26 +238,26 @@ public class PlayerMovement : MonoBehaviour
 
     public void Death()
     {
-        m_state = 5;
+        if (DeathTime >= 5.0f)
+        {
+            player.SetHp(100);
+            animator.Play("Idle");
+            ChangeStateIdle();
+            DeathTime = 0.0f;
+        }
+        else
+        {
+            DeathTime += Time.deltaTime;
+        }
+    }
+
+    public void ChangeStateDamage()
+    {
+        m_state = 4;
 
         InputKey();
 
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Death"))
-        {
-            player.SetHp(100);
-            ChangeStateIdle();
-            //animator.Play("Idle", 0);
-        }
-        else
-            animator.SetTrigger("Death");
-    }
-
-    public void Damage()
-    {
-        //m_state = 4;
-
-        //InputKey();
-
+        animator.SetBool("Aiming", false);
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Death")) return;
         int id = Random.Range(0, countOfDamageAnimations);
         if (countOfDamageAnimations > 1)
@@ -299,14 +297,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Time.time >= nextTime)
         {
-            udp.MouseMove(player.GetSocket(), this.transform.eulerAngles.y);
+            udp.MouseMove(player.GetSocket(), this.transform.position, this.transform.eulerAngles.y);
             nextTime = Time.time + rateTime;
         }
     }
 
     private void InputKey()
     {
-        udp.InputKey(player.GetSocket(), m_state, this.transform.position, this.transform.eulerAngles.y, m_key);
+        udp.InputKey(player.GetSocket(), m_state, this.transform.position, this.transform.eulerAngles.y);
     }
 
     private void FireBullet(Vector3 _position, Quaternion _rotate)
@@ -316,14 +314,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(5f, 5f, 20f, 20f), this.transform.position.ToString(), style);
+        GUI.Label(new Rect(5f, 5f, 20f, 20f), m_state.ToString(), style);
+        GUI.Label(new Rect(5f, 5f + 20, 20f, 20f), player.GetHp().ToString(), style);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "bullet")
         {
-            //Damage();
+            ChangeStateDamage();
             Destroy(collision.gameObject);
 
             if (player.GetBoss() == 0)
@@ -337,10 +336,11 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else
                 {
-                    Death();
                     app.GetPlayer().SetHp(0);
                 }
             }
         }
     }
+
+    public int GetState() { return m_state; }
 }

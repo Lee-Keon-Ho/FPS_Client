@@ -27,6 +27,8 @@ public class MainController : MonoBehaviour
     public float smoothness = 10;
 
     private bool aiming;
+
+    private PlayerMovement pm;
     void Start()
     {
         rotX = transform.localRotation.eulerAngles.x;
@@ -37,8 +39,10 @@ public class MainController : MonoBehaviour
 
         aiming = false;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        pm = FindObjectOfType<PlayerMovement>();
+
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
     }
 
     void Update()
@@ -54,6 +58,10 @@ public class MainController : MonoBehaviour
         {
             if (aiming) aiming = false;
             else aiming = true;
+        }
+        if(pm.GetState() != 3)
+        {
+            aiming = false;
         }
     }
 

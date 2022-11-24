@@ -189,6 +189,11 @@ public class UdpPacketHandler : MonoBehaviour
 
         uint socket = binaryReader.ReadUInt32();
 
+        Vector3 position;
+        position.x = binaryReader.ReadSingle();
+        position.y = binaryReader.ReadSingle();
+        position.z = binaryReader.ReadSingle();
+
         float rotation = binaryReader.ReadSingle();
 
         for(int i = 0; i < count; i++)

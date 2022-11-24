@@ -25,18 +25,19 @@ public class PeerActions : MonoBehaviour
 	private int peerNum;
 	private CPlayer player;
 
+	private int m_state;
+
+	private float DeathTime;
 	void Awake()
     {
         animator = GetComponent<Animator>();
 		controller = this.GetComponent<CharacterController>();
+		m_state = (int)eState.IDLE;
 		action = (int)eState.IDLE;
+		DeathTime = 0f;
 	}
 
-	public void Run()
-	{
-		animator.SetBool("Aiming", false);
-		animator.SetFloat("Speed", 1f);
-	}
+	
 
 	public void Attack()
 	{
@@ -46,18 +47,11 @@ public class PeerActions : MonoBehaviour
 
 	public void Death()
 	{
-		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Death"))
+		if(action == 0)
         {
-			player.SetHp(100);
-			//animator.Play("Idle", 0);
-			Idle();
-
-			App app = Transform.FindObjectOfType<App>();
-			CUdp udp = app.GetUdp();
-			udp.PeerHit(player.GetSocket(), 100);
-		}
-		else
-			animator.SetTrigger("Death");
+			animator.Play("Idle");
+			ChangeStateIdle();
+        }
 	}
 
 	public void Damage()
@@ -70,21 +64,22 @@ public class PeerActions : MonoBehaviour
 		lastDamageAnimation = id;
 		animator.SetInteger("DamageID", id);
 		animator.SetTrigger("Damage");
-	}
 
-	public void Jump()
-	{
-		animator.SetBool("Squat", false);
-		animator.SetFloat("Speed", 0f);
-		animator.SetBool("Aiming", false);
-		animator.SetTrigger("Jump");
+		ChangeStateIdle();
 	}
 
 	public void Aiming()
 	{
-		animator.SetBool("Squat", false);
-		animator.SetFloat("Speed", 0f);
-		animator.SetBool("Aiming", true);
+		peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
+
+		if(action == 0)
+        {
+			ChangeStateIdle();
+        }
+		if(action == 4)
+        {
+			Damage();
+		}
 	}
 
 	public void Sitting()
@@ -95,68 +90,131 @@ public class PeerActions : MonoBehaviour
 
 	public void Idle()
 	{
+		peer.transform.position = Vector3.MoveTowards(peer.transform.position, player.GetPosition(), Time.deltaTime);
+		peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
+
+		if(action == 1)
+        {
+			ChangeStateWalk();
+		}
+		if(action == 2)
+        {
+			ChangeStateRun();
+        }
+		if(action == 3)
+        {
+			ChangeStateAiming();
+        }
+		if (action == 4)
+		{
+			Damage();
+		}
+		if(action == 5)
+        {
+			ChangeStateDeath();
+        }
+	}
+	public void Walk() 
+	{
+		peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
+		peer.transform.Translate(Vector3.forward * 1f * Time.deltaTime);
+
+		if(action == 0)
+        {
+			ChangeStateIdle();
+        }
+		if(action == 2)
+        {
+			ChangeStateRun();
+        }
+		if (action == 4)
+		{
+			Damage();
+		}
+	}
+
+	public void Run()
+	{
+		peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
+		peer.transform.Translate(Vector3.forward * 3f * Time.deltaTime);
+
+		if(action == 0)
+        {
+			ChangeStateIdle();
+        }
+		if(action == 1)
+        {
+			ChangeStateWalk();
+        }
+		if (action == 4)
+		{
+			Damage();
+		}
+	}
+
+	public void ChangeStateIdle() 
+	{
+		m_state = 0;
+
 		animator.SetBool("Aiming", false);
 		animator.SetFloat("Speed", 0f);
 	}
-	public void Walk() // state를 변경하는 함수 // 한번만 사용하면 된다.
+	public void ChangeStateWalk()
 	{
+		m_state = 1;
+
 		animator.SetBool("Aiming", false);
 		animator.SetFloat("Speed", 0.5f);
+	}
+	public void ChangeStateRun()
+	{
+		m_state = 2;
+
+		animator.SetBool("Aiming", false);
+		animator.SetFloat("Speed", 1.0f);
+	}
+
+	public void ChangeStateAiming()
+    {
+		m_state = 3;
+
+		animator.SetBool("Squat", false);
+		animator.SetFloat("Speed", 0f);
+		animator.SetBool("Aiming", true);
+	}
+
+	public void ChangeStateDeath()
+    {
+		m_state = 5;
+
+		animator.Play("Death");
 	}
 
 	void Update() // 2022-11-16 여기도 수정
     {
 		player = CGameManager.Instance.GetPlayer(peerNum); // 2022-11-22 state로 작업을 하자
 		action = player.GetAction();
-		//switch(action)
-		//      {
-		//	case (int)eState.IDLE:
-		//		Idle();
-		//		break;
-		//	case (int)eState.WALK:
-		//		Walk();
-		//		break;
-		//	case (int)eState.RUN:
-		//		break;
-		//	case (int)eState.AIMING:
-		//		break;
-		//      }
-		//Debug.Log("peer : " + peer.transform.position + " " + Vector3.Magnitude(peer.transform.position));
-		//Debug.Log("player : " + player.GetPosition() + " " + Vector3.Magnitude(player.GetPosition()));
-		
-		if (action == 0) // stay
-		{
-			Idle();
-			peer.transform.position = Vector3.MoveTowards(peer.transform.position, player.GetPosition(), Time.deltaTime);
-			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime); // 1f 속도만 수정하면될듯하다
-		}
-		if (action == 1) // Walk
-		{
-			Walk();
-			peer.transform.Translate(Vector3.forward * 1f * Time.deltaTime);
-			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
-		}
-		if (action == 2) // Run
-		{
-			Run();
-			peer.transform.Translate(Vector3.forward * 3f * Time.deltaTime);
-			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
-		}
-		if(action == 3) // Aiming
+
+        switch (m_state)
         {
-			Aiming();
-			peer.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, player.GetRotation(), 0f), 20f * Time.deltaTime);
-		}
-		if(action == 4)
-        {
-			Damage();
-			action = 0;
+            case (int)eState.IDLE:
+                Idle();
+                break;
+            case (int)eState.WALK:
+                Walk();
+                break;
+            case (int)eState.RUN:
+				Run();
+                break;
+            case (int)eState.AIMING:
+				Aiming();
+                break;
+			case (int)eState.DAMAGE:
+                break;
+			case (int)eState.DAETH:
+				Death();
+				break;
         }
-	}
-
-	void LateUpdate()
-    {
-
     }
 
 	public void SetPlayer(int _peerNum) { peerNum = _peerNum; }
@@ -166,22 +224,25 @@ public class PeerActions : MonoBehaviour
 	{
 		if (collision.gameObject.tag == "bullet")
 		{
-			Destroy(collision.gameObject);
-			int hp = player.GetHp();
-			Debug.Log(hp);
-			hp -= 34;
-			if (hp > 0)
-			{
-				player.SetHp(hp);
-			}
-			else
-			{
-				Death();
-				player.SetHp(0);
-			}
 			App app = Transform.FindObjectOfType<App>();
 			CUdp udp = app.GetUdp();
-			udp.PeerHit(player.GetSocket(), hp);
+			Damage();
+			Destroy(collision.gameObject);
+			if (app.GetPlayer().GetBoss() == 0)
+            {
+				int hp = player.GetHp();
+				hp -= 34;
+				if (hp > 0)
+				{
+					player.SetHp(hp);
+				}
+				else
+				{
+					player.SetHp(0);
+					hp = 0;
+				}
+				udp.PeerHit(player.GetSocket(), hp);
+			}
 		}
 	}
 }

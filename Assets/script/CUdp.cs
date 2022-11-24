@@ -150,7 +150,7 @@ public class CUdp
         }
     }
 
-    public void InputKey(uint _socket, int _action, Vector3 _position, float _rotation, int _key)
+    public void InputKey(uint _socket, int _action, Vector3 _position, float _rotation)
     {
         CGameManager gm = CGameManager.Instance;
         int count = gm.GetPlayerCount();
@@ -180,7 +180,7 @@ public class CUdp
         }
     }
 
-    public void MouseMove(uint _socket, float _rotation)
+    public void MouseMove(uint _socket, Vector3 _position, float _rotation)
     {
         CGameManager gm = CGameManager.Instance;
         int count = gm.GetPlayerCount();
@@ -191,9 +191,12 @@ public class CUdp
 
         memoryStream.Position = 0;
 
-        bw.Write((ushort)12);
+        bw.Write((ushort)24);
         bw.Write((ushort)5);
         bw.Write(_socket);
+        bw.Write(_position.x);
+        bw.Write(_position.y);
+        bw.Write(_position.z);
         bw.Write(_rotation);
 
         for(int i = 0; i < count; i++)

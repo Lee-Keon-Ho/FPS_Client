@@ -8,7 +8,16 @@ public class Bullet : MonoBehaviour
 
     void Start()
     {
-        GetComponent<Rigidbody>().AddForce(transform.forward * speed);
-        //Destroy(this.gameObject, 1f);
+        Destroy(this.gameObject, 5f);
+    }
+
+    private void Update()
+    {
+        this.transform.Translate(Vector3.forward * speed * Time.deltaTime);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Destroy(this.gameObject);
     }
 }
