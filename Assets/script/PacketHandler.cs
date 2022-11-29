@@ -142,7 +142,7 @@ public class PacketHandler : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             state = binaryReader.ReadUInt16();
-            str = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(64));
+            str = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(32));
             userList.UserListUpdate(str, state, i);
         }
     }
@@ -217,53 +217,36 @@ public class PacketHandler : MonoBehaviour
         int boss = binaryReader.ReadUInt16();
         int ready = binaryReader.ReadUInt16();
         int number = binaryReader.ReadUInt16();
-        int team = binaryReader.ReadUInt16();
 
         App player = Transform.FindObjectOfType<App>();
 
         player.SetBoss(boss);
         player.SetReady(ready);
         player.SetNumber(number);
-        player.SetTeam(team);
     }
 
     private void RoomState()
     {
         ushort count = binaryReader.ReadUInt16();
-        ushort team;
         ushort ready;
         string name;
         ushort boss;
         CRoom room = Transform.FindObjectOfType<CRoom>();
         room.playerInfoReset();
-        int teamA = 0;
-        int teamB = 0;
 
         for (int i = 0; i < count; i++)
         {
-            name = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(64));
-            team = binaryReader.ReadUInt16();
+            name = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(32));
             ready = binaryReader.ReadUInt16();
             boss = binaryReader.ReadUInt16();
 
-            if (team == 0)
-            {
-                room.OnPlayerListInfo(team, ready, name, boss, teamA);
-                teamA++;
-            }
-            else
-            {
-                room.OnPlayerListInfo(team, ready, name, boss, teamB);
-                teamB++;
-            }
+            room.OnPlayerListInfo(ready, name, boss, i);
         }
     }
 
     private void GameStart()
     {
         CGameManager gm = CGameManager.Instance;
-        gm.SetTeamACount(1);
-        gm.SetTeamBCount(1);
 
         int count = binaryReader.ReadInt16();
         gm.SetPlayerCount(count);
@@ -291,14 +274,10 @@ public class PacketHandler : MonoBehaviour
         App app = Transform.FindObjectOfType<App>();
         CGameManager gm = CGameManager.Instance;
         int count = binaryReader.ReadUInt16();
-        int teamA = binaryReader.ReadUInt16();
-        int teamB = binaryReader.ReadUInt16();
         uint addr;
         uint socket;
         ushort port;
         gm.SetPlayerCount(count);
-        gm.SetTeamACount(teamA);
-        gm.SetTeamBCount(teamB);
 
         for (int i = 0; i < count; i++)
         {
@@ -316,7 +295,9 @@ public class PacketHandler : MonoBehaviour
 
             port = binaryReader.ReadUInt16();
 
-            CGameManager.Instance.SetPlayers(i, socket, addr, port, addrStr);
+            string name = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(32));
+
+            CGameManager.Instance.SetPlayers(i, socket, addr, port, addrStr, name);
         }
 
         CGameManager.Instance.gameSocket = 1;

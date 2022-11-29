@@ -11,13 +11,14 @@ public class CPlayer
     int m_boss;
     int m_ready;
     int m_number;
-    int m_team;
     string m_addrStr;
     bool m_udpConnect;
     Vector3 m_position;
     float m_rotation;
     int m_action;
     int m_key;
+    int m_kill;
+    int m_Death;
 
     private int m_HP;
 
@@ -28,6 +29,8 @@ public class CPlayer
         m_ready = 0;
         m_udpConnect = false;
         m_HP = 100;
+        m_kill = 0;
+        m_Death = 0;
         if (m_name == null) return false;
 
         m_position = Vector3.zero;
@@ -42,9 +45,6 @@ public class CPlayer
     public void SetReady(int _ready) { m_ready = _ready; }
     public int GetReady() { return m_ready; }
     public void SetNumber(int _number) { m_number = _number; }
-
-    public void SetTeam(int _team) { m_team = _team; }
-    public int GetTeam() { return m_team; }
     public void SetSocet(uint _socket) { m_socket = _socket; }
     public uint GetSocket() { return m_socket; }
     public int GetNumber() { return m_number; }
@@ -69,4 +69,10 @@ public class CPlayer
     public int GetKey() { return m_key; }
     public int GetHp() { return m_HP; }
     public void SetHp(int _hp) { m_HP = _hp; }
+    public int GetKill() { return m_kill; }
+    public int GetDeath() { return m_Death; }
+    public void AddKill() { m_kill += 1; }
+    public void AddDeath() { m_Death += 1; }
+    public void SetKill(int _kill) { m_kill = _kill; }
+    public void SetDeath(int _Death) { m_Death = _Death; }
 }

@@ -13,7 +13,7 @@ public class PeerActions : MonoBehaviour
 		DAMAGE,
 		DAETH
 	}
-
+	CGameManager gm;
 	private Animator animator;
 	const int countOfDamageAnimations = 3;
 	int lastDamageAnimation = -1;
@@ -27,28 +27,24 @@ public class PeerActions : MonoBehaviour
 
 	private int m_state;
 
-	private float DeathTime;
+	public Transform[] respawnPosition;
+
 	void Awake()
     {
-        animator = GetComponent<Animator>();
+		gm = CGameManager.Instance;
+		animator = GetComponent<Animator>();
 		controller = this.GetComponent<CharacterController>();
 		m_state = (int)eState.IDLE;
 		action = (int)eState.IDLE;
-		DeathTime = 0f;
-	}
-
-	
-
-	public void Attack()
-	{
-		Aiming();
-		animator.SetTrigger("Attack");
 	}
 
 	public void Death()
 	{
 		if(action == 0)
         {
+			int num = Random.Range(0, 7);
+			this.transform.position = player.GetPosition();
+			player.SetHp(100);
 			animator.Play("Idle");
 			ChangeStateIdle();
         }
@@ -80,6 +76,10 @@ public class PeerActions : MonoBehaviour
         {
 			Damage();
 		}
+		if(action == 5)
+        {
+			ChangeStateDeath();
+        }
 	}
 
 	public void Sitting()
@@ -192,7 +192,7 @@ public class PeerActions : MonoBehaviour
 
 	void Update() // 2022-11-16 여기도 수정
     {
-		player = CGameManager.Instance.GetPlayer(peerNum); // 2022-11-22 state로 작업을 하자
+		player = gm.GetPlayer(peerNum); // 2022-11-22 state로 작업을 하자
 		action = player.GetAction();
 
         switch (m_state)
@@ -209,8 +209,6 @@ public class PeerActions : MonoBehaviour
             case (int)eState.AIMING:
 				Aiming();
                 break;
-			case (int)eState.DAMAGE:
-                break;
 			case (int)eState.DAETH:
 				Death();
 				break;
@@ -224,6 +222,8 @@ public class PeerActions : MonoBehaviour
 	{
 		if (collision.gameObject.tag == "bullet")
 		{
+			string socket = collision.gameObject.name;
+			Debug.Log(socket);
 			App app = Transform.FindObjectOfType<App>();
 			CUdp udp = app.GetUdp();
 			Damage();
@@ -238,8 +238,19 @@ public class PeerActions : MonoBehaviour
 				}
 				else
 				{
+					int count = gm.GetPlayerCount();
 					player.SetHp(0);
 					hp = 0;
+					for(int i = 0; i < count; i++)
+                    {
+						if(socket == gm.GetPlayer(i).GetSocket().ToString()+"(Clone)")
+                        {
+							gm.GetPlayer(i).AddKill();
+							break;
+                        }
+                    }
+					player.AddDeath();
+					udp.Status();
 				}
 				udp.PeerHit(player.GetSocket(), hp);
 			}

@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
         DAMAGE,
         DAETH
     }
-
+    CGameManager gm;
     Animator animator;
     Camera camera;
 
@@ -41,6 +41,8 @@ public class PlayerMovement : MonoBehaviour
 
     private float DeathTime;
 
+    public Transform[] respawnPosition;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -62,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         App app = Transform.FindObjectOfType<App>();
         player = app.GetPlayer();
         udp = app.GetUdp();
+        gm = CGameManager.Instance;
 
         animator = this.GetComponent<Animator>();
         camera = Camera.main;
@@ -179,7 +182,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             FireBullet(firePosition.transform.position, camera.transform.rotation);
-
+            bullet.name = player.GetSocket().ToString();
             Instantiate(bullet, firePosition.transform.position, camera.transform.rotation);
         }
     }
@@ -230,16 +233,12 @@ public class PlayerMovement : MonoBehaviour
         animator.Play("Death");
     }
 
-    public void Attack()
-    {
-        ChangeStateAiming();
-        animator.SetTrigger("Attack");
-    }
-
     public void Death()
     {
         if (DeathTime >= 5.0f)
         {
+            int num = Random.Range(0, 7);
+            this.transform.position = respawnPosition[num].position;
             player.SetHp(100);
             animator.Play("Idle");
             ChangeStateIdle();
@@ -312,16 +311,17 @@ public class PlayerMovement : MonoBehaviour
         udp.FireBullet(player.GetSocket(), _position, _rotate);
     }
 
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(5f, 5f, 20f, 20f), m_state.ToString(), style);
-        GUI.Label(new Rect(5f, 5f + 20, 20f, 20f), player.GetHp().ToString(), style);
-    }
+    //private void OnGUI()
+    //{
+    //    GUI.Label(new Rect(5f, 5f, 20f, 20f), m_state.ToString(), style);
+    //    GUI.Label(new Rect(5f, 5f + 20, 20f, 20f), player.GetHp().ToString(), style);
+    //}
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "bullet")
         {
+            string socket = collision.gameObject.name;
             ChangeStateDamage();
             Destroy(collision.gameObject);
 
@@ -336,7 +336,19 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else
                 {
+                    int count = gm.GetPlayerCount();
                     app.GetPlayer().SetHp(0);
+                    for(int i = 0; i < count; i++)
+                    {
+                        if(socket == gm.GetPlayer(i).GetSocket().ToString()+"(Clone)")
+                        {
+                            gm.GetPlayer(i).AddKill();
+                            break;
+                        }
+                    }
+                    gm.GetPlayer(0).AddDeath();
+                    
+                    udp.Status();
                 }
             }
         }

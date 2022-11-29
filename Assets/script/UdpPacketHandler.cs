@@ -65,6 +65,9 @@ public class UdpPacketHandler : MonoBehaviour
             case 7:
                 PeerHit();
                 break;
+            case 8:
+                Status();
+                break;
             default:
                 break;
         }
@@ -211,6 +214,8 @@ public class UdpPacketHandler : MonoBehaviour
     {
         CPlayer player;
 
+        uint socket = binaryReader.ReadUInt32();
+
         Vector3 position;
         position.x = binaryReader.ReadSingle();
         position.y = binaryReader.ReadSingle();
@@ -225,6 +230,7 @@ public class UdpPacketHandler : MonoBehaviour
 
         //Debug.Log("x " + rotate.x + " / " + "y " + rotate.y + " / " + "z " + rotate.z + " / " + "w " + rotate.w);
 
+        bullet.name = socket.ToString();
         Instantiate(bullet, position, rotate);
     }
 
@@ -237,5 +243,22 @@ public class UdpPacketHandler : MonoBehaviour
         int hp = binaryReader.ReadInt32();
 
         player.SetHp(hp);
+    }
+
+    void Status()
+    {
+        CGameManager gm = CGameManager.Instance;
+        CPlayer player;
+        int count = gm.GetPlayerCount();
+
+        for(int i = 0; i < count; i++)
+        {
+            ushort kill = binaryReader.ReadUInt16();
+            ushort Death = binaryReader.ReadUInt16();
+            player = gm.GetPlayer(i);
+            player.SetKill(kill);
+            player.SetDeath(Death);
+            Debug.Log("kill : " + kill + " Death : " + Death);
+        }
     }
 }

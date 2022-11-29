@@ -6,12 +6,7 @@ public class MainController : MonoBehaviour
 {
     public Transform objectTofollow;
 
-    public float ForwardSpeed = 2.0f;
-    public float BackwardSpeed = 1.0f;  
-    public float StrafeSpeed = 4.0f;    
-    public float RunMultiplier = 1.0f;
-
-    public float followSpeed = 30f;
+    public float followSpeed = 1000f;
     public float sensitivity = 100f;
     public float clampAngle = 30f;
 

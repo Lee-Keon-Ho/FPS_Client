@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class Spawn : MonoBehaviour
 {
-    public GameObject[] spawn;
+    public GameObject[] peer;
     public GameObject m_player;
     private CUdp udp;
     private CGameManager gm;
     int playerCount;
     public PeerActions[] pa;
+    public Transform[] spawn;
+    private bool[] bSpawn;
 
     CPlayer player;
-
-    private float timer = 0f;
     void Awake()
     {
-        
+        bSpawn = new bool[8];
+        for (int i = 0; i < 8; i++)
+        {
+            bSpawn[i] = false;
+        }
     }
 
     void Start()
@@ -30,36 +34,18 @@ public class Spawn : MonoBehaviour
         {
             if (player.GetNumber() == i + 1)
             {
-                spawn[i].SetActive(true);
+                peer[i].SetActive(true);
                 m_player.transform.position = spawn[i].transform.position;
                 gm.GetPlayer(i).SetPosition(m_player.transform.position);
-                spawn[i].SetActive(false);
+                peer[i].SetActive(false);
             }
             else
             {
-                gm.GetPlayer(i).SetPosition(spawn[i].transform.position);
-                spawn[i].SetActive(true);
+                peer[i].transform.position = spawn[i].transform.position;
+                gm.GetPlayer(i).SetPosition(peer[i].transform.position);
+                peer[i].SetActive(true);
                 pa[i].SetPlayer(i);
             }
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //timer += Time.deltaTime;
-
-        //if (timer >= 1f)
-        //{
-        //    for (int i = 0; i < playerCount; i++)
-        //    {
-        //        if (player.GetSocket() != gm.GetPlayer(i).GetSocket())
-        //        {
-        //            spawn[i].transform.GetChild(0).position = gm.GetPosition(i); ;
-        //            spawn[i].transform.GetChild(0).rotation = Quaternion.Euler(0f, gm.GetRotation(i), 0f);
-        //        }
-        //    }
-        //    timer = 0f;
-        //}
     }
 }

@@ -5,8 +5,6 @@ using UnityEngine;
 public class CGameManager : MonoBehaviour
 {
     private static CGameManager instance = null;
-    private int teamACount;
-    private int teamBCount;
     private int playerCount;
     private CPlayer[] m_player = new CPlayer[8];
 
@@ -44,8 +42,6 @@ public class CGameManager : MonoBehaviour
     public void Init()
     {
         playerCount = 0;
-        teamACount = 0;
-        teamBCount = 0;
 
         for(int i = 0; i < 8; i++)
         {
@@ -53,12 +49,7 @@ public class CGameManager : MonoBehaviour
         }
     }
 
-    public void SetTeamACount(int _num) { teamACount = _num; }
-    public void SetTeamBCount(int _num) { teamBCount = _num; }
-    public int GetTeamACount() { return teamACount; }
-    public int GetTeamBCount() { return teamBCount; }
-
-    public void SetPlayers(int _num, uint _socket, uint _addr, ushort _port, string _addrStr)
+    public void SetPlayers(int _num, uint _socket, uint _addr, ushort _port, string _addrStr, string _name)
     {
         CGameManager gm = CGameManager.Instance;
         App app = Transform.FindObjectOfType<App>();
@@ -66,6 +57,7 @@ public class CGameManager : MonoBehaviour
         m_player[_num].SetSocet(_socket);
         m_player[_num].SetAddr(_addr, _port);
         m_player[_num].SetAddrStr(_addrStr);
+        m_player[_num].SetName(_name);
 
         for (int i = 0; i < gm.playerCount; i++)
         {

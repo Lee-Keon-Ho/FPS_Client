@@ -221,8 +221,9 @@ public class CUdp
 
         memoryStream.Position = 0;
 
-        bw.Write((ushort)32);
+        bw.Write((ushort)36);
         bw.Write((ushort)6);
+        bw.Write(_socket);
         bw.Write(_position.x);
         bw.Write(_position.y);
         bw.Write(_position.z);
@@ -246,7 +247,6 @@ public class CUdp
 
     public void PeerHit(uint _socket, int _hp)
     {
-        App app = Transform.FindObjectOfType<App>();
         CGameManager gm = CGameManager.Instance;
         int count = gm.GetPlayerCount();
         CPlayer player;
@@ -274,5 +274,36 @@ public class CUdp
         }
     }
 
+    public void Status()
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)(4 + (sizeof(ushort) * count)));
+        bw.Write((ushort)8);
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            bw.Write((ushort)player.GetKill());
+            bw.Write((ushort)player.GetDeath());
+            Debug.Log(i + " : " + player.GetKill() + " : " + player.GetDeath());
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+            EndPoint end = (EndPoint)endPoint;
+
+            int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+        }
+    }
     public Socket GetSocket() { return m_socket; }
 }
