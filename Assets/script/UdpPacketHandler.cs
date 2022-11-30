@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Net;
+using UnityEngine.SceneManagement;
 
 public class UdpPacketHandler : MonoBehaviour
 {
@@ -67,6 +68,9 @@ public class UdpPacketHandler : MonoBehaviour
                 break;
             case 8:
                 Status();
+                break;
+            case 9:
+                GameOver();
                 break;
             default:
                 break;
@@ -260,5 +264,11 @@ public class UdpPacketHandler : MonoBehaviour
             player.SetDeath(Death);
             Debug.Log("kill : " + kill + " Death : " + Death);
         }
+    }
+
+    void GameOver()
+    {
+        SceneManager.LoadScene("Room");
+        Debug.Log(1234);
     }
 }

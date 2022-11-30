@@ -305,5 +305,29 @@ public class CUdp
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
     }
+
+    public void GameOver()
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)4);
+        bw.Write((ushort)9);
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+            EndPoint end = (EndPoint)endPoint;
+
+            int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+        }
+    }
     public Socket GetSocket() { return m_socket; }
 }

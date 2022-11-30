@@ -319,7 +319,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "bullet")
+        if (collision.gameObject.tag == "bullet" && m_state != (int)eState.DAETH)
         {
             string socket = collision.gameObject.name;
             ChangeStateDamage();
@@ -328,6 +328,7 @@ public class PlayerMovement : MonoBehaviour
             if (player.GetBoss() == 0)
             {
                 App app = FindObjectOfType<App>();
+                int kill = 0;
                 int hp = app.GetPlayer().GetHp();
                 hp -= 34;
                 if (hp > 0)
@@ -343,12 +344,17 @@ public class PlayerMovement : MonoBehaviour
                         if(socket == gm.GetPlayer(i).GetSocket().ToString()+"(Clone)")
                         {
                             gm.GetPlayer(i).AddKill();
+                            kill = gm.GetPlayer(i).GetKill();
                             break;
                         }
                     }
                     gm.GetPlayer(0).AddDeath();
                     
                     udp.Status();
+                    if(kill >= 1)
+                    {
+                        udp.GameOver();
+                    }
                 }
             }
         }

@@ -159,6 +159,7 @@ public class PeerActions : MonoBehaviour
 		animator.SetBool("Aiming", false);
 		animator.SetFloat("Speed", 0f);
 	}
+
 	public void ChangeStateWalk()
 	{
 		m_state = 1;
@@ -166,6 +167,7 @@ public class PeerActions : MonoBehaviour
 		animator.SetBool("Aiming", false);
 		animator.SetFloat("Speed", 0.5f);
 	}
+
 	public void ChangeStateRun()
 	{
 		m_state = 2;
@@ -220,12 +222,13 @@ public class PeerActions : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		if (collision.gameObject.tag == "bullet")
+		if (collision.gameObject.tag == "bullet" && m_state != (int)eState.DAETH)
 		{
 			string socket = collision.gameObject.name;
 			Debug.Log(socket);
 			App app = Transform.FindObjectOfType<App>();
 			CUdp udp = app.GetUdp();
+			int kill = 0;
 			Damage();
 			Destroy(collision.gameObject);
 			if (app.GetPlayer().GetBoss() == 0)
@@ -246,11 +249,16 @@ public class PeerActions : MonoBehaviour
 						if(socket == gm.GetPlayer(i).GetSocket().ToString()+"(Clone)")
                         {
 							gm.GetPlayer(i).AddKill();
+							kill = gm.GetPlayer(i).GetKill();
 							break;
                         }
                     }
 					player.AddDeath();
 					udp.Status();
+					if(kill >= 5)
+                    {
+						udp.GameOver();
+                    }
 				}
 				udp.PeerHit(player.GetSocket(), hp);
 			}
