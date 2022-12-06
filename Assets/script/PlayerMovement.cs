@@ -17,13 +17,17 @@ public class PlayerMovement : MonoBehaviour
     Animator animator;
     Camera camera;
 
+    public AudioClip clip;
+    AudioSource audio;
+
     float rateTime;
     float nextTime;
+    float gameOverTime;
 
     public float smoothness = 10f;
 
     private int m_state;
-
+    
     private CPlayer player;
     CUdp udp;
 
@@ -46,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        audio = GetComponent<AudioSource>();
         style = new GUIStyle();
 
         rateTime = 0.1f;
@@ -181,6 +186,9 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(0))
         {
+            audio.clip = clip;
+            audio.Play();
+
             FireBullet(firePosition.transform.position, camera.transform.rotation);
             bullet.name = player.GetSocket().ToString();
             Instantiate(bullet, firePosition.transform.position, camera.transform.rotation);
@@ -235,7 +243,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Death()
     {
-        if (DeathTime >= 5.0f)
+        if (DeathTime >= 4.0f)
         {
             int num = Random.Range(0, 7);
             this.transform.position = respawnPosition[num].position;
@@ -319,6 +327,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if(CGameManager.Instance.GetGameOver()) return;
         if (collision.gameObject.tag == "bullet" && m_state != (int)eState.DAETH)
         {
             string socket = collision.gameObject.name;
@@ -353,6 +362,8 @@ public class PlayerMovement : MonoBehaviour
                     udp.Status();
                     if(kill >= 1)
                     {
+                        gm.gameSocket = 0;
+                        gm.GetPlayer(0).SetHp(100);
                         udp.GameOver();
                     }
                 }

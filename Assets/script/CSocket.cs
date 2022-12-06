@@ -163,19 +163,6 @@ public class CSocket
 
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
-    public void TeamChange(int _num)
-    {
-        MemoryStream memoryStream = new MemoryStream(sendBuffer);
-        BinaryWriter bw = new BinaryWriter(memoryStream);
-
-        memoryStream.Position = 0;
-
-        bw.Write((ushort)6);
-        bw.Write((ushort)10);
-        bw.Write((ushort)_num);
-
-        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
-    }
 
     public void Ready()
     {
@@ -203,22 +190,28 @@ public class CSocket
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }
 
-    public void Test(Vector3 vector3)
+    public void RoomState()
     {
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
         memoryStream.Position = 0;
 
-        bw.Write((ushort)16);
-        bw.Write((ushort)20);
-        bw.Write((float)vector3.x);
-        bw.Write((float)vector3.y);
-        bw.Write((float)vector3.z);
+        bw.Write((ushort)4);
+        bw.Write((ushort)9);
 
-        Debug.Log(vector3.x);
-        Debug.Log(vector3.y);
-        Debug.Log(vector3.z);
+        int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
+    }
+
+    public void GameOver()
+    {
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)4);
+        bw.Write((ushort)14);
 
         int size = m_socket.Send(sendBuffer, (int)memoryStream.Position, 0);
     }

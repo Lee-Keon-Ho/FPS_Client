@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Net;
-using UnityEngine.SceneManagement;
 
 public class UdpPacketHandler : MonoBehaviour
 {
@@ -72,6 +71,12 @@ public class UdpPacketHandler : MonoBehaviour
             case 9:
                 GameOver();
                 break;
+            case 10:
+                ConnecetComplet();
+                break;
+            case 11:
+                GameStart();
+                break;
             default:
                 break;
         }
@@ -98,8 +103,11 @@ public class UdpPacketHandler : MonoBehaviour
             player = gm.GetPlayer(i);
             if (player.GetSocket() == socket)
             {
-                player.SetUdpConnect(true);
-                loading.SetOk(i);
+                if(app.GetPlayer().GetBoss() != 0)
+                {
+                    player.SetUdpConnect(true);
+                    loading.SetOk(i);
+                }
 
                 IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
                 EndPoint end = (EndPoint)endPoint;
@@ -113,6 +121,7 @@ public class UdpPacketHandler : MonoBehaviour
                 binaryWriter.Write(player.GetSocket());
 
                 int sendSize = app.GetUdp().GetSocket().SendTo(buffer, (int)writeStream.Position, System.Net.Sockets.SocketFlags.None, end);
+                break;
             }
         }
 
@@ -124,7 +133,10 @@ public class UdpPacketHandler : MonoBehaviour
             if (player.GetUdpconnect()) connectCount++;
         }
 
-        if (connectCount == count) gm.gameSocket = 2;
+        if (connectCount == count)
+        {
+            if(gm.gameSocket != 3) gm.gameSocket = 2;
+        }
     }
 
     void PeerPosition()
@@ -268,7 +280,47 @@ public class UdpPacketHandler : MonoBehaviour
 
     void GameOver()
     {
-        SceneManager.LoadScene("Room");
-        Debug.Log(1234);
+        App app = FindObjectOfType<App>();
+
+        CGameManager.Instance.SetGameOver(true);
+    }
+
+    void ConnecetComplet()
+    {
+        CGameManager gm = CGameManager.Instance;
+        CPlayer player;
+        int count = gm.GetPlayerCount();
+        int connetCount = 0;
+        uint socket = binaryReader.ReadUInt32();
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if(socket == player.GetSocket())
+            {
+                player.SetUdpConnect(true);
+                break;
+            }
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if (player.GetUdpconnect())
+            {
+                connetCount++;
+            }
+        }
+
+        if(connetCount == count)
+        {
+            App app = FindObjectOfType<App>();
+            app.GetUdp().GameStart();
+        }
+    }
+
+    void GameStart()
+    {
+        CGameManager.Instance.gameSocket = 3;
     }
 }

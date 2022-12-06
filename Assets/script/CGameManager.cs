@@ -7,11 +7,13 @@ public class CGameManager : MonoBehaviour
     private static CGameManager instance = null;
     private int playerCount;
     private CPlayer[] m_player = new CPlayer[8];
+    private bool bGameOver;
 
     public ushort gameSocket = 0;
     void Awake()
     {
-        if(null == instance)
+        bGameOver = false;
+        if (null == instance)
         {
             instance = this;
             instance.Init();
@@ -73,4 +75,11 @@ public class CGameManager : MonoBehaviour
     public void SetPlayerCount(int _count) { playerCount = _count; }
 
     public int GetPlayerCount() { return playerCount; }
+
+    public bool GetGameOver() { return bGameOver; }
+    public void SetGameOver(bool _gameOver) 
+    {
+        gameSocket = 0;
+        bGameOver = _gameOver; 
+    }
 }

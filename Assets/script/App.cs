@@ -91,11 +91,6 @@ public class App : MonoBehaviour
         m_socket.RoomOut();
     }
 
-    public void TeamChange(int _num)
-    {
-        m_socket.TeamChange(_num);
-    }
-
     public void ReadButton()
     {
         m_socket.Ready();
@@ -104,11 +99,6 @@ public class App : MonoBehaviour
     public void GameStart()
     {
         m_socket.GameStart();
-    }
-
-    public void Test(Vector3 _vector3)
-    {
-        m_socket.Test(_vector3);
     }
 
     public string GetName() { return m_player.GetName(); }

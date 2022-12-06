@@ -19,7 +19,6 @@ public class PlayerController : MonoBehaviour {
 
 	public void SetArsenal(string name) {
 		foreach (Arsenal hand in arsenal) {
-			Debug.Log(name);
 			if (hand.name == name) {
 				if (rightGunBone.childCount > 0)
 					Destroy(rightGunBone.GetChild(0).gameObject);

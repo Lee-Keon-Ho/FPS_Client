@@ -31,7 +31,6 @@ public class CPlayer
         m_HP = 100;
         m_kill = 0;
         m_Death = 0;
-        if (m_name == null) return false;
 
         m_position = Vector3.zero;
 

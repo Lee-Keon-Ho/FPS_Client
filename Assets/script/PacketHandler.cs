@@ -265,8 +265,6 @@ public class PacketHandler : MonoBehaviour
 
         App app = Transform.FindObjectOfType<App>();
         app.SetAddr(address, port);
-
-        CGameManager.Instance.gameSocket = 1;
     }
 
     private void AddressAll()

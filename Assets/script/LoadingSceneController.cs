@@ -51,12 +51,12 @@ public class LoadingSceneController : MonoBehaviour
                 CUdp udp = app.GetUdp();
 
                 udp.SendSocket(app.GetSocket());
-
+                Debug.Log(app.GetSocket());
                 m_time = 0f;
             }
             m_time += Time.deltaTime;
         }
-        else 
+        if(CGameManager.Instance.gameSocket == 1) 
         {
             if (m_time >= 1f)
             {
@@ -67,6 +67,21 @@ public class LoadingSceneController : MonoBehaviour
                 m_time = 0f;
             }
             m_time += Time.deltaTime;
+        }
+        if(CGameManager.Instance.gameSocket == 2)
+        {
+            if(app.GetPlayer().GetBoss() != 0) // 0일 경우가 boss
+            {
+                if (m_time >= 1f)
+                {
+                    CUdp udp = app.GetUdp();
+
+                    udp.ConnecetComplet();
+
+                    m_time = 0f;
+                }
+                m_time += Time.deltaTime;
+            }
         }
 
         int count = CGameManager.Instance.GetPlayerCount();
@@ -97,7 +112,7 @@ public class LoadingSceneController : MonoBehaviour
             }
             else
             {
-                if(CGameManager.Instance.gameSocket == 2)
+                if(CGameManager.Instance.gameSocket == 3)
                 {
                     timer += Time.unscaledDeltaTime;
                     progressBar.fillAmount = Mathf.Lerp(0.9f, 1f, timer);

@@ -74,18 +74,28 @@ public class CUdp
         }
     }
 
+    public void CloseSocket()
+    {
+        thread.Abort();
+        m_socket.Close();
+    }
+
     public void SendSocket(uint _socket)
     {
         MemoryStream memoryStream = new MemoryStream(sendBuffer);
         BinaryWriter bw = new BinaryWriter(memoryStream);
 
+        IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+
+        long address = host.AddressList[1].Address;
+
         memoryStream.Position = 0;
 
-        bw.Write((ushort)4);
+        bw.Write((ushort)6);
         bw.Write((ushort)1);
         bw.Write((ushort)_socket);
 
-        int size = m_socket.SendTo(sendBuffer, 6, SocketFlags.None, m_end);
+        int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, m_end);
     }
 
     public void PeerConnect()
@@ -329,5 +339,62 @@ public class CUdp
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
     }
+
+    public void ConnecetComplet()
+    {
+        App app = Transform.FindObjectOfType<App>();
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)8);
+        bw.Write((ushort)10);
+        bw.Write((ushort)app.GetPlayer().GetSocket());
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if(player.GetBoss() == 0)
+            {
+                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                EndPoint end = (EndPoint)endPoint;
+
+                int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+
+                break;
+            }
+        }
+    }
+
+    public void GameStart()
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+        CPlayer player;
+
+        MemoryStream memoryStream = new MemoryStream(sendBuffer);
+        BinaryWriter bw = new BinaryWriter(memoryStream);
+
+        memoryStream.Position = 0;
+
+        bw.Write((ushort)4);
+        bw.Write((ushort)11);
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+
+            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+            EndPoint end = (EndPoint)endPoint;
+
+            int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
+        }
+    }
+
     public Socket GetSocket() { return m_socket; }
 }
