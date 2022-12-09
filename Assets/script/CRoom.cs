@@ -29,6 +29,7 @@ public class CRoom : MonoBehaviour
         }
 
         m_name.text = app.GetName();
+
     }
     // Start is called before the first frame update
     void Start()

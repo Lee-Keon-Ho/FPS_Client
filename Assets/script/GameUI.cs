@@ -92,6 +92,7 @@ public class GameUI : MonoBehaviour
                 app.m_socket.RoomState();
                 app.m_udp.CloseSocket();
                 CGameManager.Instance.SetGameOver(false);
+
                 SceneManager.LoadScene("Room");
             }
         }

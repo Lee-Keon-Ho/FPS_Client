@@ -45,10 +45,10 @@ public class UdpPacketHandler : MonoBehaviour
         switch (type)
         {
             case 1:
-
+                PeerConnect();
                 break;
             case 2:
-                PeerConnect();
+                PeerConnectOk();
                 break;
             case 3:
                 PeerPosition();
@@ -93,6 +93,8 @@ public class UdpPacketHandler : MonoBehaviour
         if (gm.gameSocket == 2) return;
 
         uint socket = binaryReader.ReadUInt32();
+        long sourceAddr = binaryReader.ReadInt64();
+        ushort port = binaryReader.ReadUInt16();
 
         int count = gm.GetPlayerCount();
 
@@ -103,13 +105,7 @@ public class UdpPacketHandler : MonoBehaviour
             player = gm.GetPlayer(i);
             if (player.GetSocket() == socket)
             {
-                if(app.GetPlayer().GetBoss() != 0)
-                {
-                    player.SetUdpConnect(true);
-                    loading.SetOk(i);
-                }
-
-                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                IPEndPoint endPoint = new IPEndPoint(sourceAddr, port);
                 EndPoint end = (EndPoint)endPoint;
 
                 byte[] buffer = new byte[100];
@@ -121,6 +117,32 @@ public class UdpPacketHandler : MonoBehaviour
                 binaryWriter.Write(player.GetSocket());
 
                 int sendSize = app.GetUdp().GetSocket().SendTo(buffer, (int)writeStream.Position, System.Net.Sockets.SocketFlags.None, end);
+
+                if(app.GetPlayer().GetBoss() != 0)
+                {
+                    player.SetUdpConnect(true);
+                }
+
+                break;
+            }
+        }
+    }
+
+    void PeerConnectOk()
+    {
+        CGameManager gm = CGameManager.Instance;
+        int count = gm.GetPlayerCount();
+
+        uint socket = binaryReader.ReadUInt32();
+
+        CPlayer player;
+
+        for (int i = 0; i < count; i++)
+        {
+            player = gm.GetPlayer(i);
+            if (player.GetSocket() == socket)
+            {
+                player.SetUdpConnect(true);
                 break;
             }
         }
@@ -135,7 +157,7 @@ public class UdpPacketHandler : MonoBehaviour
 
         if (connectCount == count)
         {
-            if(gm.gameSocket != 3) gm.gameSocket = 2;
+            if (gm.gameSocket != 3) gm.gameSocket = 2;
         }
     }
 
@@ -274,7 +296,6 @@ public class UdpPacketHandler : MonoBehaviour
             player = gm.GetPlayer(i);
             player.SetKill(kill);
             player.SetDeath(Death);
-            Debug.Log("kill : " + kill + " Death : " + Death);
         }
     }
 
@@ -285,7 +306,7 @@ public class UdpPacketHandler : MonoBehaviour
         CGameManager.Instance.SetGameOver(true);
     }
 
-    void ConnecetComplet()
+    void ConnecetComplet() // 방장만 실행한다.
     {
         CGameManager gm = CGameManager.Instance;
         CPlayer player;

@@ -225,7 +225,7 @@ public class PeerActions : MonoBehaviour
 		if (collision.gameObject.tag == "bullet" && m_state != (int)eState.DAETH)
 		{
 			string socket = collision.gameObject.name;
-			Debug.Log(socket);
+			
 			App app = Transform.FindObjectOfType<App>();
 			CUdp udp = app.GetUdp();
 			int kill = 0;
@@ -255,7 +255,7 @@ public class PeerActions : MonoBehaviour
                     }
 					player.AddDeath();
 					udp.Status();
-					if(kill >= 1)
+					if(kill >= 2)
                     {
 						gm.gameSocket = 0;
 						player.SetHp(100);

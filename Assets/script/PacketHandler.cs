@@ -262,9 +262,11 @@ public class PacketHandler : MonoBehaviour
     {
         uint address = binaryReader.ReadUInt32();
         ushort port = binaryReader.ReadUInt16();
+        long sourceAddr = binaryReader.ReadInt32();
 
         App app = Transform.FindObjectOfType<App>();
         app.SetAddr(address, port);
+        app.GetPlayer().SetSourceAddr(sourceAddr);
     }
 
     private void AddressAll()
@@ -275,27 +277,20 @@ public class PacketHandler : MonoBehaviour
         uint addr;
         uint socket;
         ushort port;
+        long sourceAddr;
+
         gm.SetPlayerCount(count);
 
         for (int i = 0; i < count; i++)
         {
             socket = binaryReader.ReadUInt32(); 
             addr = binaryReader.ReadUInt32();
-
-            memoryStream.Position -= sizeof(uint);
-
-            byte b1 = binaryReader.ReadByte();
-            byte b2 = binaryReader.ReadByte();
-            byte b3 = binaryReader.ReadByte();
-            byte b4 = binaryReader.ReadByte();
-
-            string addrStr = b1.ToString() + "." + b2.ToString() + "." + b3.ToString() + "." + b4.ToString();
-
             port = binaryReader.ReadUInt16();
+            sourceAddr = binaryReader.ReadInt32();
 
             string name = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(32));
 
-            CGameManager.Instance.SetPlayers(i, socket, addr, port, addrStr, name);
+            CGameManager.Instance.SetPlayers(i, socket, addr, port, sourceAddr, name);
         }
 
         CGameManager.Instance.gameSocket = 1;

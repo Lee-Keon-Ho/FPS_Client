@@ -87,13 +87,14 @@ public class CUdp
 
         IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
 
-        long address = host.AddressList[1].Address;
+        long hostAddr = host.AddressList[1].Address;
 
         memoryStream.Position = 0;
 
-        bw.Write((ushort)6);
+        bw.Write((ushort)14);
         bw.Write((ushort)1);
         bw.Write((ushort)_socket);
+        bw.Write(hostAddr);
 
         int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, m_end);
     }
@@ -109,20 +110,40 @@ public class CUdp
         int count = gm.GetPlayerCount();
         App app = Transform.FindObjectOfType<App>();
 
-        for(int i = 0; i < count; i++)
+        CPlayer player;
+
+        for (int i = 0; i < count; i++)
         {
-            CPlayer player = gm.GetPlayer(i);
+            player = gm.GetPlayer(i);
 
             if (app.GetPlayer().GetSocket() != player.GetSocket())
             {
-                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-                EndPoint end = (EndPoint)endPoint;
+                IPEndPoint endPoint;
+                EndPoint end;
 
-                bw.Write((ushort)8);
-                bw.Write((ushort)2);
-                bw.Write(app.GetPlayer().GetSocket());
+                if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+                {
+                    endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                    end = (EndPoint)endPoint;
 
-                Debug.Log("SendTo : " + end);
+                    bw.Write((ushort)(10 + sizeof(long)));
+                    bw.Write((ushort)1);
+                    bw.Write(app.GetPlayer().GetSocket());
+                    bw.Write((long)app.GetPlayer().GetSourceAddr());
+                    bw.Write((ushort)app.GetPlayer().GetPort());
+                }
+                else
+                {
+                    endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                    end = (EndPoint)endPoint;
+
+                    bw.Write((ushort)(10 + sizeof(long)));
+                    bw.Write((ushort)1);
+                    bw.Write(app.GetPlayer().GetSocket());
+                    bw.Write((long)app.GetPlayer().GetAddr());
+                    bw.Write((ushort)app.GetPlayer().GetPort());
+                }
+
                 int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
             }
             else
@@ -135,6 +156,7 @@ public class CUdp
     public void PeerPosition(Vector3 _positon, Quaternion _Rotation, uint _socket, int _action)
     {
         CGameManager gm = CGameManager.Instance;
+        App app = Transform.FindObjectOfType<App>();
         int count = gm.GetPlayerCount();
         CPlayer player;
 
@@ -153,8 +175,20 @@ public class CUdp
         for (int i = 0; i < count; i++)
         {
             player = gm.GetPlayer(i);
-            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-            EndPoint end = (EndPoint)endPoint;
+            IPEndPoint endPoint;
+            EndPoint end;
+
+            if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+            {
+                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
+            else
+            {
+                endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
+            
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
@@ -163,6 +197,7 @@ public class CUdp
     public void InputKey(uint _socket, int _action, Vector3 _position, float _rotation)
     {
         CGameManager gm = CGameManager.Instance;
+        App app = Transform.FindObjectOfType<App>();
         int count = gm.GetPlayerCount();
         CPlayer player;
 
@@ -183,8 +218,19 @@ public class CUdp
         for (int i = 0; i < count; i++)
         {
             player = gm.GetPlayer(i);
-            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-            EndPoint end = (EndPoint)endPoint;
+            IPEndPoint endPoint;
+            EndPoint end;
+
+            if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+            {
+                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
+            else
+            {
+                endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
@@ -193,6 +239,7 @@ public class CUdp
     public void MouseMove(uint _socket, Vector3 _position, float _rotation)
     {
         CGameManager gm = CGameManager.Instance;
+        App app = Transform.FindObjectOfType<App>();
         int count = gm.GetPlayerCount();
         CPlayer player;
 
@@ -212,8 +259,19 @@ public class CUdp
         for(int i = 0; i < count; i++)
         {
             player = gm.GetPlayer(i);
-            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-            EndPoint end = (EndPoint)endPoint;
+            IPEndPoint endPoint;
+            EndPoint end;
+
+            if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+            {
+                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
+            else
+            {
+                endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
@@ -247,8 +305,19 @@ public class CUdp
             player = gm.GetPlayer(i);
             if(player.GetSocket() != app.GetSocket())
             {
-                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-                EndPoint end = (EndPoint)endPoint;
+                IPEndPoint endPoint;
+                EndPoint end;
+
+                if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+                {
+                    endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                    end = (EndPoint)endPoint;
+                }
+                else
+                {
+                    endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                    end = (EndPoint)endPoint;
+                }
 
                 int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
             }
@@ -258,6 +327,7 @@ public class CUdp
     public void PeerHit(uint _socket, int _hp)
     {
         CGameManager gm = CGameManager.Instance;
+        App app = Transform.FindObjectOfType<App>();
         int count = gm.GetPlayerCount();
         CPlayer player;
 
@@ -275,8 +345,19 @@ public class CUdp
             player = gm.GetPlayer(i);
             if (player.GetSocket() == _socket)
             {
-                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-                EndPoint end = (EndPoint)endPoint;
+                IPEndPoint endPoint;
+                EndPoint end;
+
+                if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+                {
+                    endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                    end = (EndPoint)endPoint;
+                }
+                else
+                {
+                    endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                    end = (EndPoint)endPoint;
+                }
 
                 int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
                 break;
@@ -287,6 +368,7 @@ public class CUdp
     public void Status()
     {
         CGameManager gm = CGameManager.Instance;
+        App app = Transform.FindObjectOfType<App>();
         int count = gm.GetPlayerCount();
         CPlayer player;
 
@@ -303,14 +385,25 @@ public class CUdp
             player = gm.GetPlayer(i);
             bw.Write((ushort)player.GetKill());
             bw.Write((ushort)player.GetDeath());
-            Debug.Log(i + " : " + player.GetKill() + " : " + player.GetDeath());
         }
 
         for (int i = 0; i < count; i++)
         {
+            IPEndPoint endPoint;
+            EndPoint end;
+
             player = gm.GetPlayer(i);
-            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-            EndPoint end = (EndPoint)endPoint;
+
+            if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+            {
+                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
+            else
+            {
+                endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
@@ -319,6 +412,7 @@ public class CUdp
     public void GameOver()
     {
         CGameManager gm = CGameManager.Instance;
+        App app = Transform.FindObjectOfType<App>();
         int count = gm.GetPlayerCount();
         CPlayer player;
 
@@ -332,9 +426,21 @@ public class CUdp
 
         for (int i = 0; i < count; i++)
         {
+            IPEndPoint endPoint;
+            EndPoint end;
+
             player = gm.GetPlayer(i);
-            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-            EndPoint end = (EndPoint)endPoint;
+
+            if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+            {
+                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
+            else
+            {
+                endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
@@ -361,8 +467,19 @@ public class CUdp
             player = gm.GetPlayer(i);
             if(player.GetBoss() == 0)
             {
-                IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-                EndPoint end = (EndPoint)endPoint;
+                IPEndPoint endPoint;
+                EndPoint end;
+
+                if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+                {
+                    endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                    end = (EndPoint)endPoint;
+                }
+                else
+                {
+                    endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                    end = (EndPoint)endPoint;
+                }
 
                 int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
 
@@ -374,6 +491,7 @@ public class CUdp
     public void GameStart()
     {
         CGameManager gm = CGameManager.Instance;
+        App app = Transform.FindObjectOfType<App>();
         int count = gm.GetPlayerCount();
         CPlayer player;
 
@@ -387,10 +505,21 @@ public class CUdp
 
         for (int i = 0; i < count; i++)
         {
+            IPEndPoint endPoint;
+            EndPoint end;
+
             player = gm.GetPlayer(i);
 
-            IPEndPoint endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
-            EndPoint end = (EndPoint)endPoint;
+            if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+            {
+                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
+            else
+            {
+                endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
+                end = (EndPoint)endPoint;
+            }
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }

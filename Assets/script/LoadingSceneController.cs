@@ -43,15 +43,14 @@ public class LoadingSceneController : MonoBehaviour
     private void Update()
     {
         App app = Transform.FindObjectOfType<App>();
-
-        if(CGameManager.Instance.gameSocket == 0) // gm에서 다른걸로 해야한다.
+        
+        if (CGameManager.Instance.gameSocket == 0) // gm에서 다른걸로 해야한다.
         {
             if (m_time >= 1f)
             {
                 CUdp udp = app.GetUdp();
 
                 udp.SendSocket(app.GetSocket());
-                Debug.Log(app.GetSocket());
                 m_time = 0f;
             }
             m_time += Time.deltaTime;
@@ -90,7 +89,6 @@ public class LoadingSceneController : MonoBehaviour
         {
             CPlayer player = CGameManager.Instance.GetPlayer(i);
             socket[i].text = player.GetSocket().ToString();
-            addr[i].text = player.GetAddrStr();
             port[i].text = player.GetPort().ToString();
         }
 

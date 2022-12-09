@@ -11,7 +11,7 @@ public class CPlayer
     int m_boss;
     int m_ready;
     int m_number;
-    string m_addrStr;
+    long m_sourceAddr;
     bool m_udpConnect;
     Vector3 m_position;
     float m_rotation;
@@ -54,8 +54,8 @@ public class CPlayer
     }
     public ushort GetPort() { return m_port; }
     public uint GetAddr() { return m_addr; }
-    public void SetAddrStr(string _str) { m_addrStr = _str; }
-    public string GetAddrStr() { return m_addrStr; }
+    public void SetSourceAddr(long _addr) { m_sourceAddr = _addr; }
+    public long GetSourceAddr() { return m_sourceAddr; }
     public void SetUdpConnect(bool _udp) { m_udpConnect = _udp; }
     public bool GetUdpconnect() { return m_udpConnect; }
     public void SetPosition(Vector3 _position) {   m_position = _position; }
