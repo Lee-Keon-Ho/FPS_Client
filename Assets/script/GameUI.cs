@@ -22,8 +22,12 @@ public class GameUI : MonoBehaviour
 
     int MaxKill;
 
+    CPlayer[] players;
+    CPlayer tempPlayer;
     void Start()
     {
+        CGameManager gm = CGameManager.Instance;
+
         app = Transform.FindObjectOfType<App>();
 
         m_HP.text = app.GetPlayer().GetHp().ToString();
@@ -31,7 +35,7 @@ public class GameUI : MonoBehaviour
         count = CGameManager.Instance.GetPlayerCount();
 
         gameOverTime = 0f;
-
+        players = new CPlayer[count];
         for (int i = 0; i < count; i++)
         {
             ranging[i].SetActive(true);
@@ -39,9 +43,11 @@ public class GameUI : MonoBehaviour
             Kill[i].gameObject.SetActive(true);
             Death[i].gameObject.SetActive(true);
 
-            rankingName[i].text = CGameManager.Instance.GetPlayer(i).GetName();
-            Kill[i].text = CGameManager.Instance.GetPlayer(i).GetKill().ToString();
-            Death[i].text = CGameManager.Instance.GetPlayer(i).GetDeath().ToString();
+            rankingName[i].text = gm.GetPlayer(i).GetName();
+            Kill[i].text = gm.GetPlayer(i).GetKill().ToString();
+            Death[i].text = gm.GetPlayer(i).GetDeath().ToString();
+
+            players[i] = gm.GetPlayer(i);
         }
     }
 
@@ -49,7 +55,32 @@ public class GameUI : MonoBehaviour
     void Update()
     {
         m_HP.text = app.GetPlayer().GetHp().ToString();
-        
+
+        for(int i = 0; i < count; i++)
+        {
+            for(int j = 0; j < count - 1 - i; j++)
+            {
+                if(players[i].GetKill() < players[j + 1].GetKill())
+                {
+                    tempPlayer = players[i];
+                    players[j] = players[j + 1];
+                    players[j + 1] = tempPlayer;
+                }
+            }
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            rankingName[i].text = players[i].GetName();
+            MaxKill = players[i].GetKill();
+            Kill[i].text = MaxKill.ToString();
+
+            if (MaxKill >= 5) winPlayer.text = rankingName[i].text;
+            
+            Death[i].text = players[i].GetDeath().ToString();
+
+        }
+
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             m_Status.SetActive(true);
@@ -57,23 +88,6 @@ public class GameUI : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Tab))
         {
             m_Status.SetActive(false);
-        }
-
-        for (int i = 0; i < count; i++)
-        {
-            rankingName[i].text = CGameManager.Instance.GetPlayer(i).GetName();
-            MaxKill = CGameManager.Instance.GetPlayer(i).GetKill();
-            if (MaxKill >= 1)
-            {
-                Kill[i].text = MaxKill.ToString();
-                winPlayer.text = rankingName[i].text;
-            }
-            else
-            {
-                Kill[i].text = MaxKill.ToString();
-            }
-            Death[i].text = CGameManager.Instance.GetPlayer(i).GetDeath().ToString();
-
         }
 
         if (CGameManager.Instance.GetGameOver())

@@ -97,6 +97,9 @@ public class PacketHandler : MonoBehaviour
                 case 15:
                     AddressAll();
                     break;
+                case 16:
+                    GameQuit();
+                    break;
                 default:
                     break;
             }
@@ -262,7 +265,7 @@ public class PacketHandler : MonoBehaviour
     {
         uint address = binaryReader.ReadUInt32();
         ushort port = binaryReader.ReadUInt16();
-        long sourceAddr = binaryReader.ReadInt32();
+        uint sourceAddr = binaryReader.ReadUInt32();
 
         App app = Transform.FindObjectOfType<App>();
         app.SetAddr(address, port);
@@ -277,7 +280,7 @@ public class PacketHandler : MonoBehaviour
         uint addr;
         uint socket;
         ushort port;
-        long sourceAddr;
+        uint sourceAddr;
 
         gm.SetPlayerCount(count);
 
@@ -286,7 +289,10 @@ public class PacketHandler : MonoBehaviour
             socket = binaryReader.ReadUInt32(); 
             addr = binaryReader.ReadUInt32();
             port = binaryReader.ReadUInt16();
-            sourceAddr = binaryReader.ReadInt32();
+            sourceAddr = binaryReader.ReadUInt32();
+
+            Debug.Log("sourceAddr : " + sourceAddr);
+            Debug.Log("addr : " + addr);
 
             string name = System.Text.Encoding.Unicode.GetString(binaryReader.ReadBytes(32));
 
@@ -294,5 +300,21 @@ public class PacketHandler : MonoBehaviour
         }
 
         CGameManager.Instance.gameSocket = 1;
+    }
+
+    private void GameQuit()
+    {
+        App app = Transform.FindObjectOfType<App>();
+
+        for (int i = 0; i < CGameManager.Instance.GetPlayerCount(); i++)
+        {
+            CGameManager.Instance.GetPlayer(i).Init();
+        }
+        app.m_socket.GameOver();
+        app.m_socket.RoomState();
+        app.m_udp.CloseSocket();
+        CGameManager.Instance.SetGameOver(false);
+
+        SceneManager.LoadScene("Room");
     }
 }

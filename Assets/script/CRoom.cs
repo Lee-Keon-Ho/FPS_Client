@@ -30,6 +30,8 @@ public class CRoom : MonoBehaviour
 
         m_name.text = app.GetName();
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
     // Start is called before the first frame update
     void Start()

@@ -36,8 +36,8 @@ public class MainController : MonoBehaviour
 
         pm = FindObjectOfType<PlayerMovement>();
 
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()

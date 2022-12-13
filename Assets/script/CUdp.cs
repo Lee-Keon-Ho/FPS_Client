@@ -88,13 +88,13 @@ public class CUdp
         IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
 
         long hostAddr = host.AddressList[1].Address;
-
+        Debug.Log(hostAddr);
         memoryStream.Position = 0;
 
-        bw.Write((ushort)14);
+        bw.Write((ushort)10);
         bw.Write((ushort)1);
         bw.Write((ushort)_socket);
-        bw.Write(hostAddr);
+        bw.Write((uint)hostAddr);
 
         int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, m_end);
     }
@@ -123,7 +123,7 @@ public class CUdp
 
                 if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
                 {
-                    endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                    endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                     end = (EndPoint)endPoint;
 
                     bw.Write((ushort)(10 + sizeof(long)));
@@ -180,7 +180,7 @@ public class CUdp
 
             if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
             {
-                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                 end = (EndPoint)endPoint;
             }
             else
@@ -188,7 +188,6 @@ public class CUdp
                 endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
                 end = (EndPoint)endPoint;
             }
-            
 
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
@@ -223,7 +222,7 @@ public class CUdp
 
             if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
             {
-                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                 end = (EndPoint)endPoint;
             }
             else
@@ -231,7 +230,7 @@ public class CUdp
                 endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
                 end = (EndPoint)endPoint;
             }
-
+            
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
     }
@@ -264,7 +263,7 @@ public class CUdp
 
             if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
             {
-                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                 end = (EndPoint)endPoint;
             }
             else
@@ -272,7 +271,7 @@ public class CUdp
                 endPoint = new IPEndPoint(player.GetAddr(), player.GetPort());
                 end = (EndPoint)endPoint;
             }
-
+            
             int size = m_socket.SendTo(sendBuffer, (int)memoryStream.Position, SocketFlags.None, end);
         }
     }
@@ -310,7 +309,7 @@ public class CUdp
 
                 if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
                 {
-                    endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                    endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                     end = (EndPoint)endPoint;
                 }
                 else
@@ -350,7 +349,7 @@ public class CUdp
 
                 if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
                 {
-                    endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                    endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                     end = (EndPoint)endPoint;
                 }
                 else
@@ -396,7 +395,7 @@ public class CUdp
 
             if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
             {
-                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                 end = (EndPoint)endPoint;
             }
             else
@@ -433,7 +432,7 @@ public class CUdp
 
             if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
             {
-                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                 end = (EndPoint)endPoint;
             }
             else
@@ -472,7 +471,7 @@ public class CUdp
 
                 if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
                 {
-                    endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                    endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort());
                     end = (EndPoint)endPoint;
                 }
                 else
@@ -510,9 +509,9 @@ public class CUdp
 
             player = gm.GetPlayer(i);
 
-            if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr())
+            if (app.GetPlayer().GetSourceAddr() == player.GetSourceAddr()) // app SetSourceAddr의 값을 확인
             {
-                endPoint = new IPEndPoint(app.GetPlayer().GetSourceAddr(), player.GetPort());
+                endPoint = new IPEndPoint(player.GetSourceAddr(), player.GetPort()); // Error
                 end = (EndPoint)endPoint;
             }
             else

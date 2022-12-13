@@ -52,7 +52,7 @@ public class App : MonoBehaviour
 
     public void OnLogin(TextMeshProUGUI _textMesh)
     {
-        if (_textMesh.text.Length > 4)
+        if (_textMesh.text.Length > 3)
         {
             m_socket.Login(_textMesh);
             m_player.SetName(_textMesh.text);

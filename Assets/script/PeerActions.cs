@@ -255,7 +255,7 @@ public class PeerActions : MonoBehaviour
                     }
 					player.AddDeath();
 					udp.Status();
-					if(kill >= 2)
+					if(kill >= 5)
                     {
 						gm.gameSocket = 0;
 						player.SetHp(100);

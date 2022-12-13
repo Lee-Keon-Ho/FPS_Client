@@ -360,7 +360,7 @@ public class PlayerMovement : MonoBehaviour
                     gm.GetPlayer(0).AddDeath();
                     
                     udp.Status();
-                    if(kill >= 2)
+                    if(kill >= 5)
                     {
                         gm.gameSocket = 0;
                         gm.GetPlayer(0).SetHp(100);
